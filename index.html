@@ -49,6 +49,66 @@
             margin: 0.25rem 0 0.75rem 0;
         }
 
+        .top-control-row {
+            display: grid;
+            grid-template-columns: minmax(150px, 0.8fr) minmax(240px, 1.55fr) minmax(240px, 1.55fr) auto;
+            gap: 0.55rem;
+            align-items: end;
+            width: 100%;
+            margin-bottom: 0.55rem;
+        }
+
+        .top-navigation-tabs {
+            display: flex;
+            gap: 0.15rem;
+            min-width: 150px;
+            padding: 0.25rem;
+            background: #eaf0ff;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            height: 36px;
+            align-self: end;
+        }
+
+        .top-navigation-tabs .tab-btn {
+            flex: 1 1 0;
+            border: 0;
+            border-radius: 7px;
+            padding: 5px 9px;
+            min-height: 30px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            cursor: pointer;
+            color: #334155;
+            background: transparent;
+            transition: all .18s ease;
+            white-space: nowrap;
+        }
+        .top-navigation-tabs .tab-btn:hover { background: rgba(255,255,255,.72); }
+        .top-navigation-tabs .tab-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg,#1e3a8a,#2563eb);
+            box-shadow: 0 3px 8px rgba(37,99,235,.2);
+        }
+
+        .top-country-controls {
+            display: contents;
+        }
+
+        .top-control-row .control-group {
+            min-width: 0;
+        }
+
+        .top-control-row .control-group select {
+            min-height: 36px;
+        }
+
+        .inline-audit-wrap {
+            display: flex;
+            align-items: end;
+            min-width: 0;
+        }
+
         .controls-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1004,10 +1064,188 @@
             .ranking-control-card:first-child { grid-column: auto; }
             .ranking-toggle-wrap { grid-template-columns: 1fr 1fr; }
         }
-    </style>
+        .journey-animation-settings-toggle {
+            width: 100%;
+            margin: 0.35rem 0 0.45rem;
+            padding: 0.58rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface, #f8fafc);
+            color: var(--text-main);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+        .journey-animation-settings-toggle:hover { background: #eef4ff; }
+        .journey-animation-settings-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        .journey-animation-settings-toggle-icon { font-size: 0.78rem; transition: transform .18s ease; }
+        .journey-animation-settings-toggle[aria-expanded="true"] .journey-animation-settings-toggle-icon { transform: rotate(180deg); }
+        .journey-animation-settings-panel {
+            margin: 0 0 0.45rem;
+            padding: 0.42rem 0.5rem 0.5rem;
+            background: var(--surface, #f8fafc);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+        .journey-animation-settings-panel[hidden] { display: none !important; }
+        .airport-controls-one-row {
+            display: grid;
+            grid-template-columns: minmax(220px, 1.25fr) minmax(220px, 1.2fr) minmax(170px, 0.9fr) auto;
+            gap: 0.35rem;
+            align-items: stretch;
+            margin: 0;
+        }
+        .airport-controls-one-row > .journey-setting,
+        .airport-controls-one-row > .aircraft-sound-control,
+        .airport-controls-one-row > .aircraft-volume-control {
+            min-width: 0;
+            min-height: 54px;
+            box-sizing: border-box;
+        }
+        .aircraft-sound-control {
+            margin: 0;
+            padding: 0.35rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .aircraft-control-label,
+        .aircraft-volume-control > label {
+            display: block;
+            flex: 0 0 auto;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+        .aircraft-sound-control select {
+            width: 100%;
+            min-width: 0;
+            padding: 6px 9px;
+            min-height: 30px;
+            font-size: 12.5px;
+            line-height: 1.2;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text-main);
+        }
+        .aircraft-volume-control {
+            margin: 0;
+            padding: 0.35rem;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: grid;
+            grid-template-columns: auto minmax(60px,1fr) auto;
+            align-items: center;
+            gap: 7px;
+        }
+        .aircraft-volume-control input[type=range] { width: 100%; min-width: 60px; }
+        .aircraft-volume-value { min-width: 42px; text-align: right; font-weight: 700; font-size: 0.9rem; }
+        /* Phase 9B: keep airport selector beside the airport search action. */
+        .airport-facility-actions {
+            display: grid;
+            grid-template-columns: minmax(250px, 0.9fr) minmax(320px, 1.25fr) auto;
+            gap: 0.4rem;
+            align-items: stretch;
+        }
+        .airport-facility-actions .airport-selection-row {
+            display: grid;
+            grid-template-columns: auto minmax(150px, 1fr);
+            align-items: center;
+            gap: 0.45rem;
+            min-width: 0;
+        }
+        .airport-facility-actions .airport-selection-row label {
+            margin: 0;
+            overflow: visible;
+            text-overflow: clip;
+        }
+        .airport-facility-actions .airport-selection-row select {
+            min-width: 0;
+        }
+        .airport-facility-actions .location-btn,
+        .airport-facility-actions .route-btn {
+            min-width: 0;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        @media (max-width: 1050px) {
+            .airport-facility-actions {
+                grid-template-columns: minmax(220px, 0.9fr) minmax(260px, 1.1fr);
+            }
+            .airport-facility-actions .route-btn {
+                grid-column: 1 / -1;
+            }
+        }
+        @media (max-width: 760px) {
+            .airport-facility-actions {
+                grid-template-columns: 1fr;
+            }
+            .airport-facility-actions .route-btn {
+                grid-column: auto;
+            }
+            .airport-facility-actions .airport-selection-row {
+                grid-template-columns: 1fr;
+                gap: 0.2rem;
+            }
+        }
+
+        .aircraft-sound-test {
+            border: 1px solid #2563eb;
+            background: #fff;
+            color: #1d4ed8;
+            border-radius: 7px;
+            padding: 7px 11px;
+            cursor: pointer;
+            white-space: nowrap;
+            min-height: 54px;
+        }
+        .aircraft-sound-test:hover { background: #eff6ff; }
+        .aircraft-sound-test:disabled { opacity: .65; cursor: wait; }
+        @media (max-width: 1050px) {
+            .top-control-row {
+                grid-template-columns: minmax(145px, 0.8fr) minmax(210px, 1.2fr) minmax(210px, 1.2fr) auto;
+            }
+            .top-navigation-tabs { min-width: 145px; }
+            .top-navigation-tabs .tab-btn { font-size: 0.68rem; padding-left: 6px; padding-right: 6px; }
+            #latestStatusAuditBtn { font-size: 12px; padding: 9px 12px; }
+            .airport-controls-one-row { grid-template-columns: minmax(190px,1.1fr) minmax(210px,1.15fr) minmax(160px,0.9fr) auto; }
+            .aircraft-control-label { display: none; }
+        }
+        @media (max-width: 760px) {
+            .top-control-row {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.45rem;
+                align-items: end;
+            }
+            .top-navigation-tabs { grid-column: 1 / -1; width: 100%; }
+            .inline-audit-wrap { grid-column: 1 / -1; }
+            .inline-audit-wrap #latestStatusAuditBtn { width: 100%; }
+            .airport-controls-one-row { grid-template-columns: 1fr 1fr; }
+            .airport-controls-one-row > .journey-setting { grid-column: 1 / -1; }
+            .aircraft-sound-test { min-height: 42px; }
+        }
+.aircraft-sound-test { width: 100%; } }
+</style>
 
 <style id="latestStatusAuditStyles">
-#latestStatusAuditBtn{position:fixed;right:18px;bottom:18px;z-index:1200;border:0;border-radius:999px;padding:12px 18px;font-weight:800;font-size:14px;letter-spacing:.2px;background:linear-gradient(135deg,#111827,#334155);color:#fff;box-shadow:0 8px 28px rgba(0,0,0,.24);cursor:pointer}
+#latestStatusAuditBtn{position:static;width:100%;min-height:36px;z-index:1;border:0;border-radius:999px;padding:7px 12px;font-weight:800;font-size:13px;letter-spacing:.2px;background:linear-gradient(135deg,#111827,#334155);color:#fff;box-shadow:0 8px 28px rgba(0,0,0,.24);cursor:pointer}
 #latestStatusAuditBtn:hover{transform:translateY(-1px)}
 #auditOverlay{display:none;position:fixed;inset:0;z-index:1300;background:rgba(2,6,23,.80);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:14px}
 #auditPanel{width:min(1180px,97vw);max-height:94vh;overflow:auto;border-radius:24px;background:linear-gradient(180deg,#0b1220,#111827);color:#e5e7eb;box-shadow:0 30px 90px rgba(0,0,0,.48);font-family:inherit}
@@ -1026,7 +1264,7 @@
 #auditResults{margin-top:15px;max-height:50vh;overflow:auto;border:1px solid rgba(255,255,255,.08);border-radius:14px}.audit-grid-head,.audit-country-row{display:grid;grid-template-columns:1.35fr .9fr .9fr .9fr .9fr 1fr;gap:7px;align-items:center}.audit-grid-head{position:sticky;top:0;background:#172033;font-weight:800;font-size:11px;padding:10px 11px;z-index:2}.audit-country-row{padding:9px 11px;border-top:1px solid rgba(255,255,255,.055);font-size:11px}.audit-country-row:hover{background:rgba(255,255,255,.025)}
 .audit-cell-pill{display:inline-block;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.05);font-size:10px;white-space:nowrap}.audit-ok{color:#86efac}.audit-warn{color:#fde68a}.audit-na{color:#cbd5e1}.audit-partial{color:#fdba74}.audit-detail{grid-column:1/-1;display:none;padding:10px 12px;margin-top:3px;border-radius:10px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.06);line-height:1.55}.audit-detail.open{display:block}.audit-detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.audit-metric{padding:7px 8px;border-radius:8px;background:rgba(255,255,255,.035);font-size:10px}.audit-metric b{display:block;font-size:10px;margin-bottom:2px}.audit-toggle{border:0;background:transparent;color:#e5e7eb;text-align:left;padding:0;cursor:pointer;font:inherit}.audit-toggle:hover{text-decoration:underline}
 #auditSources{padding:10px 22px 20px;font-size:11px;opacity:.7}.audit-link{color:#93c5fd;text-decoration:none}.audit-link:hover{text-decoration:underline}
-@media(max-width:800px){#latestStatusAuditBtn{right:10px;bottom:10px;font-size:12px;padding:10px 14px}.audit-scanner{grid-template-columns:1fr;text-align:center}.audit-cards{grid-template-columns:repeat(2,1fr)}#auditTimer{margin:auto}.audit-source-grid{grid-template-columns:1fr 1fr}.audit-grid-head,.audit-country-row{grid-template-columns:1.3fr .9fr .9fr .9fr 1fr}.audit-grid-head>div:nth-child(5),.audit-country-row>.audit-weather{display:none}.audit-detail-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){#latestStatusAuditBtn{font-size:12px;padding:9px 12px}.audit-scanner{grid-template-columns:1fr;text-align:center}.audit-cards{grid-template-columns:repeat(2,1fr)}#auditTimer{margin:auto}.audit-source-grid{grid-template-columns:1fr 1fr}.audit-grid-head,.audit-country-row{grid-template-columns:1.3fr .9fr .9fr .9fr 1fr}.audit-grid-head>div:nth-child(5),.audit-country-row>.audit-weather{display:none}.audit-detail-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.audit-source-grid{grid-template-columns:1fr}.audit-cards{grid-template-columns:repeat(2,1fr)}.audit-grid-head,.audit-country-row{grid-template-columns:1.2fr .8fr .8fr 1fr}.audit-grid-head>div:nth-child(3),.audit-country-row>.audit-currency{display:none}.audit-detail-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -1035,24 +1273,30 @@
     <div class="container">
         <h1>Global Country Intelligence Dashboard</h1>
         
-        <div class="controls-row" id="countrySelectionControls">
-            <div class="control-group">
-                <label>Select Target Country</label>
-                <select id="countrySelect" onchange="handleTargetCountryChange()">
-                    <option value="" disabled selected>-- Choose Target --</option>
-                </select>
+        <div class="top-control-row" id="topControlRow">
+            <div class="top-navigation-tabs" role="tablist" aria-label="Dashboard views">
+                <button type="button" class="tab-btn active" id="dashboardTabBtn" role="tab" aria-selected="true" onclick="showMainTab('dashboard')">🌐 Dashboard</button>
+                <button type="button" class="tab-btn" id="rankingTabBtn" role="tab" aria-selected="false" onclick="showMainTab('ranking')">🏆 Ranking</button>
             </div>
-            <div class="control-group">
-                <label>I Am From (Your Country)</label>
-                <select id="homeCountrySelect" onchange="updateDashboard()">
-                    <option value="" disabled selected>-- Choose Home --</option>
-                </select>
-            </div>
-        </div>
 
-        <div class="tab-bar" role="tablist" aria-label="Dashboard views">
-            <button type="button" class="tab-btn active" id="dashboardTabBtn" role="tab" aria-selected="true" onclick="showMainTab('dashboard')">🌐 Dashboard</button>
-            <button type="button" class="tab-btn" id="rankingTabBtn" role="tab" aria-selected="false" onclick="showMainTab('ranking')">🏆 Ranking</button>
+            <div class="top-country-controls" id="countrySelectionControls">
+                <div class="control-group">
+                    <label>Select Target Country</label>
+                    <select id="countrySelect" onchange="handleTargetCountryChange()">
+                        <option value="" disabled selected>-- Choose Target --</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>I Am From (Your Country)</label>
+                    <select id="homeCountrySelect" onchange="updateDashboard()">
+                        <option value="" disabled selected>-- Choose Home --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="inline-audit-wrap">
+                <button id="latestStatusAuditBtn" type="button" title="Audit latest available data for all countries">🔍 Audit For Latest Data</button>
+            </div>
         </div>
 
         <div id="rankingTabPanel" class="ranking-panel" role="tabpanel" aria-label="Ranking">
@@ -1284,21 +1528,38 @@
                     <div class="facility-panel">
                         <div class="facility-status" id="worldAirportStatus">Click the button below to locate the nearest airport from My Location.</div>
 
-                        <div class="airport-control-pair">
-                            <div class="journey-setting">
-                                <label for="journeyAnimationTime">Journey Animation Time</label>
-                                <div class="journey-slider-row">
-                                    <input id="journeyAnimationTime" type="range" min="5" max="30" step="2" value="5" aria-label="Journey Animation Time">
-                                    <output id="journeyAnimationTimeValue" for="journeyAnimationTime">5 sec</output>
+                        <button type="button" class="journey-animation-settings-toggle" id="journeyAnimationSettingsToggle" aria-expanded="false" aria-controls="journeyAnimationSettingsPanel" onclick="toggleJourneyAnimationSettings()">
+                            <span>⚙️ Journey Animation Settings</span>
+                            <span class="journey-animation-settings-toggle-icon" aria-hidden="true">▼</span>
+                        </button>
+                        <div class="journey-animation-settings-panel" id="journeyAnimationSettingsPanel" aria-label="Journey Animation Settings" hidden>
+                            <div class="airport-control-pair airport-controls-one-row">
+                                <div class="journey-setting">
+                                    <label for="journeyAnimationTime">Journey Animation Time</label>
+                                    <div class="journey-slider-row">
+                                        <input id="journeyAnimationTime" type="range" min="5" max="30" step="2" value="5" aria-label="Journey Animation Time">
+                                        <output id="journeyAnimationTimeValue" for="journeyAnimationTime">5 sec</output>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="airport-selection-row">
-                                <label for="targetAirportSelect">Select Airport in Target Country</label>
-                                <select id="targetAirportSelect" disabled>
-                                    <option value="">-- Find Current Location First --</option>
-                                </select>
+                                <div class="aircraft-sound-control" aria-label="Aircraft sound controls">
+                                    <label class="aircraft-control-label" for="aircraftSoundSelect">✈️ Aircraft Sound</label>
+                                    <select id="aircraftSoundSelect" aria-label="Aircraft Sound Choice">
+                                        <option value="1">1. Soft Jet Cabin Hum</option>
+                                        <option value="2" selected>2. Gentle Take-off → Cruise</option>
+                                        <option value="3">3. Airy Flight Ambience</option>
+                                        <option value="4">4. Premium Aircraft Cabin</option>
+                                        <option value="5">5. Cinematic Flight</option>
+                                    </select>
+                                </div>
+                                <div class="aircraft-volume-wrap aircraft-volume-control">
+                                    <label for="aircraftSoundVolume">Volume (0–1000%)</label>
+                                    <input id="aircraftSoundVolume" type="range" min="0" max="1000" step="1" value="60" aria-label="Aircraft Sound Volume">
+                                    <output id="aircraftSoundVolumeValue" class="aircraft-volume-value" for="aircraftSoundVolume">60%</output>
+                                </div>
+                                <button type="button" id="aircraftSoundTest" class="aircraft-sound-test" onclick="previewAircraftSound()">▶ Test Sound</button>
                             </div>
                         </div>
+                        
                         <div class="inline-location-timer" id="airportLocationTimer" aria-live="polite">
                             <div class="inline-location-orb" aria-hidden="true"></div>
                             <div class="inline-location-timer-text"><strong>Locating nearest airport</strong><br><span id="airportLocationTimerSeconds">0.0 s</span></div>
@@ -1309,7 +1570,13 @@
                             <div class="data-item"><div class="data-label">3. Journey Distance</div><div class="data-value" id="worldAirportDistance">--</div></div>
                             <div class="data-item"><div class="data-label">4. Journey Time</div><div class="data-value" id="worldAirportJourneyTimeDisplay">5 sec</div></div>
                         </div>
-                        <div class="facility-actions">
+                        <div class="facility-actions airport-facility-actions">
+                            <div class="airport-selection-row">
+                                <label for="targetAirportSelect">Select Airport in Target Country</label>
+                                <select id="targetAirportSelect" disabled>
+                                    <option value="">-- Find Current Location First --</option>
+                                </select>
+                            </div>
                             <button type="button" class="location-btn" onclick="findWorldNearestFacility('airport')">🌐 Find Airport in the Target Country from Your Current Location</button>
                             <a id="worldAirportRoute" class="route-btn" href="#" target="_blank" rel="noopener">Open Route in Google Maps</a>
                         </div>
@@ -1792,6 +2059,10 @@ let airportAudioContext = null;
 let activeSound = null;
 let selectedAirportList = [];
 let selectedAirport = null;
+let aircraftSoundChoice = localStorage.getItem("worldInfoAircraftSoundChoice") || "2";
+let aircraftSoundVolume = Number(localStorage.getItem("worldInfoAircraftSoundVolume"));
+if(!Number.isFinite(aircraftSoundVolume)) aircraftSoundVolume = 60;
+
 
 const $ = id => document.getElementById(id);
 
@@ -2000,12 +2271,13 @@ function selectAirportFromDropdown(){
     if(status) status.textContent=`${airport.name} selected. Press Find Airport to locate My Location and start the air journey.`;
 }
 
-function ensureAudio(){
+async function ensureAudio(){
     try{
         const Ctx=window.AudioContext||window.webkitAudioContext;
         if(!Ctx) return null;
         if(!airportAudioContext) airportAudioContext=new Ctx();
-        if(airportAudioContext.state==="suspended") airportAudioContext.resume().catch(()=>{});
+        if(airportAudioContext.state==="suspended") await airportAudioContext.resume();
+        if(airportAudioContext.state!=="running") return null;
         return airportAudioContext;
     }catch(_){return null;}
 }
@@ -2022,27 +2294,164 @@ function stopJourneySound(){
     }catch(_){activeSound=null;}
 }
 
-function startJourneySound(mode){
+function getAircraftSoundSettings(){
+    const select=$("aircraftSoundSelect");
+    const volume=$("aircraftSoundVolume");
+    if(select) aircraftSoundChoice=String(select.value||aircraftSoundChoice||"2");
+    if(volume) aircraftSoundVolume=Math.max(0,Math.min(1000,Number(volume.value)||0));
+    return {choice:aircraftSoundChoice,volume:aircraftSoundVolume};
+}
+
+function syncAircraftSoundControls(){
+    const select=$("aircraftSoundSelect"), volume=$("aircraftSoundVolume"), output=$("aircraftSoundVolumeValue");
+    if(select) select.value=aircraftSoundChoice;
+    if(volume) volume.value=String(aircraftSoundVolume);
+    if(output) output.textContent=`${Math.round(aircraftSoundVolume)}%`;
+}
+
+function saveAircraftSoundSettings(){
+    localStorage.setItem("worldInfoAircraftSoundChoice",aircraftSoundChoice);
+    localStorage.setItem("worldInfoAircraftSoundVolume",String(Math.round(aircraftSoundVolume)));
+}
+
+function createNoiseSource(ctx){
+    const source=ctx.createBufferSource();
+    const buffer=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate);
+    const data=buffer.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1);
+    source.buffer=buffer; source.loop=true;
+    return source;
+}
+
+function buildAircraftSound(ctx,master,choice,now,nodes,oscs){
+    const addTone=(type,f1,f2,g1,g2,tc=2.0)=>{
+        const o=ctx.createOscillator(), g=ctx.createGain();
+        o.type=type; o.frequency.setValueAtTime(f1,now);
+        if(f2!==f1) o.frequency.exponentialRampToValueAtTime(f2,now+2.4);
+        g.gain.setValueAtTime(0.0001,now); g.gain.exponentialRampToValueAtTime(g1,now+0.8);
+        g.gain.setTargetAtTime(g2,now+2.6,tc); o.connect(g).connect(master); o.start();
+        oscs.push(o); nodes.push(o,g); return {o,g};
+    };
+    const addAir=(gainStart,gainCruise,cutoff=420)=>{
+        const air=createNoiseSource(ctx), filter=ctx.createBiquadFilter(), g=ctx.createGain();
+        filter.type="lowpass"; filter.frequency.value=cutoff; filter.Q.value=0.25;
+        g.gain.setValueAtTime(0.0001,now); g.gain.exponentialRampToValueAtTime(gainStart,now+1.0); g.gain.setTargetAtTime(gainCruise,now+3.0,1.4);
+        air.connect(filter).connect(g).connect(master); air.start(); nodes.push(air,filter,g);
+    };
+
+    switch(String(choice)){
+        case "1": // Soft Jet Cabin Hum
+            addTone("sine",82,88,0.24,0.17,1.4);
+            addTone("sine",164,176,0.075,0.05,1.5);
+            addTone("triangle",246,264,0.035,0.02,1.7);
+            addAir(0.022,0.014,520);
+            break;
+        case "2": // Gentle Take-off -> Cruise
+            addTone("sine",78,104,0.25,0.18,1.2);
+            addTone("triangle",156,208,0.09,0.055,1.1);
+            addTone("sine",312,416,0.018,0.012,1.5);
+            addAir(0.045,0.026,620);
+            break;
+        case "3": // Airy Flight Ambience
+            addTone("sine",88,96,0.23,0.15,1.5);
+            addTone("sine",176,192,0.075,0.045,1.7);
+            addTone("sine",352,384,0.022,0.014,1.8);
+            addAir(0.055,0.032,900);
+            break;
+        case "4": // Premium Aircraft Cabin
+            addTone("sine",84,86,0.26,0.18,1.8);
+            addTone("sine",168,172,0.07,0.042,2.0);
+            addTone("triangle",252,258,0.024,0.012,2.0);
+            addAir(0.015,0.009,360);
+            break;
+        case "5": // Cinematic Flight
+            addTone("sine",86,98,0.23,0.15,1.5);
+            addTone("triangle",172,196,0.075,0.042,1.6);
+            addTone("sine",344,392,0.022,0.012,2.2);
+            addAir(0.034,0.020,700);
+            break;
+        default:
+            addTone("sine",78,104,0.25,0.18,1.2);
+            addTone("triangle",156,208,0.09,0.055,1.1);
+            addTone("sine",312,416,0.018,0.012,1.5);
+            addAir(0.045,0.026,620);
+    }
+}
+
+async function startJourneySound(mode){
     stopJourneySound();
-    const ctx=ensureAudio(); if(!ctx) return;
+    const ctx=await ensureAudio(); if(!ctx) return;
     try{
         const master=ctx.createGain();
-        const base=mode==="road"?0.165:0.225;
-        master.gain.setValueAtTime(0.0001,ctx.currentTime);
-        master.gain.exponentialRampToValueAtTime(base*5,ctx.currentTime+0.15);
-        master.connect(ctx.destination);
+        const now=ctx.currentTime;
+        const settings=getAircraftSoundSettings();
+        const base=mode==="road"?0.165:0.19;
+        // Aircraft volume is a user gain control. Road/car sound keeps its existing level.
+        const userGain=mode==="road"?1:Math.max(0,Math.min(10,settings.volume/100));
+        const effectiveBase=base*userGain;
+        master.gain.setValueAtTime(0.0001,now);
+        if(effectiveBase>0) master.gain.exponentialRampToValueAtTime(effectiveBase,now+0.55);
+        const limiter=ctx.createDynamicsCompressor();
+        // Protective compressor/limiter: user gain is applied first, then peaks are controlled.
+        limiter.threshold.value=-3; limiter.knee.value=5; limiter.ratio.value=20; limiter.attack.value=0.003; limiter.release.value=0.12;
+        master.connect(limiter).connect(ctx.destination);
         const oscs=[];
+        const nodes=[master];
         if(mode==="road"){
-            [["sawtooth",68,0.22],["square",136,0.035],["triangle",205,0.025]].forEach(([type,f,g])=>{
-                const o=ctx.createOscillator(), n=ctx.createGain(); o.type=type;o.frequency.value=f;n.gain.value=g;o.connect(n).connect(master);o.start();oscs.push(o);
+            [["sawtooth",68,0.16],["square",136,0.018],["triangle",205,0.018]].forEach(([type,f,g])=>{
+                const o=ctx.createOscillator(), n=ctx.createGain();
+                o.type=type; o.frequency.value=f; n.gain.value=g; o.connect(n).connect(master); o.start(); oscs.push(o); nodes.push(n,o);
             });
         }else{
-            [["sawtooth",92,0.20],["triangle",184,0.06],["sine",46,0.12]].forEach(([type,f,g])=>{
-                const o=ctx.createOscillator(), n=ctx.createGain(); o.type=type;o.frequency.value=f;n.gain.value=g;o.connect(n).connect(master);o.start();oscs.push(o);
-            });
+            buildAircraftSound(ctx,master,settings.choice,now,nodes,oscs);
         }
-        activeSound={ctx,master,oscs,nodes:[master,...oscs]};
+        activeSound={ctx,master,oscs,nodes};
     }catch(e){console.warn("Journey sound unavailable",e);}
+}
+
+function toggleJourneyAnimationSettings(){
+    const panel=$("journeyAnimationSettingsPanel");
+    const button=$("journeyAnimationSettingsToggle");
+    if(!panel||!button) return;
+    const isOpen=button.getAttribute("aria-expanded")==='true';
+    button.setAttribute("aria-expanded",String(!isOpen));
+    panel.hidden=isOpen;
+}
+
+async function previewAircraftSound(){
+    const button=$("aircraftSoundTest");
+    const ctx=await ensureAudio();
+    if(!ctx){
+        if(button) button.textContent="⚠ Sound unavailable";
+        setTimeout(()=>{if(button) button.textContent="▶ Test Sound";},1800);
+        return;
+    }
+    getAircraftSoundSettings();
+    saveAircraftSoundSettings();
+    stopJourneySound();
+    try{
+        const master=ctx.createGain(), now=ctx.currentTime;
+        // Preview follows the same 0–1000% user-gain scale before peak protection.
+        const gain=Math.max(0,Math.min(10,aircraftSoundVolume/100))*0.34;
+        master.gain.setValueAtTime(0.0001,now);
+        if(gain>0) master.gain.exponentialRampToValueAtTime(gain,now+0.35);
+        const limiter=ctx.createDynamicsCompressor();
+        // Protective compressor/limiter: user gain is applied first, then peaks are controlled.
+        limiter.threshold.value=-3; limiter.knee.value=5; limiter.ratio.value=20; limiter.attack.value=0.003; limiter.release.value=0.12;
+        master.connect(limiter).connect(ctx.destination);
+        const oscs=[], nodes=[master,limiter];
+        buildAircraftSound(ctx,master,aircraftSoundChoice,now,nodes,oscs);
+        activeSound={ctx,master,oscs,nodes};
+        if(button) button.textContent="■ Playing...";
+        setTimeout(()=>{
+            if(activeSound&&activeSound.master===master) stopJourneySound();
+            if(button) button.textContent="▶ Test Sound";
+        },7000);
+    }catch(e){
+        console.warn("Aircraft sound preview unavailable",e);
+        if(button) button.textContent="⚠ Sound unavailable";
+        setTimeout(()=>{if(button) button.textContent="▶ Test Sound";},1800);
+    }
 }
 
 function aircraftSvg(){return `<svg class="journey-vehicle-svg" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#fff" stroke="#2563eb" stroke-width="2"/><path d="M20 5 L24 17 L34 22 L34 26 L23 23 L22 34 L28 37 L28 39 L20 35 L12 39 L12 37 L18 34 L17 23 L6 26 L6 22 L16 17 Z" fill="#2563eb"/></svg>`;}
@@ -2245,7 +2654,7 @@ async function findWorldNearestFacility(type){
     const status=$(airport?"worldAirportStatus":"worldRailStatus");
     if(content){content.style.display="block";icon.textContent="▲ Click to Collapse";}
     if(button){button.disabled=true;button.textContent=airport?"Finding Airport(s)...":"Locating nearest railway station...";}
-    if(airport) ensureAudio();
+    if(airport) ensureAudio().catch(()=>{});
     startLocationDetectionTimer(type);
     try{
         const location=await getWorldUserLocation(type);
@@ -3582,8 +3991,6 @@ if(journeyAnimationSlider){
 }
 </script>
 
-
-<button id="latestStatusAuditBtn" type="button" title="Audit latest available status for all countries">🔍 Audit for Latest Status</button>
 <div id="auditOverlay" aria-hidden="true">
   <div id="auditPanel" role="dialog" aria-modal="true" aria-labelledby="auditTitle">
     <div id="auditHead">
@@ -3713,6 +4120,16 @@ async function run(){
  const frag=document.createDocumentFragment();for(const item of results){const groups={Economy:categoryFor(item.metrics,'Economy'),Society:categoryFor(item.metrics,'Society'),Currency:categoryFor(item.metrics,'Currency'),Weather:categoryFor(item.metrics,'Weather')};const row=document.createElement('div');row.className='audit-country-row';row.innerHTML=`<div><button class="audit-toggle" type="button">▸ ${esc(item.name)}</button></div><div><span class="audit-cell-pill">${groups.Economy.cur}/${groups.Economy.total} current</span></div><div><span class="audit-cell-pill">${groups.Society.cur}/${groups.Society.total} current</span></div><div class="audit-currency"><span class="audit-cell-pill">${groups.Currency.cur}/${groups.Currency.total}</span></div><div class="audit-weather"><span class="audit-cell-pill">${groups.Weather.cur}/${groups.Weather.total}</span></div><div><span class="audit-cell-pill ${item.status.cls}">${esc(item.status.text)}</span></div><div class="audit-detail">${detailHTML(item.metrics)}</div>`;const toggle=row.querySelector('.audit-toggle'),detail=row.querySelector('.audit-detail');toggle.addEventListener('click',()=>{detail.classList.toggle('open');toggle.textContent=(detail.classList.contains('open')?'▾ ':'▸ ')+item.name;});frag.appendChild(row);} $('auditRows').appendChild(frag);$('auditCountry').textContent='✓ GLOBAL MULTI-INDICATOR AUDIT COMPLETE';
 }
 btn.addEventListener('click',run);
+})();
+
+(function initAircraftSoundControls(){
+    const init=()=>{
+        syncAircraftSoundControls();
+        const select=$("aircraftSoundSelect"), volume=$("aircraftSoundVolume"), output=$("aircraftSoundVolumeValue");
+        if(select) select.addEventListener("change",()=>{ aircraftSoundChoice=select.value; saveAircraftSoundSettings(); });
+        if(volume) volume.addEventListener("input",()=>{ aircraftSoundVolume=Math.max(0,Math.min(1000,Number(volume.value)||0)); if(output) output.textContent=`${Math.round(aircraftSoundVolume)}%`; saveAircraftSoundSettings(); });
+    };
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init,{once:true}); else init();
 })();
 </script>
 </body>
