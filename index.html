@@ -190,6 +190,28 @@
             color: var(--primary);
         }
 
+        .country-header-airport-btn {
+            flex: 1 1 auto;
+            min-width: 0;
+            min-height: 36px;
+            margin-left: auto;
+            padding: 7px 10px;
+            border: 0;
+            border-radius: 7px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.68rem;
+            line-height: 1.15;
+            font-weight: 800;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .country-header-airport-btn:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
         .category-section {
             margin-bottom: 0.45rem;
         }
@@ -1241,7 +1263,7 @@
             .airport-controls-one-row > .journey-setting { grid-column: 1 / -1; }
             .aircraft-sound-test { min-height: 42px; }
         }
-.aircraft-sound-test { width: 100%; } }
+.aircraft-sound-test { width: 100%; }
 </style>
 
 <style id="latestStatusAuditStyles">
@@ -1413,6 +1435,7 @@
                 <div>
                     <h2 id="countryName">Country Name</h2>
                 </div>
+                <button type="button" id="worldAirportFindButton" class="country-header-airport-btn" onclick="findWorldNearestFacility('airport')">🌐 Find Airport in the Target Country from Your Current Location</button>
             </div>
             
             <!-- CAPITAL CITY MAP & STREET VIEW -->
@@ -1481,8 +1504,7 @@
                             <div class="data-item"><div class="data-label">1. Reference Location</div><div class="data-value" id="worldUserLocationAirport">--</div></div>
                             <div class="data-item"><div class="data-label">2. Selected Airport</div><div class="data-value" id="worldNearestAirport">--</div></div>
                             <div class="data-item"><div class="data-label">3. Journey Distance</div><div class="data-value" id="worldAirportDistance">--</div></div>
-                            <div class="data-item"><div class="data-label">4. Journey Time</div><div class="data-value" id="worldAirportJourneyTimeDisplay">5 sec</div></div>
-                        </div>
+                         </div>
                         <div class="facility-actions airport-facility-actions">
                             <div class="airport-selection-row">
                                 <label for="targetAirportSelect">Select Airport in Target Country</label>
@@ -1490,7 +1512,6 @@
                                     <option value="">-- Find Current Location First --</option>
                                 </select>
                             </div>
-                            <button type="button" class="location-btn" onclick="findWorldNearestFacility('airport')">🌐 Find Airport in the Target Country from Your Current Location</button>
                             <a id="worldAirportRoute" class="route-btn" href="#" target="_blank" rel="noopener">Open Route in Google Maps</a>
                         </div>
                     </div>
@@ -1585,31 +1606,6 @@
                 </div>
             </div>
 
-            <!-- NEAREST RAILWAY STATION PATH FROM CURRENT LOCATION -->
-            <div class="facility-section">
-                <div class="facility-title" onclick="toggleFacilitySection('railPathContent', 'railPathIcon')">
-                    <span>🚆 Nearest Railway Station from My Location</span>
-                    <span id="railPathIcon">▼ Click to Expand</span>
-                </div>
-                <div id="railPathContent" class="facility-content">
-                    <div class="facility-panel">
-                        <div class="facility-status" id="worldRailStatus">Click the button below to locate the nearest railway station from My Location.</div>
-                        <div class="inline-location-timer" id="railLocationTimer" aria-live="polite">
-                            <div class="inline-location-orb" aria-hidden="true"></div>
-                            <div class="inline-location-timer-text"><strong>Locating nearest railway station</strong><br><span id="railLocationTimerSeconds">0.0 s</span></div>
-                        </div>
-                        <div class="grid">
-                            <div class="data-item"><div class="data-label">1. Reference Location</div><div class="data-value" id="worldUserLocationRail">--</div></div>
-                            <div class="data-item"><div class="data-label">2. Nearest Railway Station</div><div class="data-value" id="worldNearestRail">--</div></div>
-                            <div class="data-item"><div class="data-label">3. Distance</div><div class="data-value" id="worldRailDistance">--</div></div>
-                        </div>
-                        <div class="facility-actions">
-                            <button type="button" class="location-btn" onclick="findWorldNearestFacility('rail')">🌐 Find Nearest Railway Station</button>
-                            <a id="worldRailRoute" class="route-btn" href="#" target="_blank" rel="noopener">Open Route in Google Maps</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
         </div>
 
@@ -2042,6 +2038,10 @@ const capitalCoords = {
 let dashboardGeneration = 0;
 let startupLocation = null;
 let locationPermissionState = "unknown";
+
+/* PHASE 1 — My Location persistence and change detection */
+const MY_LOCATION_STORAGE_KEY = "worldInfoMyLocation_v1";
+const MY_LOCATION_CHANGE_THRESHOLD_METERS = 100;
 let airportMap = null;
 let airportMapResizeObserver = null;
 let airportMapOriginMarker = null;
@@ -2150,9 +2150,50 @@ function requestLocation(options={}) {
     });
 }
 
+function loadStoredMyLocation() {
+    try {
+        const raw=localStorage.getItem(MY_LOCATION_STORAGE_KEY);
+        if(!raw) return null;
+        const saved=JSON.parse(raw);
+        const lat=Number(saved?.lat), lon=Number(saved?.lon);
+        if(!Number.isFinite(lat)||!Number.isFinite(lon)) return null;
+        return {
+            lat,
+            lon,
+            accuracy:Number.isFinite(Number(saved?.accuracy)) ? Number(saved.accuracy) : null,
+            savedAt:saved?.savedAt||null
+        };
+    } catch(_) { return null; }
+}
+
+function saveMyLocation(location) {
+    try {
+        localStorage.setItem(MY_LOCATION_STORAGE_KEY,JSON.stringify({
+            lat:location.lat,
+            lon:location.lon,
+            accuracy:location.accuracy ?? null,
+            savedAt:new Date().toISOString()
+        }));
+    } catch(_) { }
+}
+
+function myLocationChanged(previous,current) {
+    if(!previous||!current) return true;
+    const distanceMeters=worldHaversineKm(previous.lat,previous.lon,current.lat,current.lon)*1000;
+    return distanceMeters >= MY_LOCATION_CHANGE_THRESHOLD_METERS;
+}
+
 async function initializeStartupLocation() {
     if(startupLocation) return startupLocation;
-    if(!navigator.geolocation) { locationPermissionState="unsupported"; return null; }
+    if(!navigator.geolocation) {
+        locationPermissionState="unsupported";
+        return null;
+    }
+
+    /* Load the previous My Location before checking the device again. */
+    const previousLocation=loadStoredMyLocation();
+    if(previousLocation) startupLocation=previousLocation;
+
     try {
         if(navigator.permissions?.query){
             const p=await navigator.permissions.query({name:"geolocation"});
@@ -2160,15 +2201,26 @@ async function initializeStartupLocation() {
             p.onchange=()=>locationPermissionState=p.state;
         }
     } catch(_){ }
+
     try {
-        const pos=await requestLocation({highAccuracy:false,timeout:8000,maximumAge:120000});
-        startupLocation=positionToLocation(pos);
+        /* Fresh GPS check on every application run. */
+        const pos=await requestLocation({highAccuracy:true,timeout:10000,maximumAge:0});
+        const currentLocation=positionToLocation(pos);
         locationPermissionState="granted";
+
+        if(!previousLocation || myLocationChanged(previousLocation,currentLocation)) {
+            startupLocation=currentLocation;
+            saveMyLocation(currentLocation);
+        } else {
+            /* Ignore normal GPS jitter and retain the previous coordinates. */
+            startupLocation=previousLocation;
+        }
         return startupLocation;
     } catch(error){
         if(error.code===1) locationPermissionState="denied";
         else locationPermissionState="error";
-        return null;
+        /* If GPS temporarily fails on a later run, retain the stored location. */
+        return startupLocation;
     }
 }
 
@@ -2178,9 +2230,19 @@ async function getWorldUserLocation(type) {
         const p=await initializeStartupLocation();
         if(p) return p;
     } catch(_){ }
+
     try {
         const pos=await requestLocation({highAccuracy:true,timeout:10000,maximumAge:0});
-        startupLocation=positionToLocation(pos);
+        const currentLocation=positionToLocation(pos);
+        const previousLocation=loadStoredMyLocation();
+
+        if(!previousLocation || myLocationChanged(previousLocation,currentLocation)) {
+            startupLocation=currentLocation;
+            saveMyLocation(currentLocation);
+        } else {
+            startupLocation=previousLocation;
+        }
+
         locationPermissionState="granted";
         return startupLocation;
     } catch(error){
@@ -2224,8 +2286,109 @@ function populateAirportChoicesForTarget(targetCountry){
     const status=$("worldAirportStatus");
     if(status){
         status.textContent=airports.length
-            ? "Select an airport from the dropdown, then press Find Airport to start the journey."
+            ? "Calculating the nearest airport from My Location..."
             : "No major airports are listed for this Target Country.";
+    }
+}
+
+async function automaticallyUpdateTargetCountryAirport(targetCountry,generation){
+    if(!targetCountry || !countryData[targetCountry]) return;
+    const status=$("worldAirportStatus");
+    const button=$("worldAirportFindButton");
+
+    try{
+        /*
+         * Use the Phase 1 common My Location. Do not request a second
+         * Airport-specific location here.
+         */
+        const location=startupLocation || await initializeStartupLocation();
+        if(generation!==dashboardGeneration) return;
+        if(!location) throw new Error("My Location is not available yet. Please allow Location access and try again.");
+
+        const names=countryData[targetCountry]?.geo?.airports;
+        const airportNames=Array.isArray(names)?names.filter(Boolean):[];
+        if(!airportNames.length){
+            populateAirportDropdown([],false);
+            throw new Error("No major airports are listed for this Target Country.");
+        }
+
+        if(status) status.textContent=`Finding the nearest airport in ${targetCountry}...`;
+        if(button) button.disabled=true;
+
+        /*
+         * Resolve the airport names already present in the application's
+         * country data to geographic coordinates, then calculate the
+         * great-circle distance from the fixed My Location.
+         */
+        const resolvedResults=await Promise.allSettled(
+            airportNames.map(async name=>{
+                const resolved=await geocodeAirport(name,targetCountry);
+                if(!resolved) throw new Error(`Could not locate ${name}`);
+                return {
+                    name,
+                    lat:resolved.lat,
+                    lon:resolved.lon,
+                    distance:worldHaversineKm(location.lat,location.lon,resolved.lat,resolved.lon)
+                };
+            })
+        );
+
+        if(generation!==dashboardGeneration) return;
+
+        const airports=resolvedResults
+            .filter(r=>r.status==="fulfilled" && r.value)
+            .map(r=>r.value)
+            .sort((a,b)=>a.distance-b.distance);
+
+        if(!airports.length){
+            populateAirportDropdown([],false);
+            throw new Error(`Airport coordinates could not be obtained for ${targetCountry}.`);
+        }
+
+        /* First entry is the nearest airport and becomes the default selection. */
+        populateAirportDropdown(airports,true);
+        selectedAirport=airports[0];
+
+        const select=$("targetAirportSelect");
+        if(select) select.value="0";
+
+        $("worldUserLocationAirport").textContent=`My Location (${location.lat.toFixed(5)}, ${location.lon.toFixed(5)})`;
+        $("worldNearestAirport").textContent=selectedAirport.name;
+        $("worldAirportDistance").textContent=`${selectedAirport.distance.toFixed(2)} km great-circle journey distance`;
+
+        const route=`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(`${location.lat},${location.lon}`)}&destination=${encodeURIComponent(`${selectedAirport.lat},${selectedAirport.lon}`)}&travelmode=driving`;
+        const routeLink=$("worldAirportRoute");
+        if(routeLink){
+            routeLink.href=route;
+            routeLink.textContent=`Open Route from My Location to ${selectedAirport.name} in Google Maps`;
+        }
+
+        if(status){
+            status.textContent=`${selectedAirport.name} is automatically selected as the nearest airport in ${targetCountry}. Starting the air journey...`;
+        }
+
+        /*
+         * Use the existing, tested journey renderer so the automatic
+         * Target Country selection also produces the airplane animation.
+         *
+         * renderAirportJourney() temporarily opens the map so the animation
+         * can be displayed. The Airport information tab itself remains
+         * collapsed as required.
+         */
+        await renderAirportJourney(location,selectedAirport);
+
+        /*
+         * Restore the Airport information tab to its collapsed state after
+         * the journey renderer has finished preparing the map.
+         */
+        const airportContent=$("airportPathContent"),airportIcon=$("airportPathIcon");
+        if(airportContent) airportContent.style.display="none";
+        if(airportIcon) airportIcon.textContent="▼ Click to Expand";
+    }catch(error){
+        if(generation!==dashboardGeneration) return;
+        if(status) status.textContent=error?.message||"Airport data unavailable.";
+    }finally{
+        if(generation===dashboardGeneration && button) button.disabled=false;
     }
 }
 
@@ -2249,8 +2412,6 @@ function updateJourneyAnimationTimeDisplay(){
     normalizeJourneyAnimationSlider();
     const slider=$("journeyAnimationTime"), output=$("journeyAnimationTimeValue");
     if(slider&&output) output.textContent=`${getSelectedJourneySeconds()} sec`;
-    const journeyTimeDisplay=$("worldAirportJourneyTimeDisplay");
-    if(journeyTimeDisplay) journeyTimeDisplay.textContent=`${getSelectedJourneySeconds()} sec`;
 }
 
 function createAircraftPathPoints(startLat,startLon,endLat,endLon,segments=96) {
@@ -2268,8 +2429,25 @@ function selectAirportFromDropdown(){
     const airport=selectedAirportList[index];
     if(!airport) return;
     selectedAirport=airport;
+
+    const location=startupLocation;
+    if(location && Number.isFinite(airport.lat) && Number.isFinite(airport.lon)){
+        const distance=worldHaversineKm(location.lat,location.lon,airport.lat,airport.lon);
+        airport.distance=distance;
+        $("worldUserLocationAirport").textContent=`My Location (${location.lat.toFixed(5)}, ${location.lon.toFixed(5)})`;
+        $("worldNearestAirport").textContent=airport.name;
+        $("worldAirportDistance").textContent=`${distance.toFixed(2)} km great-circle journey distance`;
+
+        const route=`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(`${location.lat},${location.lon}`)}&destination=${encodeURIComponent(`${airport.lat},${airport.lon}`)}&travelmode=driving`;
+        const routeLink=$("worldAirportRoute");
+        if(routeLink){
+            routeLink.href=route;
+            routeLink.textContent=`Open Route from My Location to ${airport.name} in Google Maps`;
+        }
+    }
+
     const status=$("worldAirportStatus");
-    if(status) status.textContent=`${airport.name} selected. Press Find Airport to locate My Location and start the air journey.`;
+    if(status) status.textContent=`${airport.name} selected.`;
 }
 
 async function ensureAudio(){
@@ -2470,6 +2648,25 @@ function watchAirportMapResize(){
     if(frame) airportMapResizeObserver.observe(frame);
 }
 
+async function waitForLeaflet(timeoutMs=10000){
+    const started=performance.now();
+    while(typeof L==="undefined"){
+        if(performance.now()-started>=timeoutMs) throw new Error("The map library could not be loaded. Please check your internet connection and try again.");
+        await new Promise(resolve=>setTimeout(resolve,100));
+    }
+    return true;
+}
+
+async function waitForAirportMapContainer(timeoutMs=3000){
+    const started=performance.now();
+    while(true){
+        const el=$("airportMap");
+        if(el && el.offsetWidth>=20 && el.offsetHeight>=20) return el;
+        if(performance.now()-started>=timeoutMs) throw new Error("The map area is not ready yet. Please try again.");
+        await new Promise(resolve=>requestAnimationFrame(resolve));
+    }
+}
+
 function ensureAirportMap(){
     if(airportMap) return airportMap;
     const el=$("airportMap"); if(!el||typeof L==="undefined") return null;
@@ -2554,13 +2751,16 @@ async function renderAirportJourney(referenceLocation,facility){
     const title=$("mapSectionTitle")?.querySelector("span");
     if(title)title.textContent=`My Location → ${facility.name} (${targetCountry}) - Map & ${mode==="road"?"Road":"Air"} Route`;
 
-    // The map may have just been opened. Give the browser one paint opportunity
-    // before measuring it, so the first click cannot fail because of a zero-size map.
-    await new Promise(resolve=>requestAnimationFrame(()=>resolve()));
+    // Wait for the external map library and for the now-visible map container.
+    // This removes the startup race that can occur when the application is
+    // opened while the browser is still establishing its external connections.
+    await waitForLeaflet(10000);
+    if(requestToken!==airportJourneyRequestToken||gen!==dashboardGeneration)return false;
+    await waitForAirportMapContainer(3000);
     if(requestToken!==airportJourneyRequestToken||gen!==dashboardGeneration)return false;
     let map=ensureAirportMap();
     if(!map){
-        await new Promise(resolve=>setTimeout(resolve,120));
+        await new Promise(resolve=>setTimeout(resolve,150));
         if(requestToken!==airportJourneyRequestToken||gen!==dashboardGeneration)return false;
         map=ensureAirportMap();
     }
@@ -2579,9 +2779,6 @@ async function renderAirportJourney(referenceLocation,facility){
     const journeyDistance=routePathDistanceKm(routePoints);
 
     $("worldAirportDistance").textContent=`${journeyDistance.toFixed(2)} km ${mode==="road"?"road distance":"great-circle journey distance"}`;
-    const journeyTime=getSelectedJourneySeconds();
-    const journeyTimeDisplay=$("worldAirportJourneyTimeDisplay");
-    if(journeyTimeDisplay)journeyTimeDisplay.textContent=`${journeyTime} sec`;
 
     airportMapOriginMarker=L.marker([referenceLocation.lat,referenceLocation.lon],{icon:createMapMarkerIcon("location"),zIndexOffset:1000}).addTo(map);
     airportMapOriginMarker.bindPopup(`<strong>My Location</strong><small>${referenceLocation.lat.toFixed(5)}, ${referenceLocation.lon.toFixed(5)}</small>`);
@@ -2607,7 +2804,7 @@ async function renderAirportJourney(referenceLocation,facility){
     map.invalidateSize(true);
 
     // Start the animation only after all route layers, vehicle and map viewport exist.
-    const duration=Math.max(1000,journeyTime*1000);
+    const duration=Math.max(1000,getSelectedJourneySeconds()*1000);
     startJourneySound(mode);
     const started=performance.now();
     airportRouteAnimationFrame=null;
@@ -2651,7 +2848,7 @@ async function findWorldNearestFacility(type){
     if(airport && airportJourneyBusy) return;
     if(airport) airportJourneyBusy=true;
     const generation=dashboardGeneration;
-    const content=$(airport?"airportPathContent":"railPathContent"),icon=$(airport?"airportPathIcon":"railPathIcon"),button=content?.querySelector(".location-btn");
+    const content=$(airport?"airportPathContent":"railPathContent"),icon=$(airport?"airportPathIcon":"railPathIcon"),button=airport?$("worldAirportFindButton"):content?.querySelector(".location-btn");
     const status=$(airport?"worldAirportStatus":"worldRailStatus");
     if(content){content.style.display="block";icon.textContent="▲ Click to Collapse";}
     if(button){button.disabled=true;button.textContent=airport?"Finding Airport(s)...":"Locating nearest railway station...";}
@@ -3412,14 +3609,27 @@ function resetDashboardForTargetChange(){
     const select=$("targetAirportSelect");if(select){select.innerHTML='<option value="">-- Select Airport --</option>';select.disabled=true;}
     ["countryName","geoArea","geoLand","geoCultivable","geoCapital","geoMajorCities","geoAirports","trendTemp","trendHumidity","trendRain","trendSnow","trendWind","predTemp","predHumidity","predRain","predSnow","predVisibility","econCurrency","econGdp","econExport","econImport","econPerCapita","econCostOfLiving","econInternalDebt","econExternalDebt","econBanks","econAlgaeFunding","socPopulation","socFood","socTrend","socLanguages","socLiteracy","socRatio","socHappiness","worldUserLocationAirport","worldNearestAirport","worldAirportDistance","worldUserLocationRail","worldNearestRail","worldRailDistance"].forEach(id=>{if($(id))$(id).textContent="--";});
     updateJourneyAnimationTimeDisplay();
-    const jt=$("worldAirportJourneyTimeDisplay"); if(jt) jt.textContent=`${getSelectedJourneySeconds()} sec`;
-    if($("worldAirportStatus"))$("worldAirportStatus").textContent="Click the button below to find an airport in the Target Country from Your Current Location.";
+
+    /* Keep the Airport tab collapsed after a Target Country change. */
+    const airportContent=$("airportPathContent"),airportIcon=$("airportPathIcon");
+    if(airportContent) airportContent.style.display="none";
+    if(airportIcon) airportIcon.textContent="▼ Click to Expand";
+
+    if($("worldAirportStatus"))$("worldAirportStatus").textContent="Calculating airport information from My Location...";
 }
 
 function handleTargetCountryChange(){
     resetDashboardForTargetChange();
     const target=$("countrySelect")?.value||"";
-    if(target) populateAirportChoicesForTarget(target);
+    const generation=dashboardGeneration;
+    if(target){
+        populateAirportChoicesForTarget(target);
+        automaticallyUpdateTargetCountryAirport(target,generation).catch(error=>{
+            if(generation===dashboardGeneration && $("worldAirportStatus")){
+                $("worldAirportStatus").textContent=error?.message||"Airport data unavailable.";
+            }
+        });
+    }
     updateDashboard();
 }
 
@@ -3971,15 +4181,39 @@ function populateCountrySelectors(){
     countries.forEach(name=>{const o=document.createElement("option");o.value=name;o.textContent=name;c.appendChild(o);const hopt=document.createElement("option");hopt.value=name;hopt.textContent=name;h.appendChild(hopt);});
 }
 
-function initializeApp(){
+async function initializeApp(){
+    /* PHASE 1/2A: establish startup state in a controlled sequence.
+       UI controls are created first; My Location and automatic airport
+       calculation then run in order so the journey renderer is not racing
+       application initialization. */
     populateCountrySelectors();
     initializeRankingControls();
     updateSavedCountryCount("Saved target countries");
+
+    const mapContent=$("mapCollapsibleContent"),mapIcon=$("mapToggleIcon");
+    if(mapContent) mapContent.style.display="none";
+    if(mapIcon) mapIcon.textContent="▼ Click to Expand";
+    const airportPathContent=$("airportPathContent"),airportPathIcon=$("airportPathIcon");
+    if(airportPathContent) airportPathContent.style.display="none";
+    if(airportPathIcon) airportPathIcon.textContent="▼ Click to Expand";
+    const airportSelect=$("targetAirportSelect");
+    if(airportSelect) airportSelect.addEventListener("change",selectAirportFromDropdown);
+
     const initialTarget=$("countrySelect")?.value||"";
-    if(initialTarget) populateAirportChoicesForTarget(initialTarget);
-    $("mapCollapsibleContent").style.display="none";$("mapToggleIcon").textContent="▼ Click to Expand";
-    const airportSelect=$("targetAirportSelect");if(airportSelect)airportSelect.addEventListener("change",selectAirportFromDropdown);
-    initializeStartupLocation().catch(()=>{});
+    if(!initialTarget) return;
+
+    populateAirportChoicesForTarget(initialTarget);
+    const generation=dashboardGeneration;
+    try{
+        await initializeStartupLocation();
+        if(generation!==dashboardGeneration) return;
+        await automaticallyUpdateTargetCountryAirport(initialTarget,generation);
+    }catch(error){
+        if(generation===dashboardGeneration){
+            const status=$("worldAirportStatus");
+            if(status) status.textContent=error?.message||"Unable to initialize My Location and airport data.";
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded",initializeApp);
