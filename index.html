@@ -51,7 +51,7 @@
 
         .top-control-row {
             display: grid;
-            grid-template-columns: minmax(150px, 0.8fr) minmax(240px, 1.55fr) minmax(240px, 1.55fr) auto;
+            grid-template-columns: 280px minmax(240px, 1.55fr) minmax(240px, 1.55fr) auto;
             gap: 0.55rem;
             align-items: end;
             width: 100%;
@@ -61,7 +61,7 @@
         .top-navigation-tabs {
             display: flex;
             gap: 0.15rem;
-            min-width: 150px;
+            min-width: 280px;
             padding: 0.25rem;
             background: #eaf0ff;
             border: 1px solid #cbd5e1;
@@ -866,6 +866,20 @@
         }
         @keyframes allDataSpin { to { transform: rotate(360deg); } }
 
+        /* ========================= PER CAPITA FIGURE TAB ========================= */
+        .per-capita-section { width:100%; }
+        .per-capita-section .category-title { cursor:pointer; }
+        .per-capita-section .category-title:hover { color:var(--accent); }
+        .per-capita-subtitle { color:var(--text-muted); font-size:.72rem; margin-bottom:.3rem; }
+        .per-capita-note,.per-capita-formula {
+            padding:.45rem .6rem; margin-bottom:.35rem; border-radius:8px; background:#f8fafc;
+            border:1px solid #dbe3ef; color:#475569; font-size:.68rem; line-height:1.45;
+        }
+        .per-capita-formula { margin-top:.35rem; margin-bottom:0; background:#eef6ff; color:#1e3a8a; }
+        .per-capita-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:.35rem; }
+        @media(max-width:760px){ .per-capita-grid{grid-template-columns:1fr 1fr;} }
+        @media(max-width:520px){ .per-capita-grid{grid-template-columns:1fr;} }
+
         /* ========================= RANKING TAB ========================= */
         .tab-bar {
             display: flex;
@@ -1242,9 +1256,9 @@
         .aircraft-sound-test:disabled { opacity: .65; cursor: wait; }
         @media (max-width: 1050px) {
             .top-control-row {
-                grid-template-columns: minmax(145px, 0.8fr) minmax(210px, 1.2fr) minmax(210px, 1.2fr) auto;
+                grid-template-columns: 260px minmax(210px, 1.2fr) minmax(210px, 1.2fr) auto;
             }
-            .top-navigation-tabs { min-width: 145px; }
+            .top-navigation-tabs { min-width: 260px; }
             .top-navigation-tabs .tab-btn { font-size: 0.68rem; padding-left: 6px; padding-right: 6px; }
             #latestStatusAuditBtn { font-size: 12px; padding: 9px 12px; }
             .airport-controls-one-row { grid-template-columns: minmax(190px,1.1fr) minmax(210px,1.15fr) minmax(160px,0.9fr) auto; }
@@ -1358,6 +1372,7 @@
                 </table>
             </div>
         </div>
+
 
         <div id="dashboardTabContent">
         <div class="data-storage-panel" aria-label="Society and Economy data storage controls">
@@ -1606,6 +1621,26 @@
                 </div>
             </div>
 
+            <!-- PER CAPITA FIGURE -->
+            <div class="category-section per-capita-section">
+                <div class="category-title" onclick="toggleSection('perCapitaCollapsibleContent', 'perCapitaToggleIcon')"><span>Per Capita Figure</span><span id="perCapitaToggleIcon">▼ Click to Expand</span></div>
+                <div id="perCapitaCollapsibleContent" class="collapsible-content">
+                    <div class="per-capita-subtitle" id="perCapitaCountryLabel">Select a Target Country to calculate per-capita figures.</div>
+                    <div class="per-capita-note">Financial figures are calculated from the country data already used by this dashboard. GDP, Export, Import and External Debt are shown per person in USD; Internal Debt is shown per person in the source currency. Land figures are shown per person in square metres.</div>
+                    <div class="grid per-capita-grid">
+                        <div class="data-item"><div class="data-label">1. Per Capita GDP</div><div class="data-value" id="pcGDP">--</div></div>
+                        <div class="data-item"><div class="data-label">2. Per Capita Arable Land</div><div class="data-value" id="pcArableLand">--</div></div>
+                        <div class="data-item"><div class="data-label">3. Per Capita Total Land</div><div class="data-value" id="pcTotalLand">--</div></div>
+                        <div class="data-item"><div class="data-label">4. Per Capita Export</div><div class="data-value" id="pcExport">--</div></div>
+                        <div class="data-item"><div class="data-label">5. Per Capita Import</div><div class="data-value" id="pcImport">--</div></div>
+                        <div class="data-item"><div class="data-label">6. Per Capita External Debt</div><div class="data-value" id="pcExternalDebt">--</div></div>
+                        <div class="data-item"><div class="data-label">7. Per Capita Internal Debt</div><div class="data-value" id="pcInternalDebt">--</div></div>
+                        <div class="data-item"><div class="data-label">8. Illiterate Population Density</div><div class="data-value" id="pcIlliterateDensity">--</div></div>
+                        <div class="data-item"><div class="data-label">9. Literate Population Density</div><div class="data-value" id="pcLiterateDensity">--</div></div>
+                    </div>
+                    <div class="per-capita-formula" id="perCapitaFormulaNote">Population-density figures use the available Total Population, Total Land Area and Literacy Rate data.</div>
+                </div>
+            </div>
 
         </div>
 
@@ -2364,7 +2399,7 @@ async function automaticallyUpdateTargetCountryAirport(targetCountry,generation)
         }
 
         if(status){
-            status.textContent=`${selectedAirport.name} is automatically selected as the nearest airport in ${targetCountry}. Starting the air journey...`;
+            status.textContent=`${selectedAirport.name} is automatically selected as the nearest airport in ${targetCountry}. Flight route is ready. Press the Find Airport button to start the journey.`;
         }
 
         /*
@@ -2375,7 +2410,7 @@ async function automaticallyUpdateTargetCountryAirport(targetCountry,generation)
          * can be displayed. The Airport information tab itself remains
          * collapsed as required.
          */
-        await renderAirportJourney(location,selectedAirport);
+        await renderAirportJourney(location,selectedAirport,false);
 
         /*
          * Restore the Airport information tab to its collapsed state after
@@ -2447,7 +2482,10 @@ function selectAirportFromDropdown(){
     }
 
     const status=$("worldAirportStatus");
-    if(status) status.textContent=`${airport.name} selected.`;
+    if(status) status.textContent=`${airport.name} selected. Flight route is ready. Press the Find Airport button to start the journey.`;
+    if(location && Number.isFinite(airport.lat) && Number.isFinite(airport.lon)){
+        renderAirportJourney(location,airport,false).catch(err=>console.warn("Static airport route preparation failed:",err));
+    }
 }
 
 async function ensureAudio(){
@@ -2736,7 +2774,7 @@ async function getRoadRoutePoints(referenceLocation,facility){
     }catch(_){return fallback;}
 }
 
-async function renderAirportJourney(referenceLocation,facility){
+async function renderAirportJourney(referenceLocation,facility,startAnimation=false){
     if(!referenceLocation||!facility)return false;
     const requestToken=++airportJourneyRequestToken;
     const gen=dashboardGeneration;
@@ -2802,6 +2840,18 @@ async function renderAirportJourney(referenceLocation,facility){
     await new Promise(resolve=>requestAnimationFrame(()=>resolve()));
     if(requestToken!==airportJourneyRequestToken||gen!==dashboardGeneration)return false;
     map.invalidateSize(true);
+
+    // The route is fully prepared here. Automatic Target Country updates
+    // leave the vehicle at the source until the user presses the Find Airport
+    // button. Only an explicit button action starts the animation.
+    if(!startAnimation){
+        airportMapVehicleMarker.setLatLng(routePoints[0]);
+        airportMapRouteCasing.setLatLngs(routePoints);
+        airportMapDistanceLine.setLatLngs(routePoints);
+        stopJourneySound();
+        airportRouteAnimationFrame=null;
+        return true;
+    }
 
     // Start the animation only after all route layers, vehicle and map viewport exist.
     const duration=Math.max(1000,getSelectedJourneySeconds()*1000);
@@ -2874,7 +2924,7 @@ async function findWorldNearestFacility(type){
             $("worldNearestAirport").textContent=airport.name;
             $("worldAirportDistance").textContent=`${airport.distance.toFixed(2)} km journey distance`;
             status.textContent=`${airport.name} found. Starting the air journey...`;
-            await renderAirportJourney(location,airport);
+            await renderAirportJourney(location,airport,true);
         }else{
             const country=$("countrySelect")?.value;
             if(!country)throw new Error("Please select a Target Country first.");
@@ -3417,6 +3467,49 @@ function getSavedReportRows(){
     });
 }
 
+const PER_CAPITA_EXCEL_COLUMNS = [
+    "Per Capita GDP (USD/person)",
+    "Per Capita Arable Land (m²/person)",
+    "Per Capita Total Land (m²/person)",
+    "Per Capita Export (USD/person)",
+    "Per Capita Import (USD/person)",
+    "Per Capita External Debt (USD/person)",
+    "Per Capita Internal Debt (Local Currency/person)",
+    "Illiterate Population Density (persons/km²)",
+    "Literate Population Density (persons/km²)"
+];
+
+function getPerCapitaExcelValues(target){
+    const data=countryData?.[target];
+    if(!data) return PER_CAPITA_EXCEL_COLUMNS.map(()=>"");
+    const population=parsePerCapitaNumber(data?.soc?.pop);
+    const totalLandSqKm=parsePerCapitaNumber(data?.geo?.land);
+    const arableLandSqKm=parsePerCapitaNumber(data?.geo?.cultivable);
+    const gdp=parsePerCapitaNumber(data?.econ?.gdp);
+    const exportsValue=parsePerCapitaNumber(data?.econ?.export);
+    const importsValue=parsePerCapitaNumber(data?.econ?.import);
+    const externalDebt=parsePerCapitaNumber(data?.econ?.externalDebt);
+    const internalDebt=parsePerCapitaNumber(data?.econ?.internalDebt);
+    const currencyCode=(String(data?.econ?.currency||'').match(/\(([A-Za-z]{3})\)/)?.[1]||'Local currency').toUpperCase();
+    const pcGDP=population>0 && Number.isFinite(gdp)?gdp/population:null;
+    const pcArable=population>0 && Number.isFinite(arableLandSqKm)?(arableLandSqKm*1e6)/population:null;
+    const pcLand=population>0 && Number.isFinite(totalLandSqKm)?(totalLandSqKm*1e6)/population:null;
+    const pcExport=population>0 && Number.isFinite(exportsValue)?exportsValue/population:null;
+    const pcImport=population>0 && Number.isFinite(importsValue)?importsValue/population:null;
+    const pcExternal=population>0 && Number.isFinite(externalDebt)?externalDebt/population:null;
+    const pcInternal=population>0 && Number.isFinite(internalDebt)?internalDebt/population:null;
+    const literacy=parsePerCapitaNumber(data?.soc?.literacy);
+    let illiterateDensity=null,literateDensity=null;
+    if(population>0 && totalLandSqKm>0 && Number.isFinite(literacy)){
+        const literatePopulation=population*Math.max(0,Math.min(100,literacy))/100;
+        const illiteratePopulation=Math.max(0,population-literatePopulation);
+        literateDensity=literatePopulation/totalLandSqKm;
+        illiterateDensity=illiteratePopulation/totalLandSqKm;
+    }
+    return [pcGDP,pcArable,pcLand,pcExport,pcImport,pcExternal,pcInternal,illiterateDensity,literateDensity]
+        .map(v=>Number.isFinite(v)?Number(v.toFixed(6)):"");
+}
+
 function getReportSourceHtml(){
     return `<div class="report-sources">
         <div class="report-sources-title">Sources of Data</div>
@@ -3446,25 +3539,34 @@ function downloadSocietyEconomyExcel(){
         return;
     }
 
-    const aoa=[SOC_ECON_COLUMNS];
-    rows.forEach(row=>aoa.push(SOC_ECON_COLUMNS.map(col=>row[col]??"")));
+    const excelColumns=[...SOC_ECON_COLUMNS,...PER_CAPITA_EXCEL_COLUMNS];
+    const aoa=[excelColumns];
+    rows.forEach(row=>{
+        const target=row?.['Target Country']||'';
+        aoa.push([
+            ...SOC_ECON_COLUMNS.map(col=>row[col]??""),
+            ...getPerCapitaExcelValues(target)
+        ]);
+    });
     aoa.push([]);
     aoa.push(["SOURCES OF DATA"]);
     REPORT_SOURCES.forEach(source=>aoa.push([source]));
 
     const ws=XLSX.utils.aoa_to_sheet(aoa);
-    ws["!cols"]=SOC_ECON_COLUMNS.map(col=>({wch:Math.min(Math.max(col.length+3,14),35)}));
+    ws["!cols"]=excelColumns.map(col=>({wch:Math.min(Math.max(col.length+3,14),35)}));
+    ws["!freeze"]={xSplit:0,ySplit:1};
+    ws["!autofilter"]={ref:`A1:${columnLetter(excelColumns.length)}${rows.length+1}`};
 
     const wb=XLSX.utils.book_new();
     wb.Props={
-        Title:"Global Country Intelligence Dashboard - Society & Economy Data",
-        Subject:"Saved Society and Economy data",
+        Title:"Global Country Intelligence Dashboard - Society, Economy & Per Capita Data",
+        Subject:"Saved Society, Economy and Per Capita data",
         Author:"Global Country Intelligence Dashboard",
         CreatedDate:new Date()
     };
-    XLSX.utils.book_append_sheet(wb,ws,"Society & Economy");
-    XLSX.writeFile(wb,`World_Info_Society_Economy_Data_${new Date().toISOString().slice(0,10)}.xlsx`);
-    updateSavedCountryCount("Excel downloaded from saved data");
+    XLSX.utils.book_append_sheet(wb,ws,"Society Economy Per Capita");
+    XLSX.writeFile(wb,`World_Info_Society_Economy_PerCapita_Data_${new Date().toISOString().slice(0,10)}.xlsx`);
+    updateSavedCountryCount("Excel downloaded with Per Capita data");
 }
 
 function buildSocietyEconomyWordHtml(rows){
@@ -3607,7 +3709,7 @@ function resetDashboardForTargetChange(){
     dashboardGeneration++;
     clearAirportMapLayers();selectedAirport=null;selectedAirportList=[];
     const select=$("targetAirportSelect");if(select){select.innerHTML='<option value="">-- Select Airport --</option>';select.disabled=true;}
-    ["countryName","geoArea","geoLand","geoCultivable","geoCapital","geoMajorCities","geoAirports","trendTemp","trendHumidity","trendRain","trendSnow","trendWind","predTemp","predHumidity","predRain","predSnow","predVisibility","econCurrency","econGdp","econExport","econImport","econPerCapita","econCostOfLiving","econInternalDebt","econExternalDebt","econBanks","econAlgaeFunding","socPopulation","socFood","socTrend","socLanguages","socLiteracy","socRatio","socHappiness","worldUserLocationAirport","worldNearestAirport","worldAirportDistance","worldUserLocationRail","worldNearestRail","worldRailDistance"].forEach(id=>{if($(id))$(id).textContent="--";});
+    ["countryName","geoArea","geoLand","geoCultivable","geoCapital","geoMajorCities","geoAirports","trendTemp","trendHumidity","trendRain","trendSnow","trendWind","predTemp","predHumidity","predRain","predSnow","predVisibility","econCurrency","econGdp","econExport","econImport","econPerCapita","econCostOfLiving","econInternalDebt","econExternalDebt","econBanks","econAlgaeFunding","socPopulation","socFood","socTrend","socLanguages","socLiteracy","socRatio","socHappiness","worldUserLocationAirport","worldNearestAirport","worldAirportDistance","worldUserLocationRail","worldNearestRail","worldRailDistance","pcGDP","pcArableLand","pcTotalLand","pcExport","pcImport","pcExternalDebt","pcInternalDebt","pcIlliterateDensity","pcLiterateDensity"].forEach(id=>{if($(id))$(id).textContent="--";});
     updateJourneyAnimationTimeDisplay();
 
     /* Keep the Airport tab collapsed after a Target Country change. */
@@ -3645,6 +3747,7 @@ async function updateDashboard(){
     $("trendTemp").textContent=data.trend.temp;$("trendHumidity").textContent=data.trend.humidity;$("trendRain").textContent=data.trend.rain;$("trendSnow").textContent=data.trend.snow;$("trendWind").textContent=data.trend.wind;
     $("econCurrency").textContent=data.econ.currency;$("econGdp").textContent=data.econ.gdp;$("econExport").textContent=data.econ.export;$("econImport").textContent=data.econ.import;$("econPerCapita").textContent=data.econ.perCapita;$("econCostOfLiving").textContent=data.econ.costOfLiving;$("econInternalDebt").textContent=data.econ.internalDebt;$("econExternalDebt").textContent=data.econ.externalDebt;$("econBanks").textContent=data.econ.banks;$("econAlgaeFunding").textContent=getAlgaeFundingDisplay(target);
     $("socPopulation").textContent=data.soc.pop;$("socFood").textContent=data.soc.food;$("socTrend").textContent=data.soc.popTrend;$("socLanguages").textContent=data.soc.languages;$("socLiteracy").textContent=data.soc.literacy;$("socRatio").textContent=data.soc.ratio;$("socHappiness").textContent=data.soc.happiness;
+    updatePerCapitaFigure();
     const loc=capitalCoords[target]||{lat:0,lon:0};
     $("streetViewBtn").href=`https://www.google.com/maps/@${loc.lat},${loc.lon},17z/data=!3m1!1e3?entry=ttu`;
     fetchLiveWeatherPrediction(target,dashboardGeneration);
@@ -3756,6 +3859,17 @@ const RANKING_PARAMETERS = [
     {key:'Land Area', label:'Land Area', type:'geoNumber', source:'geo.land', group:'Geography', unit:'sq km'},
     {key:'Cultivable Land', label:'Cultivable Land', type:'geoNumber', source:'geo.cultivable', group:'Geography', unit:'sq km'},
 
+    // Per Capita Figure — calculated from the country's stored population, geography and economy data.
+    {key:'Per Capita GDP', label:'Per Capita GDP', type:'perCapita', pcIndex:0, group:'Per Capita Figure', unit:'USD/person'},
+    {key:'Per Capita Arable Land', label:'Per Capita Arable Land', type:'perCapita', pcIndex:1, group:'Per Capita Figure', unit:'m²/person'},
+    {key:'Per Capita Total Land', label:'Per Capita Total Land', type:'perCapita', pcIndex:2, group:'Per Capita Figure', unit:'m²/person'},
+    {key:'Per Capita Export', label:'Per Capita Export', type:'perCapita', pcIndex:3, group:'Per Capita Figure', unit:'USD/person'},
+    {key:'Per Capita Import', label:'Per Capita Import', type:'perCapita', pcIndex:4, group:'Per Capita Figure', unit:'USD/person'},
+    {key:'Per Capita External Debt', label:'Per Capita External Debt', type:'perCapita', pcIndex:5, group:'Per Capita Figure', unit:'USD/person'},
+    {key:'Per Capita Internal Debt', label:'Per Capita Internal Debt', type:'perCapita', pcIndex:6, group:'Per Capita Figure', unit:'Local currency/person'},
+    {key:'Illiterate Population Density', label:'Illiterate Population Density', type:'perCapita', pcIndex:7, group:'Per Capita Figure', unit:'persons/km²'},
+    {key:'Literate Population Density', label:'Literate Population Density', type:'perCapita', pcIndex:8, group:'Per Capita Figure', unit:'persons/km²'},
+
     // General Weather Trend — range data are split into minimum, maximum and total range for meaningful numerical ranking.
     {key:'Minimum Temperature', label:'Minimum Temperature', type:'weatherMin', source:'trend.temp', group:'General Weather Trend', unit:'°C'},
     {key:'Maximum Temperature', label:'Maximum Temperature', type:'weatherMax', source:'trend.temp', group:'General Weather Trend', unit:'°C'},
@@ -3801,6 +3915,92 @@ let rankingUsdRateDate = null;
 let rankingUsdRateSource = 'Frankfurter latest/reference rates';
 let rankingRefreshToken = 0;
 
+function parsePerCapitaNumber(value){
+    if(value===null || value===undefined) return null;
+    const raw=String(value).replace(/,/g,'').trim();
+    if(!raw || /unknown|n\/a|not available|--/i.test(raw)) return null;
+    const m=raw.match(/(-?\d+(?:\.\d+)?)\s*(trillion|billion|million|thousand|k|M)\b/i);
+    if(m){
+        const mult={trillion:1e12,billion:1e9,million:1e6,thousand:1e3,k:1e3,m:1e6}[m[2].toLowerCase()];
+        return Number(m[1])*mult;
+    }
+    const n=raw.match(/-?\d+(?:\.\d+)?/);
+    return n?Number(n[0]):null;
+}
+
+function formatPerCapitaMoney(value,currency='USD'){
+    if(!Number.isFinite(value)) return '--';
+    const symbol=currency==='USD'?'$':'';
+    return symbol+value.toLocaleString(undefined,{maximumFractionDigits:2})+(currency==='USD'?' USD':` ${currency}`);
+}
+
+function formatPerCapitaArea(value){
+    if(!Number.isFinite(value)) return '--';
+    return value.toLocaleString(undefined,{maximumFractionDigits:2})+' m²/person';
+}
+
+function formatPopulationDensity(value){
+    if(!Number.isFinite(value)) return '--';
+    return value.toLocaleString(undefined,{maximumFractionDigits:2})+' persons/km²';
+}
+
+function updatePerCapitaFigure(){
+    const target=$('countrySelect')?.value||'';
+    const data=countryData[target];
+    const label=$('perCapitaCountryLabel');
+    const ids=['pcGDP','pcArableLand','pcTotalLand','pcExport','pcImport','pcExternalDebt','pcInternalDebt','pcIlliterateDensity','pcLiterateDensity'];
+    if(!data){
+        if(label) label.textContent='Select a Target Country to calculate per-capita figures.';
+        ids.forEach(id=>{if($(id)) $(id).textContent='--';});
+        return;
+    }
+    if(label) label.textContent=`Calculated for ${target}`;
+
+    const population=parsePerCapitaNumber(data?.soc?.pop);
+    const totalLandSqKm=parsePerCapitaNumber(data?.geo?.land);
+    const arableLandSqKm=parsePerCapitaNumber(data?.geo?.cultivable);
+    const gdp=parsePerCapitaNumber(data?.econ?.gdp);
+    const exportsValue=parsePerCapitaNumber(data?.econ?.export);
+    const importsValue=parsePerCapitaNumber(data?.econ?.import);
+    const externalDebt=parsePerCapitaNumber(data?.econ?.externalDebt);
+    const internalDebt=parsePerCapitaNumber(data?.econ?.internalDebt);
+    const currencyCode=(String(data?.econ?.currency||'').match(/\(([A-Za-z]{3})\)/)?.[1]||'Local currency').toUpperCase();
+
+    const pcGDP=population>0 && Number.isFinite(gdp)?gdp/population:null;
+    const pcArable=population>0 && Number.isFinite(arableLandSqKm)?(arableLandSqKm*1e6)/population:null;
+    const pcLand=population>0 && Number.isFinite(totalLandSqKm)?(totalLandSqKm*1e6)/population:null;
+    const pcExport=population>0 && Number.isFinite(exportsValue)?exportsValue/population:null;
+    const pcImport=population>0 && Number.isFinite(importsValue)?importsValue/population:null;
+    const pcExternal=population>0 && Number.isFinite(externalDebt)?externalDebt/population:null;
+    const pcInternal=population>0 && Number.isFinite(internalDebt)?internalDebt/population:null;
+
+    const literacy=parsePerCapitaNumber(data?.soc?.literacy);
+    let literateDensity=null, illiterateDensity=null;
+    if(population>0 && totalLandSqKm>0 && Number.isFinite(literacy)){
+        const literatePopulation=population*Math.max(0,Math.min(100,literacy))/100;
+        const illiteratePopulation=Math.max(0,population-literatePopulation);
+        literateDensity=literatePopulation/totalLandSqKm;
+        illiterateDensity=illiteratePopulation/totalLandSqKm;
+    }
+
+    $('pcGDP').textContent=formatPerCapitaMoney(pcGDP,'USD');
+    $('pcArableLand').textContent=formatPerCapitaArea(pcArable);
+    $('pcTotalLand').textContent=formatPerCapitaArea(pcLand);
+    $('pcExport').textContent=formatPerCapitaMoney(pcExport,'USD');
+    $('pcImport').textContent=formatPerCapitaMoney(pcImport,'USD');
+    $('pcExternalDebt').textContent=formatPerCapitaMoney(pcExternal,'USD');
+    $('pcInternalDebt').textContent=formatPerCapitaMoney(pcInternal,currencyCode);
+    $('pcIlliterateDensity').textContent=formatPopulationDensity(illiterateDensity);
+    $('pcLiterateDensity').textContent=formatPopulationDensity(literateDensity);
+
+    const note=$('perCapitaFormulaNote');
+    if(note){
+        note.textContent=Number.isFinite(literacy)
+            ? `Illiterate density = estimated illiterate population ÷ total land area; Literate density = estimated literate population ÷ total land area, using the dashboard literacy rate of ${literacy.toFixed(2)}%.`
+            : 'Literacy Rate is unavailable for this country, so literate and illiterate population density cannot be calculated.';
+    }
+}
+
 function showMainTab(tab){
     const dashboard=$('dashboardTabContent'), ranking=$('rankingTabPanel');
     const dBtn=$('dashboardTabBtn'), rBtn=$('rankingTabBtn');
@@ -3808,6 +4008,8 @@ function showMainTab(tab){
     if(dashboard) dashboard.style.display=isRanking?'none':'block';
     const countryControls=$('countrySelectionControls');
     if(countryControls) countryControls.style.display=isRanking?'none':'';
+    const auditWrap=$('latestStatusAuditBtn')?.closest('.inline-audit-wrap');
+    if(auditWrap) auditWrap.style.display=isRanking?'none':'flex';
     if(ranking) ranking.classList.toggle('active',isRanking);
     if(dBtn){dBtn.classList.toggle('active',!isRanking);dBtn.setAttribute('aria-selected',String(!isRanking));}
     if(rBtn){rBtn.classList.toggle('active',isRanking);rBtn.setAttribute('aria-selected',String(isRanking));}
@@ -3823,7 +4025,7 @@ function initializeRankingControls(){
     const sel=$('rankingParameterSelect');
     if(!sel) return;
     sel.innerHTML='<option value="">-- Select Parameter --</option>';
-    const groups={Geography:[], 'General Weather Trend':[], Economy:[], Society:[]};
+    const groups={Geography:[], 'General Weather Trend':[], Economy:[], Society:[], 'Per Capita Figure':[]};
     RANKING_PARAMETERS.forEach(p=>groups[p.group].push(p));
     Object.entries(groups).forEach(([group,items])=>{
         const og=document.createElement('optgroup'); og.label=group;
@@ -3971,6 +4173,21 @@ function buildRankingRows(param){
         } else if(param.type==='savedRate'){
             display=saved ? saved[param.key] : '--';
             numeric=numericForRanking(display,'number');
+        } else if(param.type==='perCapita'){
+            const pcValues=getPerCapitaExcelValues(country);
+            const value=pcValues[param.pcIndex];
+            numeric=(value!=='' && Number.isFinite(Number(value)))?Number(value):null;
+            normalized=numeric;
+            const currencyCode=(String(d?.econ?.currency||'').match(/\(([A-Za-z]{3})\)/)?.[1]||'Local currency').toUpperCase();
+            if(param.key==='Per Capita Internal Debt'){
+                display=Number.isFinite(numeric)?`${numeric.toLocaleString(undefined,{maximumFractionDigits:2})} ${currencyCode}/person`:'N/A';
+            } else if(['Per Capita GDP','Per Capita Export','Per Capita Import','Per Capita External Debt'].includes(param.key)){
+                display=Number.isFinite(numeric)?moneyUsd(numeric)+' / person':'N/A';
+            } else if(['Per Capita Arable Land','Per Capita Total Land'].includes(param.key)){
+                display=Number.isFinite(numeric)?`${numeric.toLocaleString(undefined,{maximumFractionDigits:2})} m²/person`:'N/A';
+            } else {
+                display=Number.isFinite(numeric)?`${numeric.toLocaleString(undefined,{maximumFractionDigits:2})} persons/km²`:'N/A';
+            }
         } else {
             const raw=getNestedValue(d,param.source);
             display=raw??'--';
@@ -4062,6 +4279,7 @@ function buildRankingNote(param){
     if(param.type==='financialUSD'){
         return `This dashboard stores this parameter in USD. The displayed normalized USD value is therefore the source value itself. Ranking is ${orderText}.`;
     }
+    if(param.type==='perCapita') return `Per Capita Figure ranking: this value is calculated from the dashboard's stored country data. Unit: ${param.unit||'numeric value'}. Order is ${orderText}.`;
     if(param.type==='geoNumber') return `Geography ranking: the stored area value is converted to square kilometres before ranking. Order is ${orderText}.`;
     if(['weatherMin','weatherMax','weatherRange'].includes(param.type)) return `General Weather Trend ranking: the dashboard's stored min/max range is parsed numerically in ${param.unit||'the displayed unit'}. For range parameters, Range = absolute difference between maximum and minimum. Order is ${orderText}.`;
     if(param.type==='savedRate'){
