@@ -1415,49 +1415,6 @@
                 </div>
             </div>
             
-            <!-- GEOGRAPHY -->
-            <div class="category-section">
-                <div class="category-title" onclick="toggleSection('geographyCollapsibleContent', 'geographyToggleIcon')"><span>Geography</span><span id="geographyToggleIcon">▼ Click to Expand</span></div>
-                <div id="geographyCollapsibleContent" class="collapsible-content">
-                <div class="grid">
-                    <div class="data-item"><div class="data-label">1. Area</div><div class="data-value" id="geoArea">--</div></div>
-                    <div class="data-item"><div class="data-label">2. Land Area</div><div class="data-value" id="geoLand">--</div></div>
-                    <div class="data-item"><div class="data-label">3. Cultivable Land</div><div class="data-value" id="geoCultivable">--</div></div>
-                    <div class="data-item"><div class="data-label">4. Capital City</div><div class="data-value" id="geoCapital">--</div></div>
-                    <div class="data-item"><div class="data-label">5. Major Cities</div><div class="data-value" id="geoMajorCities">--</div></div>
-                    <div class="data-item"><div class="data-label">6. Major Airports</div><div class="data-value" id="geoAirports">--</div></div>
-                </div>
-                </div>
-            </div>
-
-            <!-- GENERAL WEATHER TREND -->
-            <div class="category-section">
-                <div class="category-title" onclick="toggleSection('trendCollapsibleContent', 'trendToggleIcon')"><span>General Weather Trend</span><span id="trendToggleIcon">▼ Click to Expand</span></div>
-                <div id="trendCollapsibleContent" class="collapsible-content">
-                <div class="grid">
-                    <div class="data-item"><div class="data-label">1. Max/Min Temperature</div><div class="data-value" id="trendTemp">--</div></div>
-                    <div class="data-item"><div class="data-label">2. Max/Min Humidity</div><div class="data-value" id="trendHumidity">--</div></div>
-                    <div class="data-item"><div class="data-label">3. Max/Min Rainfall</div><div class="data-value" id="trendRain">--</div></div>
-                    <div class="data-item"><div class="data-label">4. Max/Min Snowfall</div><div class="data-value" id="trendSnow">--</div></div>
-                    <div class="data-item"><div class="data-label">5. Max/Min Windspeed</div><div class="data-value" id="trendWind">--</div></div>
-                </div>
-                </div>
-            </div>
-
-            <!-- WEATHER PREDICTION FOR CAPITAL AS OF TODAY -->
-            <div class="category-section">
-                <div class="category-title" id="weatherPredictionTitle" onclick="toggleSection('weatherPredictionCollapsibleContent', 'weatherPredictionToggleIcon')"><span id="weatherPredictionLabel">Weather Prediction as of Today</span><span id="weatherPredictionToggleIcon">▼ Click to Expand</span></div>
-                <div id="weatherPredictionCollapsibleContent" class="collapsible-content">
-                <div class="grid">
-                    <div class="data-item"><div class="data-label">1. Temperature</div><div class="data-value" id="predTemp">--</div></div>
-                    <div class="data-item"><div class="data-label">2. Humidity</div><div class="data-value" id="predHumidity">--</div></div>
-                    <div class="data-item"><div class="data-label">3. Rainfall</div><div class="data-value" id="predRain">--</div></div>
-                    <div class="data-item"><div class="data-label">4. Snowfall</div><div class="data-value" id="predSnow">--</div></div>
-                    <div class="data-item"><div class="data-label">5. Visibility</div><div class="data-value" id="predVisibility">--</div></div>
-                </div>
-                </div>
-            </div>
-
             <!-- CAPITAL CITY MAP & STREET VIEW -->
             <div class="category-section">
                 <div class="category-title" id="mapSectionTitle" onclick="toggleMapSection()">
@@ -1471,50 +1428,6 @@
                     <a id="streetViewBtn" href="#" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 8px; background-color: var(--accent); color: #fff; text-decoration: none; font-size: 0.75rem; font-weight: 600; border-radius: 6px; text-transform: uppercase; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                         🌐 Open 3D Street View of Capital
                     </a>
-                </div>
-            </div>
-
-            <!-- ECONOMY -->
-            <div class="category-section">
-                <div class="category-title" onclick="toggleSection('economyCollapsibleContent', 'economyToggleIcon')"><span>Economy</span><span id="economyToggleIcon">▼ Click to Expand</span></div>
-                <div id="economyCollapsibleContent" class="collapsible-content">
-                <div class="grid">
-                    <div class="data-item"><div class="data-label">1. Currency</div><div class="data-value" id="econCurrency">--</div></div>
-                    <div class="data-item"><div class="data-label">2. GDP</div><div class="data-value" id="econGdp">--</div></div>
-                    <div class="data-item"><div class="data-label">3. Gross Export</div><div class="data-value" id="econExport">--</div></div>
-                    <div class="data-item"><div class="data-label">4. Gross Import</div><div class="data-value" id="econImport">--</div></div>
-                    <div class="data-item"><div class="data-label">5. Per Capita Income</div><div class="data-value" id="econPerCapita">--</div></div>
-                    <div class="data-item"><div class="data-label">6. Cost of Living (Local)</div><div class="data-value" id="econCostOfLiving">--</div></div>
-                    <div class="data-item"><div class="data-label">7. Total Internal Debt</div><div class="data-value" id="econInternalDebt">--</div></div>
-                    <div class="data-item"><div class="data-label">8. Total External Debt</div><div class="data-value" id="econExternalDebt">--</div></div>
-                    <div class="data-item"><div class="data-label">9. Major Banks</div><div class="data-value" id="econBanks">--</div></div>
-                    <div class="data-item highlight-item"><div class="data-label">10. Publicly Identifiable Algae-Related Research Funding</div><div class="data-value" id="econAlgaeFunding">--</div></div>
-                    
-                    <div class="data-item highlight-item">
-                        <div class="data-label">11. Target Currency equivalent in Home Currency</div>
-                        <div class="data-value" id="currTargetToHome" style="color:#0369a1; font-weight:700;">Select Home Country...</div>
-                    </div>
-                    <div class="data-item highlight-item">
-                        <div class="data-label">12. Home Currency equivalent in Target Currency</div>
-                        <div class="data-value" id="currHomeToTarget" style="color:#0369a1; font-weight:700;">Select Home Country...</div>
-                    </div>
-                </div>
-                </div>
-            </div>
-
-            <!-- SOCIETY -->
-            <div class="category-section">
-                <div class="category-title" onclick="toggleSection('societyCollapsibleContent', 'societyToggleIcon')"><span>Society</span><span id="societyToggleIcon">▼ Click to Expand</span></div>
-                <div id="societyCollapsibleContent" class="collapsible-content">
-                <div class="grid">
-                    <div class="data-item"><div class="data-label">1. Total Population</div><div class="data-value" id="socPopulation">--</div></div>
-                    <div class="data-item"><div class="data-label">2. Staple Food</div><div class="data-value" id="socFood">--</div></div>
-                    <div class="data-item"><div class="data-label">3. Population Trend</div><div class="data-value" id="socTrend">--</div></div>
-                    <div class="data-item"><div class="data-label">4. Major Languages</div><div class="data-value" id="socLanguages">--</div></div>
-                    <div class="data-item"><div class="data-label">5. Literacy Rate</div><div class="data-value" id="socLiteracy">--</div></div>
-                    <div class="data-item"><div class="data-label">6. Female to Male Ratio</div><div class="data-value" id="socRatio">--</div></div>
-                    <div class="data-item"><div class="data-label">7. Happiness Index</div><div class="data-value" id="socHappiness">--</div></div>
-                </div>
                 </div>
             </div>
 
@@ -1581,6 +1494,94 @@
                             <a id="worldAirportRoute" class="route-btn" href="#" target="_blank" rel="noopener">Open Route in Google Maps</a>
                         </div>
                     </div>
+                </div>
+            </div>
+
+
+            <!-- GEOGRAPHY -->
+            <div class="category-section">
+                <div class="category-title" onclick="toggleSection('geographyCollapsibleContent', 'geographyToggleIcon')"><span>Geography</span><span id="geographyToggleIcon">▼ Click to Expand</span></div>
+                <div id="geographyCollapsibleContent" class="collapsible-content">
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Area</div><div class="data-value" id="geoArea">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Land Area</div><div class="data-value" id="geoLand">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Cultivable Land</div><div class="data-value" id="geoCultivable">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Capital City</div><div class="data-value" id="geoCapital">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Major Cities</div><div class="data-value" id="geoMajorCities">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Major Airports</div><div class="data-value" id="geoAirports">--</div></div>
+                </div>
+                </div>
+            </div>
+
+            <!-- GENERAL WEATHER TREND -->
+            <div class="category-section">
+                <div class="category-title" onclick="toggleSection('trendCollapsibleContent', 'trendToggleIcon')"><span>General Weather Trend</span><span id="trendToggleIcon">▼ Click to Expand</span></div>
+                <div id="trendCollapsibleContent" class="collapsible-content">
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Max/Min Temperature</div><div class="data-value" id="trendTemp">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Max/Min Humidity</div><div class="data-value" id="trendHumidity">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Max/Min Rainfall</div><div class="data-value" id="trendRain">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Max/Min Snowfall</div><div class="data-value" id="trendSnow">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Max/Min Windspeed</div><div class="data-value" id="trendWind">--</div></div>
+                </div>
+                </div>
+            </div>
+
+            <!-- WEATHER PREDICTION FOR CAPITAL AS OF TODAY -->
+            <div class="category-section">
+                <div class="category-title" id="weatherPredictionTitle" onclick="toggleSection('weatherPredictionCollapsibleContent', 'weatherPredictionToggleIcon')"><span id="weatherPredictionLabel">Weather Prediction as of Today</span><span id="weatherPredictionToggleIcon">▼ Click to Expand</span></div>
+                <div id="weatherPredictionCollapsibleContent" class="collapsible-content">
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Temperature</div><div class="data-value" id="predTemp">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Humidity</div><div class="data-value" id="predHumidity">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Rainfall</div><div class="data-value" id="predRain">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Snowfall</div><div class="data-value" id="predSnow">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Visibility</div><div class="data-value" id="predVisibility">--</div></div>
+                </div>
+                </div>
+            </div>
+
+            <!-- ECONOMY -->
+            <div class="category-section">
+                <div class="category-title" onclick="toggleSection('economyCollapsibleContent', 'economyToggleIcon')"><span>Economy</span><span id="economyToggleIcon">▼ Click to Expand</span></div>
+                <div id="economyCollapsibleContent" class="collapsible-content">
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Currency</div><div class="data-value" id="econCurrency">--</div></div>
+                    <div class="data-item"><div class="data-label">2. GDP</div><div class="data-value" id="econGdp">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Gross Export</div><div class="data-value" id="econExport">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Gross Import</div><div class="data-value" id="econImport">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Per Capita Income</div><div class="data-value" id="econPerCapita">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Cost of Living (Local)</div><div class="data-value" id="econCostOfLiving">--</div></div>
+                    <div class="data-item"><div class="data-label">7. Total Internal Debt</div><div class="data-value" id="econInternalDebt">--</div></div>
+                    <div class="data-item"><div class="data-label">8. Total External Debt</div><div class="data-value" id="econExternalDebt">--</div></div>
+                    <div class="data-item"><div class="data-label">9. Major Banks</div><div class="data-value" id="econBanks">--</div></div>
+                    <div class="data-item highlight-item"><div class="data-label">10. Publicly Identifiable Algae-Related Research Funding</div><div class="data-value" id="econAlgaeFunding">--</div></div>
+                    
+                    <div class="data-item highlight-item">
+                        <div class="data-label">11. Target Currency equivalent in Home Currency</div>
+                        <div class="data-value" id="currTargetToHome" style="color:#0369a1; font-weight:700;">Select Home Country...</div>
+                    </div>
+                    <div class="data-item highlight-item">
+                        <div class="data-label">12. Home Currency equivalent in Target Currency</div>
+                        <div class="data-value" id="currHomeToTarget" style="color:#0369a1; font-weight:700;">Select Home Country...</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- SOCIETY -->
+            <div class="category-section">
+                <div class="category-title" onclick="toggleSection('societyCollapsibleContent', 'societyToggleIcon')"><span>Society</span><span id="societyToggleIcon">▼ Click to Expand</span></div>
+                <div id="societyCollapsibleContent" class="collapsible-content">
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Total Population</div><div class="data-value" id="socPopulation">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Staple Food</div><div class="data-value" id="socFood">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Population Trend</div><div class="data-value" id="socTrend">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Major Languages</div><div class="data-value" id="socLanguages">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Literacy Rate</div><div class="data-value" id="socLiteracy">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Female to Male Ratio</div><div class="data-value" id="socRatio">--</div></div>
+                    <div class="data-item"><div class="data-label">7. Happiness Index</div><div class="data-value" id="socHappiness">--</div></div>
+                </div>
                 </div>
             </div>
 
