@@ -1324,7 +1324,7 @@
                 </div>
                 <div class="control-group">
                     <label>I Am From (Your Country)</label>
-                    <select id="homeCountrySelect" onchange="updateDashboard()">
+                    <select id="homeCountrySelect" onchange="handleReferenceCountryChange()">
                         <option value="" disabled selected>-- Choose Home --</option>
                     </select>
                 </div>
@@ -1450,7 +1450,7 @@
                 <div>
                     <h2 id="countryName">Country Name</h2>
                 </div>
-                <button type="button" id="worldAirportFindButton" class="country-header-airport-btn" onclick="findWorldNearestFacility('airport')">🌐 Find Airport in the Target Country from Your Current Location</button>
+                <button type="button" id="worldAirportFindButton" class="country-header-airport-btn" onclick="findWorldNearestFacility('airport')">🌐 Find Airport in the Target Country from Reference Point</button>
             </div>
             
             <!-- CAPITAL CITY MAP & STREET VIEW -->
@@ -2074,6 +2074,118 @@ let dashboardGeneration = 0;
 let startupLocation = null;
 let locationPermissionState = "unknown";
 
+/*
+ * REFERENCE POINT SYSTEM
+ * ----------------------
+ * Default origin for airport/flight/car simulation:
+ *   My Location (device GPS)
+ *
+ * If "I Am From (Your Country)" is selected:
+ *   Origin = the capital-city coordinates stored in capitalCoords.
+ *
+ * The Target Country remains the destination country.
+ */
+let journeyReferenceLocation = null;
+let journeyReferenceMode = "my";          // "my" or "capital"
+let journeyReferenceCountry = "";
+let journeyReferenceCapital = "";
+
+function getCapitalReference(country) {
+    if (!country || !countryData[country]) return null;
+    const c = capitalCoords[country];
+    if (!c) return null;
+
+    const lat = Number(c.lat ?? c[0]);
+    const lon = Number(c.lon ?? c[1]);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+
+    return {
+        lat,
+        lon,
+        accuracy: null,
+        country,
+        capital: countryData[country]?.geo?.capital || country,
+        source: "capital"
+    };
+}
+
+/*
+ * Resolve the origin used by the airport journey.
+ * A selected Home Country always takes precedence over GPS.
+ * With no Home Country selected, the application uses My Location.
+ */
+const MY_LOCATION_HOME_VALUE = "__MY_LOCATION__";
+
+async function resolveJourneyReference(options = {}) {
+    const homeCountry = $("homeCountrySelect")?.value || "";
+
+    /*
+     * Explicit "My Location" selection means the user's detected device
+     * location must be used as the journey origin.  An empty Home selector
+     * is retained as the legacy fallback and also resolves to My Location.
+     */
+    if (homeCountry && homeCountry !== MY_LOCATION_HOME_VALUE) {
+        const capital = getCapitalReference(homeCountry);
+        if (!capital) {
+            throw new Error(`Capital coordinates are not available for ${homeCountry}.`);
+        }
+
+        journeyReferenceLocation = capital;
+        journeyReferenceMode = "capital";
+        journeyReferenceCountry = homeCountry;
+        journeyReferenceCapital = capital.capital;
+        return capital;
+    }
+
+    const location = await getWorldUserLocation("airport");
+    if (!location) {
+        throw new Error("My Location is not available. Please allow Location access and try again.");
+    }
+
+    journeyReferenceLocation = {
+        ...location,
+        source: "my"
+    };
+    journeyReferenceMode = "my";
+    journeyReferenceCountry = "";
+    journeyReferenceCapital = "";
+    return journeyReferenceLocation;
+}
+
+function getJourneyReferenceLabel(location = journeyReferenceLocation) {
+    if (!location) return "Reference Location";
+
+    if (journeyReferenceMode === "capital") {
+        return `${journeyReferenceCapital}, ${journeyReferenceCountry} (Capital)`;
+    }
+
+    return `My Location (${Number(location.lat).toFixed(5)}, ${Number(location.lon).toFixed(5)})`;
+}
+
+function getJourneyReferenceShortLabel() {
+    if (journeyReferenceMode === "capital") {
+        return `${journeyReferenceCapital}, ${journeyReferenceCountry}`;
+    }
+    return "My Location";
+}
+
+function updateJourneyReferenceDisplay(location = journeyReferenceLocation) {
+    const el = $("worldUserLocationAirport");
+    if (!el) return;
+
+    if (!location) {
+        el.textContent = "--";
+        return;
+    }
+
+    if (journeyReferenceMode === "capital") {
+        el.textContent = `${journeyReferenceCapital}, ${journeyReferenceCountry} (Capital)`;
+    } else {
+        el.textContent = `My Location (${Number(location.lat).toFixed(5)}, ${Number(location.lon).toFixed(5)})`;
+    }
+}
+
+
 /* PHASE 1 — My Location persistence and change detection */
 const MY_LOCATION_STORAGE_KEY = "worldInfoMyLocation_v1";
 const MY_LOCATION_CHANGE_THRESHOLD_METERS = 100;
@@ -2321,39 +2433,45 @@ function populateAirportChoicesForTarget(targetCountry){
     const status=$("worldAirportStatus");
     if(status){
         status.textContent=airports.length
-            ? "Calculating the nearest airport from My Location..."
+            ? "Calculating the nearest airport from the selected reference point..."
             : "No major airports are listed for this Target Country.";
     }
 }
 
 async function automaticallyUpdateTargetCountryAirport(targetCountry,generation){
     if(!targetCountry || !countryData[targetCountry]) return;
+
     const status=$("worldAirportStatus");
     const button=$("worldAirportFindButton");
 
     try{
         /*
-         * Use the Phase 1 common My Location. Do not request a second
-         * Airport-specific location here.
+         * Resolve the journey origin:
+         *   - A normal Home Country selected -> its capital
+         *   - "My Location" selected -> device/browser location
+         *   - Home Country blank -> legacy My Location fallback
+         *
+         * No GPS request is made when a normal Home Country is selected.
          */
-        const location=startupLocation || await initializeStartupLocation();
+        const reference=await resolveJourneyReference();
         if(generation!==dashboardGeneration) return;
-        if(!location) throw new Error("My Location is not available yet. Please allow Location access and try again.");
 
         const names=countryData[targetCountry]?.geo?.airports;
         const airportNames=Array.isArray(names)?names.filter(Boolean):[];
+
         if(!airportNames.length){
             populateAirportDropdown([],false);
             throw new Error("No major airports are listed for this Target Country.");
         }
 
-        if(status) status.textContent=`Finding the nearest airport in ${targetCountry}...`;
+        if(status){
+            status.textContent=`Finding the nearest airport in ${targetCountry} from ${getJourneyReferenceShortLabel()}...`;
+        }
         if(button) button.disabled=true;
 
         /*
-         * Resolve the airport names already present in the application's
-         * country data to geographic coordinates, then calculate the
-         * great-circle distance from the fixed My Location.
+         * Resolve all airport names already present in the application data,
+         * then calculate their distance from the selected reference point.
          */
         const resolvedResults=await Promise.allSettled(
             airportNames.map(async name=>{
@@ -2363,7 +2481,10 @@ async function automaticallyUpdateTargetCountryAirport(targetCountry,generation)
                     name,
                     lat:resolved.lat,
                     lon:resolved.lon,
-                    distance:worldHaversineKm(location.lat,location.lon,resolved.lat,resolved.lon)
+                    distance:worldHaversineKm(
+                        reference.lat,reference.lon,
+                        resolved.lat,resolved.lon
+                    )
                 };
             })
         );
@@ -2380,45 +2501,50 @@ async function automaticallyUpdateTargetCountryAirport(targetCountry,generation)
             throw new Error(`Airport coordinates could not be obtained for ${targetCountry}.`);
         }
 
-        /* First entry is the nearest airport and becomes the default selection. */
         populateAirportDropdown(airports,true);
         selectedAirport=airports[0];
 
         const select=$("targetAirportSelect");
         if(select) select.value="0";
 
-        $("worldUserLocationAirport").textContent=`My Location (${location.lat.toFixed(5)}, ${location.lon.toFixed(5)})`;
+        updateJourneyReferenceDisplay(reference);
         $("worldNearestAirport").textContent=selectedAirport.name;
-        $("worldAirportDistance").textContent=`${selectedAirport.distance.toFixed(2)} km great-circle journey distance`;
+        $("worldAirportDistance").textContent=
+            `${selectedAirport.distance.toFixed(2)} km great-circle distance`;
 
-        const route=`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(`${location.lat},${location.lon}`)}&destination=${encodeURIComponent(`${selectedAirport.lat},${selectedAirport.lon}`)}&travelmode=driving`;
+        const route=`https://www.google.com/maps/dir/?api=1&origin=${
+            encodeURIComponent(`${reference.lat},${reference.lon}`)
+        }&destination=${
+            encodeURIComponent(`${selectedAirport.lat},${selectedAirport.lon}`)
+        }&travelmode=driving`;
+
         const routeLink=$("worldAirportRoute");
         if(routeLink){
             routeLink.href=route;
-            routeLink.textContent=`Open Route from My Location to ${selectedAirport.name} in Google Maps`;
+            routeLink.textContent=
+                `Open Route from ${getJourneyReferenceShortLabel()} to ${selectedAirport.name} in Google Maps`;
         }
 
         if(status){
-            status.textContent=`${selectedAirport.name} is automatically selected as the nearest airport in ${targetCountry}. Flight route is ready. Press the Find Airport button to start the journey.`;
+            status.textContent=
+                `${selectedAirport.name} is automatically selected as the nearest airport in ${targetCountry}. ` +
+                `Reference: ${getJourneyReferenceLabel(reference)}. ` +
+                `The journey is ready. Press the Find Airport button to start the animation.`;
         }
 
         /*
-         * Use the existing, tested journey renderer so the automatic
-         * Target Country selection also produces the airplane animation.
-         *
-         * renderAirportJourney() temporarily opens the map so the animation
-         * can be displayed. The Airport information tab itself remains
-         * collapsed as required.
+         * Prepare the map and route but DO NOT start animation.
+         * Animation begins only from the explicit Find Airport button.
          */
-        await renderAirportJourney(location,selectedAirport,false);
+        await renderAirportJourney(reference,selectedAirport,false);
 
-        /*
-         * Restore the Airport information tab to its collapsed state after
-         * the journey renderer has finished preparing the map.
-         */
-        const airportContent=$("airportPathContent"),airportIcon=$("airportPathIcon");
+        if(generation!==dashboardGeneration) return;
+
+        const airportContent=$("airportPathContent");
+        const airportIcon=$("airportPathIcon");
         if(airportContent) airportContent.style.display="none";
         if(airportIcon) airportIcon.textContent="▼ Click to Expand";
+
     }catch(error){
         if(generation!==dashboardGeneration) return;
         if(status) status.textContent=error?.message||"Airport data unavailable.";
@@ -2463,28 +2589,45 @@ function selectAirportFromDropdown(){
     const index=Number($("targetAirportSelect")?.value);
     const airport=selectedAirportList[index];
     if(!airport) return;
+
     selectedAirport=airport;
 
-    const location=startupLocation;
+    const location=journeyReferenceLocation;
     if(location && Number.isFinite(airport.lat) && Number.isFinite(airport.lon)){
-        const distance=worldHaversineKm(location.lat,location.lon,airport.lat,airport.lon);
-        airport.distance=distance;
-        $("worldUserLocationAirport").textContent=`My Location (${location.lat.toFixed(5)}, ${location.lon.toFixed(5)})`;
-        $("worldNearestAirport").textContent=airport.name;
-        $("worldAirportDistance").textContent=`${distance.toFixed(2)} km great-circle journey distance`;
+        const distance=worldHaversineKm(
+            location.lat,location.lon,airport.lat,airport.lon
+        );
 
-        const route=`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(`${location.lat},${location.lon}`)}&destination=${encodeURIComponent(`${airport.lat},${airport.lon}`)}&travelmode=driving`;
+        airport.distance=distance;
+        updateJourneyReferenceDisplay(location);
+        $("worldNearestAirport").textContent=airport.name;
+        $("worldAirportDistance").textContent=
+            `${distance.toFixed(2)} km great-circle journey distance`;
+
+        const route=`https://www.google.com/maps/dir/?api=1&origin=${
+            encodeURIComponent(`${location.lat},${location.lon}`)
+        }&destination=${
+            encodeURIComponent(`${airport.lat},${airport.lon}`)
+        }&travelmode=driving`;
+
         const routeLink=$("worldAirportRoute");
         if(routeLink){
             routeLink.href=route;
-            routeLink.textContent=`Open Route from My Location to ${airport.name} in Google Maps`;
+            routeLink.textContent=
+                `Open Route from ${getJourneyReferenceShortLabel()} to ${airport.name} in Google Maps`;
         }
     }
 
     const status=$("worldAirportStatus");
-    if(status) status.textContent=`${airport.name} selected. Flight route is ready. Press the Find Airport button to start the journey.`;
+    if(status){
+        status.textContent=
+            `${airport.name} selected. Reference: ${getJourneyReferenceLabel(location)}. ` +
+            `The journey is ready. Press the Find Airport button to start the journey.`;
+    }
+
     if(location && Number.isFinite(airport.lat) && Number.isFinite(airport.lon)){
-        renderAirportJourney(location,airport,false).catch(err=>console.warn("Static airport route preparation failed:",err));
+        renderAirportJourney(location,airport,false)
+            .catch(err=>console.warn("Static airport route preparation failed:",err));
     }
 }
 
@@ -2787,7 +2930,7 @@ async function renderAirportJourney(referenceLocation,facility,startAnimation=fa
     if(mapContent)mapContent.style.display="block";
     if(mapIcon)mapIcon.textContent="▲ Click to Collapse";
     const title=$("mapSectionTitle")?.querySelector("span");
-    if(title)title.textContent=`My Location → ${facility.name} (${targetCountry}) - Map & ${mode==="road"?"Road":"Air"} Route`;
+    if(title)title.textContent=`${getJourneyReferenceShortLabel()} → ${facility.name} (${targetCountry}) - Map & ${mode==="road"?"Road":"Air"} Route`;
 
     // Wait for the external map library and for the now-visible map container.
     // This removes the startup race that can occur when the application is
@@ -2819,7 +2962,7 @@ async function renderAirportJourney(referenceLocation,facility,startAnimation=fa
     $("worldAirportDistance").textContent=`${journeyDistance.toFixed(2)} km ${mode==="road"?"road distance":"great-circle journey distance"}`;
 
     airportMapOriginMarker=L.marker([referenceLocation.lat,referenceLocation.lon],{icon:createMapMarkerIcon("location"),zIndexOffset:1000}).addTo(map);
-    airportMapOriginMarker.bindPopup(`<strong>My Location</strong><small>${referenceLocation.lat.toFixed(5)}, ${referenceLocation.lon.toFixed(5)}</small>`);
+    airportMapOriginMarker.bindPopup(`<strong>${escapeHtml(getJourneyReferenceShortLabel())}</strong><small>${referenceLocation.lat.toFixed(5)}, ${referenceLocation.lon.toFixed(5)}</small>`);
     airportMapDestinationMarker=L.marker([facility.lat,facility.lon],{icon:createMapMarkerIcon("airport"),zIndexOffset:1100}).addTo(map);
     airportMapDestinationMarker.bindTooltip(`<strong>✈ ${escapeHtml(facility.name)}</strong>`,{permanent:true,direction:"bottom",offset:[0,28],className:"airport-name-tooltip"});
 
@@ -2905,25 +3048,54 @@ async function findWorldNearestFacility(type){
     if(airport) ensureAudio().catch(()=>{});
     startLocationDetectionTimer(type);
     try{
-        const location=await getWorldUserLocation(type);
+        const location=airport ? await resolveJourneyReference() : await getWorldUserLocation(type);
         if(generation!==dashboardGeneration)return;
         if(airport){
             const country=$("countrySelect")?.value;
             if(!country)throw new Error("Please select a Target Country first.");
+
             const index=Number($("targetAirportSelect")?.value);
             const choice=selectedAirportList[index];
             if(!choice)throw new Error("Please select an airport from the dropdown first.");
-            status.textContent=`My Location detected. Locating ${choice.name}...`;
+
+            status.textContent=
+                `Reference point: ${getJourneyReferenceLabel(location)}. Locating ${choice.name}...`;
+
             const resolved=await geocodeAirport(choice.name,country);
             if(!resolved)throw new Error(`Could not locate ${choice.name} in ${country}.`);
             if(generation!==dashboardGeneration)return;
-            const airport={...choice,...resolved,distance:worldHaversineKm(location.lat,location.lon,resolved.lat,resolved.lon)};
+
+            const airport={
+                ...choice,
+                ...resolved,
+                distance:worldHaversineKm(
+                    location.lat,location.lon,resolved.lat,resolved.lon
+                )
+            };
+
             selectedAirport=airport;
             selectedAirportList[index]=airport;
-            $("worldUserLocationAirport").textContent=`My Location (${location.lat.toFixed(5)}, ${location.lon.toFixed(5)})`;
+
+            updateJourneyReferenceDisplay(location);
             $("worldNearestAirport").textContent=airport.name;
-            $("worldAirportDistance").textContent=`${airport.distance.toFixed(2)} km journey distance`;
-            status.textContent=`${airport.name} found. Starting the air journey...`;
+            $("worldAirportDistance").textContent=
+                `${airport.distance.toFixed(2)} km journey distance`;
+
+            const route=`https://www.google.com/maps/dir/?api=1&origin=${
+                encodeURIComponent(`${location.lat},${location.lon}`)
+            }&destination=${
+                encodeURIComponent(`${airport.lat},${airport.lon}`)
+            }&travelmode=driving`;
+
+            if($("worldAirportRoute")){
+                $("worldAirportRoute").href=route;
+                $("worldAirportRoute").textContent=
+                    `Open Route from ${getJourneyReferenceShortLabel()} to ${airport.name} in Google Maps`;
+            }
+
+            status.textContent=
+                `${airport.name} found. Starting the ${journeyReferenceMode==="capital"?"road/air":"air"} journey from ${getJourneyReferenceLabel(location)}...`;
+
             await renderAirportJourney(location,airport,true);
         }else{
             const country=$("countrySelect")?.value;
@@ -2942,7 +3114,7 @@ async function findWorldNearestFacility(type){
     }finally{
         stopLocationDetectionTimer(type);
         if(airport) airportJourneyBusy=false;
-        if(button){button.disabled=false;button.textContent=airport?"🌐 Find Airport in the Target Country from Your Current Location":"🌐 Find Nearest Railway Station";}
+        if(button){button.disabled=false;button.textContent=airport?"🌐 Find Airport in the Target Country from Reference Point":"🌐 Find Nearest Railway Station";}
     }
 }
 
@@ -3707,6 +3879,10 @@ function resetSavedSocietyEconomyData(){
 
 function resetDashboardForTargetChange(){
     dashboardGeneration++;
+    journeyReferenceLocation=null;
+    journeyReferenceMode="my";
+    journeyReferenceCountry="";
+    journeyReferenceCapital="";
     clearAirportMapLayers();selectedAirport=null;selectedAirportList=[];
     const select=$("targetAirportSelect");if(select){select.innerHTML='<option value="">-- Select Airport --</option>';select.disabled=true;}
     ["countryName","geoArea","geoLand","geoCultivable","geoCapital","geoMajorCities","geoAirports","trendTemp","trendHumidity","trendRain","trendSnow","trendWind","predTemp","predHumidity","predRain","predSnow","predVisibility","econCurrency","econGdp","econExport","econImport","econPerCapita","econCostOfLiving","econInternalDebt","econExternalDebt","econBanks","econAlgaeFunding","socPopulation","socFood","socTrend","socLanguages","socLiteracy","socRatio","socHappiness","worldUserLocationAirport","worldNearestAirport","worldAirportDistance","worldUserLocationRail","worldNearestRail","worldRailDistance","pcGDP","pcArableLand","pcTotalLand","pcExport","pcImport","pcExternalDebt","pcInternalDebt","pcIlliterateDensity","pcLiterateDensity"].forEach(id=>{if($(id))$(id).textContent="--";});
@@ -3717,7 +3893,7 @@ function resetDashboardForTargetChange(){
     if(airportContent) airportContent.style.display="none";
     if(airportIcon) airportIcon.textContent="▼ Click to Expand";
 
-    if($("worldAirportStatus"))$("worldAirportStatus").textContent="Calculating airport information from My Location...";
+    if($("worldAirportStatus"))$("worldAirportStatus").textContent="Calculating airport information from the selected reference point...";
 }
 
 function handleTargetCountryChange(){
@@ -3735,6 +3911,31 @@ function handleTargetCountryChange(){
     updateDashboard();
 }
 
+function handleReferenceCountryChange(){
+    /*
+     * A Home Country selection changes only the journey origin.
+     * Target-country information and currency data are still refreshed normally.
+     */
+    resetDashboardForTargetChange();
+
+    const target=$("countrySelect")?.value||"";
+    const home=$("homeCountrySelect")?.value||"";
+    const generation=dashboardGeneration;
+
+    if(target){
+        populateAirportChoicesForTarget(target);
+
+        automaticallyUpdateTargetCountryAirport(target,generation).catch(error=>{
+            if(generation===dashboardGeneration && $("worldAirportStatus")){
+                $("worldAirportStatus").textContent=
+                    error?.message||"Airport data unavailable.";
+            }
+        });
+    }
+
+    updateDashboard();
+}
+
 async function updateDashboard(){
     const target=$("countrySelect")?.value||"",home=$("homeCountrySelect")?.value||"";
     if(!target||!countryData[target])return;
@@ -3742,7 +3943,8 @@ async function updateDashboard(){
     $("emptyState").style.display="none";$("infoCard").style.display="block";
     $("countryName").textContent=target;
     $("weatherPredictionLabel").textContent=`Weather Prediction for ${data.geo.capital} as of Today`;
-    $("mapSectionTitle").querySelector("span").textContent=`${data.geo.capital} - Map & 3D Street View`;
+    $("mapSectionTitle").querySelector("span").textContent=
+        `${data.geo.capital} - Map & 3D Street View`;
     $("geoArea").textContent=data.geo.area;$("geoLand").textContent=data.geo.land;$("geoCultivable").textContent=data.geo.cultivable;$("geoCapital").textContent=data.geo.capital;$("geoMajorCities").textContent=data.geo.majorCities;$("geoAirports").textContent=Array.isArray(data.geo.airports)?data.geo.airports.join(", "):data.geo.airports;
     $("trendTemp").textContent=data.trend.temp;$("trendHumidity").textContent=data.trend.humidity;$("trendRain").textContent=data.trend.rain;$("trendSnow").textContent=data.trend.snow;$("trendWind").textContent=data.trend.wind;
     $("econCurrency").textContent=data.econ.currency;$("econGdp").textContent=data.econ.gdp;$("econExport").textContent=data.econ.export;$("econImport").textContent=data.econ.import;$("econPerCapita").textContent=data.econ.perCapita;$("econCostOfLiving").textContent=data.econ.costOfLiving;$("econInternalDebt").textContent=data.econ.internalDebt;$("econExternalDebt").textContent=data.econ.externalDebt;$("econBanks").textContent=data.econ.banks;$("econAlgaeFunding").textContent=getAlgaeFundingDisplay(target);
@@ -3761,7 +3963,31 @@ async function fetchLiveWeatherPrediction(country,generation){
 
 async function calculateCurrency(target,home,generation){
     if(!target||!home){$("currTargetToHome").textContent="Please select both countries above.";$("currHomeToTarget").textContent="Please select both countries above.";return;}
-    const t=countryData[target].econ,h=countryData[home].econ;const tc=(t.currency.match(/\(([^)]+)\)/)||[])[1],hc=(h.currency.match(/\(([^)]+)\)/)||[])[1];
+
+    /*
+     * "My Location" is a geographic reference point, not a country.
+     * For the currency panel only, identify the country containing the
+     * detected coordinates and use that country's stored currency data.
+     * This keeps the existing currency feature functional without treating
+     * the special dropdown value as a key in countryData.
+     */
+    let homeCountryForCurrency=home;
+    if(home===MY_LOCATION_HOME_VALUE){
+        try{
+            const location=await getWorldUserLocation("airport");
+            const iso2=await reverseCountry(location);
+            const matchedCountry=Object.keys(countryIso2||{}).find(c=>String(countryIso2[c]||'').toLowerCase()===String(iso2||'').toLowerCase());
+            if(matchedCountry && countryData[matchedCountry]) homeCountryForCurrency=matchedCountry;
+        }catch(_){ }
+    }
+
+    if(!countryData[target]?.econ || !countryData[homeCountryForCurrency]?.econ){
+        $("currTargetToHome").textContent="Currency data for the selected reference location is unavailable.";
+        $("currHomeToTarget").textContent="Currency data for the selected reference location is unavailable.";
+        return;
+    }
+
+    const t=countryData[target].econ,h=countryData[homeCountryForCurrency].econ;const tc=(t.currency.match(/\(([^)]+)\)/)||[])[1],hc=(h.currency.match(/\(([^)]+)\)/)||[])[1];
     if(!tc||!hc)return;if(tc===hc){$("currTargetToHome").textContent=`1 ${tc} = 1.000 ${hc}`;$("currHomeToTarget").textContent=`1 ${hc} = 1.000 ${tc}`;return;}
     $("currTargetToHome").textContent="Fetching exchange rate...";$("currHomeToTarget").textContent="Fetching exchange rate...";
     try{const j=await (await worldFetchWithTimeout(`https://api.frankfurter.dev/v1/latest?base=${hc}&symbols=${tc}`,7000)).json();if(generation!==dashboardGeneration)return;const r=j?.rates?.[tc];if(!Number.isFinite(r))throw new Error();$("currHomeToTarget").textContent=`1 ${hc} = ${r.toFixed(3)} ${tc}`;$("currTargetToHome").textContent=`1 ${tc} = ${(1/r).toFixed(3)} ${hc}`;}catch(_){const a=h.rateToUSD/t.rateToUSD,b=t.rateToUSD/h.rateToUSD;$("currTargetToHome").textContent=`1 ${tc} = ${a.toFixed(3)} ${hc} (fallback)`;$("currHomeToTarget").textContent=`1 ${hc} = ${b.toFixed(3)} ${tc} (fallback)`;}
@@ -4396,7 +4622,32 @@ function downloadRankingPdf(){
 function populateCountrySelectors(){
     const c=$("countrySelect"),h=$("homeCountrySelect");if(!c||!h)return;
     const countries=Object.keys(countryData).sort((a,b)=>a.localeCompare(b));
-    countries.forEach(name=>{const o=document.createElement("option");o.value=name;o.textContent=name;c.appendChild(o);const hopt=document.createElement("option");hopt.value=name;hopt.textContent=name;h.appendChild(hopt);});
+
+    /* Target Country remains a normal country-only selector. */
+    countries.forEach(name=>{
+        const o=document.createElement("option");
+        o.value=name;
+        o.textContent=name;
+        c.appendChild(o);
+    });
+
+    /*
+     * Home Country gets a special first option.  It represents the actual
+     * device/browser location obtained by the existing geolocation code.
+     * It is deliberately not inserted into countryData because it is not a
+     * country record.
+     */
+    const myLocationOption=document.createElement("option");
+    myLocationOption.value=MY_LOCATION_HOME_VALUE;
+    myLocationOption.textContent="📍 My Location";
+    h.appendChild(myLocationOption);
+
+    countries.forEach(name=>{
+        const hopt=document.createElement("option");
+        hopt.value=name;
+        hopt.textContent=name;
+        h.appendChild(hopt);
+    });
 }
 
 async function initializeApp(){
