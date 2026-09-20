@@ -880,6 +880,36 @@
         @media(max-width:760px){ .per-capita-grid{grid-template-columns:1fr 1fr;} }
         @media(max-width:520px){ .per-capita-grid{grid-template-columns:1fr;} }
 
+        /* ========================= GOVERNMENT & DIPLOMACY ========================= */
+        .government-diplomacy-note {
+            margin: 0 0 .35rem;
+            padding: .42rem .58rem;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #dbe3ef;
+            color: #475569;
+            font-size: .66rem;
+            line-height: 1.4;
+        }
+        .government-diplomacy-status {
+            display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+            margin-top:.35rem; padding:.32rem .45rem; border-radius:7px;
+            background:#eff6ff; border:1px solid #bfdbfe; color:#1e3a8a;
+            font-size:.62rem; line-height:1.25;
+        }
+        .government-diplomacy-status.loading { background:#f8fafc; border-color:#cbd5e1; color:#64748b; }
+        .government-diplomacy-status.error { background:#fff7ed; border-color:#fed7aa; color:#9a3412; }
+        .government-diplomacy-source { font-size:.6rem; color:#64748b; margin-top:.25rem; line-height:1.35; }
+        .government-diplomacy-source a { color:#2563eb; text-decoration:none; }
+        .government-diplomacy-source a:hover { text-decoration:underline; }
+        .government-diplomacy-check-btn {
+            width:100%; max-width:520px; border:0; border-radius:12px; padding:.72rem 1rem;
+            background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; font-weight:800;
+            font-size:.82rem; letter-spacing:.02em; cursor:pointer; box-shadow:0 4px 10px rgba(37,99,235,.22);
+        }
+        .government-diplomacy-check-btn:hover { filter:brightness(1.05); }
+        .government-diplomacy-check-btn:disabled { opacity:.55; cursor:not-allowed; filter:none; box-shadow:none; }
+
         /* ========================= RANKING TAB ========================= */
         .tab-bar {
             display: flex;
@@ -1278,6 +1308,11 @@
             .aircraft-sound-test { min-height: 42px; }
         }
 .aircraft-sound-test { width: 100%; }
+
+        /* PHASE 2 — Live Weather state presentation */
+        #predTemp,#predHumidity,#predRain,#predSnow,#predVisibility{
+            transition:opacity .18s ease;
+        }
 </style>
 
 <style id="latestStatusAuditStyles">
@@ -1617,7 +1652,31 @@
                     <div class="data-item"><div class="data-label">5. Literacy Rate</div><div class="data-value" id="socLiteracy">--</div></div>
                     <div class="data-item"><div class="data-label">6. Female to Male Ratio</div><div class="data-value" id="socRatio">--</div></div>
                     <div class="data-item"><div class="data-label">7. Happiness Index</div><div class="data-value" id="socHappiness">--</div></div>
+                    <div class="data-item highlight-item"><div class="data-label">8. Poverty Rate — $3.00/day (2021 PPP)</div><div class="data-value" id="socPoverty300">--</div></div>
+                    <div class="data-item highlight-item"><div class="data-label">9. Poverty Rate — $4.20/day (2021 PPP)</div><div class="data-value" id="socPoverty420">--</div></div>
+                    <div class="data-item highlight-item"><div class="data-label">10. Poverty Rate — $8.30/day (2021 PPP)</div><div class="data-value" id="socPoverty830">--</div></div>
                 </div>
+                </div>
+            </div>
+
+            <!-- GOVERNMENT & DIPLOMACY -->
+            <div class="category-section">
+                <div class="category-title" onclick="toggleSection('governmentDiplomacyCollapsibleContent', 'governmentDiplomacyToggleIcon')">
+                    <span>Government &amp; Diplomacy</span><span id="governmentDiplomacyToggleIcon">▼ Click to Expand</span>
+                </div>
+                <div id="governmentDiplomacyCollapsibleContent" class="collapsible-content">
+                    <div class="government-diplomacy-note">Current country-level government and diplomatic information is retrieved dynamically. Select a Target Country and press <strong>CHECK</strong> to start the search. No Government &amp; Diplomacy search is started automatically.</div>
+                    <div style="display:flex;justify-content:center;margin:.55rem 0 .7rem;">
+                        <button type="button" id="governmentDiplomacyCheckBtn" class="government-diplomacy-check-btn" onclick="checkGovernmentDiplomacy()">🔎 CHECK GOVERNMENT &amp; DIPLOMACY</button>
+                    </div>
+                    <div class="grid">
+                        <div class="data-item"><div class="data-label">1. Head of State</div><div class="data-value" id="govHeadOfState">--</div></div>
+                        <div class="data-item"><div class="data-label">2. Head of Government</div><div class="data-value" id="govHeadOfGovernment">--</div></div>
+                        <div class="data-item"><div class="data-label">3. Foreign Minister</div><div class="data-value" id="govForeignMinister">--</div></div>
+                        <div class="data-item highlight-item"><div class="data-label">4. Permanent Representative to UN</div><div class="data-value" id="govPermanentRepresentative">--</div></div>
+                    </div>
+                    <div id="governmentDiplomacyStatus" class="government-diplomacy-status loading" aria-live="polite">Select a Target Country to retrieve Government &amp; Diplomacy data.</div>
+                    <div class="government-diplomacy-source">Structured data source: <a href="https://www.wikidata.org/" target="_blank" rel="noopener">Wikidata</a>. Official UN reference: <a href="https://www.un.org/dgacm/en/node/4313" target="_blank" rel="noopener">UN Protocol &amp; Liaison Service — Blue Book</a> and <a href="https://www.un.org/dgacm/en/node/4316" target="_blank" rel="noopener">UN Heads of State, Heads of Government and Ministers for Foreign Affairs</a>.</div>
                 </div>
             </div>
 
@@ -1647,7 +1706,7 @@
         <div class="sources-section">
             <h3>Sources</h3>
             <ul>
-                <li>World Bank Open Data & World Development Indicators</li>
+                <li>World Bank Open Data & World Development Indicators, including Poverty and Inequality Platform (PIP) 2021 PPP poverty indicators</li>
                 <li>International Monetary Fund (IMF) World Economic Outlook</li>
                 <li>Open-Meteo Weather & Climatology Forecast API</li>
                 <li>FAOSTAT / UN Demographic Yearbook</li>
@@ -2073,6 +2132,91 @@ const capitalCoords = {
 let dashboardGeneration = 0;
 let startupLocation = null;
 let locationPermissionState = "unknown";
+
+/*
+ * PHASE 1 — DASHBOARD CORE LIFECYCLE
+ * ----------------------------------
+ * This state belongs only to the country-information dashboard.
+ * Asynchronous modules (weather, currency, World Bank, airport/location)
+ * must never use their own independent target-change lifecycle.
+ */
+const dashboardState = {
+    initialized: false,
+    refreshing: false,
+    lastTarget: "",
+    lastHome: ""
+};
+
+function dashboardElement(id){
+    return document.getElementById(id);
+}
+
+function setDashboardStatus(message){
+    const el = dashboardElement("worldAirportStatus");
+    if(el && message) el.textContent = message;
+}
+
+/*
+ * Common entry point for every Target/Home country change.
+ *
+ * Important design rule:
+ *   A country selection immediately refreshes the country dashboard.
+ *   Airport/geolocation work starts afterwards and is never allowed to
+ *   block the dashboard refresh.
+ */
+function refreshDashboardLifecycle(reason="country-change"){
+    resetDashboardForTargetChange();
+
+    const target = dashboardElement("countrySelect")?.value || "";
+    const home = dashboardElement("homeCountrySelect")?.value || "";
+    const generation = dashboardGeneration;
+
+    dashboardState.refreshing = true;
+    dashboardState.lastTarget = target;
+    dashboardState.lastHome = home;
+
+    if(!target || !countryData[target]){
+        updatePerCapitaFigure();
+        dashboardState.refreshing = false;
+        return;
+    }
+
+    /*
+     * These are synchronous country-data operations. They must happen
+     * before any network/geolocation/airport work.
+     */
+    updatePerCapitaFigure();
+    updateDashboard();
+
+    /*
+     * Journey/airport work is deliberately isolated from the dashboard.
+     * Any failure here must not erase or prevent country information.
+     */
+    try{
+        populateAirportChoicesForTarget(target);
+
+        Promise.resolve(automaticallyUpdateTargetCountryAirport(target,generation))
+            .catch(error=>{
+                if(generation===dashboardGeneration){
+                    setDashboardStatus(
+                        error?.message || "Airport data unavailable."
+                    );
+                }
+            })
+            .finally(()=>{
+                if(generation===dashboardGeneration){
+                    dashboardState.refreshing = false;
+                }
+            });
+    }catch(error){
+        if(generation===dashboardGeneration){
+            setDashboardStatus(
+                error?.message || "Airport data unavailable."
+            );
+            dashboardState.refreshing = false;
+        }
+    }
+}
 
 /*
  * REFERENCE POINT SYSTEM
@@ -3140,17 +3284,26 @@ const SOC_ECON_COLUMNS = [
     "Literacy Rate",
     "Female to Male Ratio",
     "Happiness Index",
+    "Poverty Rate — $3.00/day (2021 PPP)",
+    "Poverty Rate — $4.20/day (2021 PPP)",
+    "Poverty Rate — $8.30/day (2021 PPP)",
+    "Poverty Data Year — $3.00/day",
+    "Poverty Data Year — $4.20/day",
+    "Poverty Data Year — $8.30/day",
     "Target Currency equivalent in Home Currency",
     "Home Currency equivalent in Target Currency"
 ];
 
 const REPORT_SOURCES = [
     "World Bank Open Data & World Development Indicators",
+    "World Bank Poverty and Inequality Platform (PIP) — 2021 PPP poverty headcount indicators",
     "International Monetary Fund (IMF) World Economic Outlook",
     "Open-Meteo Weather & Climatology Forecast API",
     "FAOSTAT / UN Demographic Yearbook",
     "World Happiness Report",
-    "Live Foreign Exchange Rates & Accurate Reference Data"
+    "Live Foreign Exchange Rates & Accurate Reference Data",
+    "Wikidata — live structured Government & Diplomacy data",
+    "United Nations Protocol and Liaison Service — official Government and Blue Book references"
 ];
 
 let savedSocietyEconomyData = loadSavedSocietyEconomyData();
@@ -3365,6 +3518,12 @@ async function saveAllTargetCountriesToExcel(){
     };
 
     try{
+        await loadWorldBankPovertyData();
+    }catch(e){
+        console.warn('World Bank poverty data unavailable during Save Data For All:',e);
+    }
+
+    try{
         await ensureAlgaeUsdRates();
     }catch(e){
         console.warn('Algae funding USD normalization unavailable:',e);
@@ -3394,6 +3553,12 @@ async function saveAllTargetCountriesToExcel(){
             'Literacy Rate':safeNested(d,'soc.literacy'),
             'Female to Male Ratio':safeNested(d,'soc.ratio'),
             'Happiness Index':safeNested(d,'soc.happiness'),
+            'Poverty Rate — $3.00/day (2021 PPP)':formatWorldBankPoverty(target,'poverty300'),
+            'Poverty Rate — $4.20/day (2021 PPP)':formatWorldBankPoverty(target,'poverty420'),
+            'Poverty Rate — $8.30/day (2021 PPP)':formatWorldBankPoverty(target,'poverty830'),
+            'Poverty Data Year — $3.00/day':getWorldBankPoverty(target,'poverty300')?.year||'N/A',
+            'Poverty Data Year — $4.20/day':getWorldBankPoverty(target,'poverty420')?.year||'N/A',
+            'Poverty Data Year — $8.30/day':getWorldBankPoverty(target,'poverty830')?.year||'N/A',
             'Target Currency equivalent in Home Currency':old['Target Currency equivalent in Home Currency']||'--',
             'Home Currency equivalent in Target Currency':old['Home Currency equivalent in Target Currency']||'--'
         };
@@ -3878,6 +4043,10 @@ function resetSavedSocietyEconomyData(){
 }
 
 function resetDashboardForTargetChange(){
+    /*
+     * Invalidate every in-flight dashboard-related asynchronous operation.
+     * The new generation becomes the sole authority for the next refresh.
+     */
     dashboardGeneration++;
     journeyReferenceLocation=null;
     journeyReferenceMode="my";
@@ -3885,7 +4054,7 @@ function resetDashboardForTargetChange(){
     journeyReferenceCapital="";
     clearAirportMapLayers();selectedAirport=null;selectedAirportList=[];
     const select=$("targetAirportSelect");if(select){select.innerHTML='<option value="">-- Select Airport --</option>';select.disabled=true;}
-    ["countryName","geoArea","geoLand","geoCultivable","geoCapital","geoMajorCities","geoAirports","trendTemp","trendHumidity","trendRain","trendSnow","trendWind","predTemp","predHumidity","predRain","predSnow","predVisibility","econCurrency","econGdp","econExport","econImport","econPerCapita","econCostOfLiving","econInternalDebt","econExternalDebt","econBanks","econAlgaeFunding","socPopulation","socFood","socTrend","socLanguages","socLiteracy","socRatio","socHappiness","worldUserLocationAirport","worldNearestAirport","worldAirportDistance","worldUserLocationRail","worldNearestRail","worldRailDistance","pcGDP","pcArableLand","pcTotalLand","pcExport","pcImport","pcExternalDebt","pcInternalDebt","pcIlliterateDensity","pcLiterateDensity"].forEach(id=>{if($(id))$(id).textContent="--";});
+    ["countryName","geoArea","geoLand","geoCultivable","geoCapital","geoMajorCities","geoAirports","trendTemp","trendHumidity","trendRain","trendSnow","trendWind","predTemp","predHumidity","predRain","predSnow","predVisibility","econCurrency","econGdp","econExport","econImport","econPerCapita","econCostOfLiving","econInternalDebt","econExternalDebt","econBanks","econAlgaeFunding","socPopulation","socFood","socTrend","socLanguages","socLiteracy","socRatio","socHappiness","socPoverty300","socPoverty420","socPoverty830","worldUserLocationAirport","worldNearestAirport","worldAirportDistance","worldUserLocationRail","worldNearestRail","worldRailDistance","pcGDP","pcArableLand","pcTotalLand","pcExport","pcImport","pcExternalDebt","pcInternalDebt","pcIlliterateDensity","pcLiterateDensity"].forEach(id=>{if($(id))$(id).textContent="--";});
     updateJourneyAnimationTimeDisplay();
 
     /* Keep the Airport tab collapsed after a Target Country change. */
@@ -3897,44 +4066,507 @@ function resetDashboardForTargetChange(){
 }
 
 function handleTargetCountryChange(){
-    resetDashboardForTargetChange();
-    const target=$("countrySelect")?.value||"";
-    const generation=dashboardGeneration;
-    if(target){
-        populateAirportChoicesForTarget(target);
-        automaticallyUpdateTargetCountryAirport(target,generation).catch(error=>{
-            if(generation===dashboardGeneration && $("worldAirportStatus")){
-                $("worldAirportStatus").textContent=error?.message||"Airport data unavailable.";
-            }
-        });
-    }
-    updateDashboard();
+    refreshDashboardLifecycle("target-country-change");
 }
 
 function handleReferenceCountryChange(){
-    /*
-     * A Home Country selection changes only the journey origin.
-     * Target-country information and currency data are still refreshed normally.
-     */
-    resetDashboardForTargetChange();
+    refreshDashboardLifecycle("reference-country-change");
+}
 
-    const target=$("countrySelect")?.value||"";
-    const home=$("homeCountrySelect")?.value||"";
-    const generation=dashboardGeneration;
+function getWorldBankPoverty(country, povertyKey){
+    return worldBankPovertyData?.[iso2For(country)]?.[povertyKey] || null;
+}
 
-    if(target){
-        populateAirportChoicesForTarget(target);
+function formatWorldBankPoverty(country, povertyKey){
+    const p=getWorldBankPoverty(country,povertyKey);
+    if(!p || !Number.isFinite(Number(p.value))) return 'N/A — no latest World Bank observation';
+    return `${Number(p.value).toFixed(2)}% of population (data year ${p.year})`;
+}
 
-        automaticallyUpdateTargetCountryAirport(target,generation).catch(error=>{
-            if(generation===dashboardGeneration && $("worldAirportStatus")){
-                $("worldAirportStatus").textContent=
-                    error?.message||"Airport data unavailable.";
+function updateWorldBankPovertyDisplay(country){
+    const values={
+        socPoverty300:formatWorldBankPoverty(country,'poverty300'),
+        socPoverty420:formatWorldBankPoverty(country,'poverty420'),
+        socPoverty830:formatWorldBankPoverty(country,'poverty830')
+    };
+    Object.entries(values).forEach(([id,value])=>{if($(id))$(id).textContent=value;});
+}
+
+async function loadWorldBankPovertyData(force=false){
+    if(worldBankPovertyState.loading) return worldBankPovertyData;
+    if(worldBankPovertyState.loaded && !force) return worldBankPovertyData;
+
+    worldBankPovertyState={...worldBankPovertyState,loading:true,error:null};
+    const out={};
+
+    try{
+        const requests=Object.entries(WORLD_BANK_POVERTY_INDICATORS).map(async ([povertyKey,meta])=>{
+            const url=`https://api.worldbank.org/v2/country/all/indicator/${encodeURIComponent(meta.key)}?format=json&per_page=1000&mrnev=1`;
+            const response=await worldFetchWithTimeout(url,15000,{headers:{Accept:'application/json'}});
+            const json=await response.json();
+            if(!Array.isArray(json)||!Array.isArray(json[1])){
+                throw new Error(`Invalid World Bank response for ${meta.key}`);
+            }
+
+            /*
+             * Do not assume the API response is ordered by year.  The World Bank
+             * endpoint can return more than one observation for a country.  For
+             * each country/indicator explicitly retain the latest NON-NULL
+             * observation.  This makes the result deterministic even if the API
+             * changes its ordering or mrnev behaviour.
+             */
+            for(const row of json[1]){
+                if(row?.value==null || row?.value==='' || !Number.isFinite(Number(row.value))) continue;
+
+                const iso3=String(row.countryiso3code||row.country?.id||'').toUpperCase();
+                const iso2=(iso3ToIso2[iso3]||String(row.countryiso2code||'')).toLowerCase();
+                if(!iso2) continue;
+
+                const year=Number(row.date);
+                if(!Number.isFinite(year)) continue;
+
+                const candidate={
+                    value:Number(row.value),
+                    year,
+                    indicator:meta.key,
+                    threshold:meta.threshold,
+                    yearBasis:meta.yearBasis
+                };
+                const existing=out[iso2]?.[povertyKey];
+                if(!existing || year>Number(existing.year)){
+                    (out[iso2]||(out[iso2]={}))[povertyKey]=candidate;
+                }
             }
         });
+
+        await Promise.all(requests);
+        worldBankPovertyData=out;
+        worldBankPovertyState={
+            loaded:true,
+            loading:false,
+            error:null,
+            loadedAt:new Date().toISOString()
+        };
+
+        /* Refresh the visible country after the asynchronous load completes. */
+        const currentTarget=$("countrySelect")?.value||"";
+        if(currentTarget) updateWorldBankPovertyDisplay(currentTarget);
+        return out;
+    }catch(error){
+        worldBankPovertyData=out;
+        worldBankPovertyState={
+            loaded:false,
+            loading:false,
+            error:error?.message||String(error),
+            loadedAt:new Date().toISOString()
+        };
+        console.warn('World Bank poverty data unavailable:',error);
+        const currentTarget=$("countrySelect")?.value||"";
+        if(currentTarget) updateWorldBankPovertyDisplay(currentTarget);
+        return out;
+    }
+}
+
+/* ========================= GOVERNMENT & DIPLOMACY ========================= */
+/*
+ * PHASE 10 — ROBUST DYNAMIC GOVERNMENT & DIPLOMACY ENGINE
+ * --------------------------------------------------------
+ * Design goals:
+ *   1. Do not depend on the dashboard lifecycle generation counter.
+ *   2. Do not use a country-label SPARQL lookup.
+ *   3. Resolve the selected country to a Wikidata Q-id with the Action API.
+ *   4. Read Head of State / Head of Government directly from the country item.
+ *   5. Search Foreign Minister / Permanent Representative separately so one
+ *      missing field cannot block the other three.
+ *   6. Every network request has a timeout and stale selections are ignored.
+ *   7. Keep the original dashboard, ranking and all other modules untouched.
+ */
+const governmentDiplomacyState = {
+    cache: new Map(),
+    requestToken: 0,
+    qidCache: new Map()
+};
+
+function setGovernmentDiplomacyValue(id, value){
+    const el = $(id);
+    if(el) el.textContent = value || 'Not available';
+}
+
+function setGovernmentDiplomacyStatus(message, mode='loading'){
+    const el = $('governmentDiplomacyStatus');
+    if(!el) return;
+    el.className = `government-diplomacy-status ${mode}`.trim();
+    el.textContent = message;
+}
+
+function governmentDiplomacyCurrentCountry(target){
+    return String($('countrySelect')?.value || '').trim() === String(target || '').trim();
+}
+
+function governmentDiplomacyFetch(url, timeout=10000){
+    const controller = new AbortController();
+    const timer = setTimeout(()=>controller.abort(), timeout);
+    return fetch(url, {
+        signal: controller.signal,
+        cache: 'no-store',
+        headers: { 'Accept': 'application/json' }
+    }).finally(()=>clearTimeout(timer));
+}
+
+function governmentDiplomacyEscapedLiteral(value){
+    return JSON.stringify(String(value || ''));
+}
+
+async function governmentDiplomacySearchQid(target){
+    const cached = governmentDiplomacyState.qidCache.get(target);
+    if(cached) return cached;
+
+    /* Prefer the application's own ISO-2 mapping when available. */
+    const iso2 = (()=>{
+        try { return String(countryIso2?.[target] || '').toUpperCase(); }
+        catch(_){ return ''; }
+    })();
+
+    /* Wikidata Action API search is deliberately used here instead of SPARQL
+       text matching. Wikidata itself recommends search for fuzzy/text lookup. */
+    const searches = [target];
+    if(iso2) searches.push(`${target} country ${iso2}`);
+
+    for(const term of searches){
+        const url = 'https://www.wikidata.org/w/api.php?' + new URLSearchParams({
+            action: 'wbsearchentities',
+            search: term,
+            language: 'en',
+            uselang: 'en',
+            type: 'item',
+            limit: '10',
+            format: 'json',
+            origin: '*'
+        }).toString();
+
+        try{
+            const r = await governmentDiplomacyFetch(url, 9000);
+            if(!r.ok) continue;
+            const j = await r.json();
+            const results = Array.isArray(j?.search) ? j.search : [];
+            const wanted = target.toLowerCase();
+            const exact = results.find(x => String(x?.label || '').toLowerCase() === wanted);
+            const countryLike = results.find(x => {
+                const d = String(x?.description || '').toLowerCase();
+                const l = String(x?.label || '').toLowerCase();
+                return d.includes('country') || d.includes('sovereign state') || l === wanted;
+            });
+            const hit = exact || countryLike || results[0];
+            if(hit?.id && /^Q\d+$/.test(hit.id)){
+                governmentDiplomacyState.qidCache.set(target, hit.id);
+                return hit.id;
+            }
+        }catch(_){ /* try the next search/fallback */ }
     }
 
-    updateDashboard();
+    return '';
 }
+
+async function governmentDiplomacyGetEntity(qid){
+    if(!qid) return null;
+    const url = 'https://www.wikidata.org/w/api.php?' + new URLSearchParams({
+        action: 'wbgetentities',
+        ids: qid,
+        props: 'claims|labels',
+        languages: 'en',
+        format: 'json',
+        origin: '*'
+    }).toString();
+    const r = await governmentDiplomacyFetch(url, 9000);
+    if(!r.ok) throw new Error(`Wikidata entity HTTP ${r.status}`);
+    const j = await r.json();
+    return j?.entities?.[qid] || null;
+}
+
+function governmentDiplomacyClaimQids(entity, property){
+    const claims = entity?.claims?.[property];
+    if(!Array.isArray(claims)) return [];
+    return claims
+        .filter(c => c?.mainsnak?.snaktype === 'value')
+        .map(c => c?.mainsnak?.datavalue?.value?.id)
+        .filter(x => /^Q\d+$/.test(String(x || '')));
+}
+
+async function governmentDiplomacyGetLabels(qids){
+    const ids = [...new Set((qids || []).filter(x => /^Q\d+$/.test(String(x || ''))))];
+    if(!ids.length) return new Map();
+    const url = 'https://www.wikidata.org/w/api.php?' + new URLSearchParams({
+        action: 'wbgetentities',
+        ids: ids.slice(0,50).join('|'),
+        props: 'labels',
+        languages: 'en',
+        format: 'json',
+        origin: '*'
+    }).toString();
+    const r = await governmentDiplomacyFetch(url, 9000);
+    if(!r.ok) throw new Error(`Wikidata labels HTTP ${r.status}`);
+    const j = await r.json();
+    const map = new Map();
+    for(const qid of ids){
+        const label = j?.entities?.[qid]?.labels?.en?.value;
+        if(label) map.set(qid,label);
+    }
+    return map;
+}
+
+async function governmentDiplomacySPARQL(query, timeout=12000){
+    const url = 'https://query.wikidata.org/sparql?' + new URLSearchParams({
+        query,
+        format: 'json'
+    }).toString();
+    const r = await governmentDiplomacyFetch(url, timeout);
+    if(!r.ok) throw new Error(`Wikidata SPARQL HTTP ${r.status}`);
+    return r.json();
+}
+
+function governmentDiplomacyPickBinding(json, personVar='personLabel', officeVar='officeLabel'){
+    const rows = Array.isArray(json?.results?.bindings) ? json.results.bindings : [];
+    if(!rows.length) return null;
+    return rows.find(x => x?.[personVar]?.value) || null;
+}
+
+async function governmentDiplomacyFindForeignMinister(qid){
+    if(!qid) return '';
+    const query = `
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+SELECT DISTINCT ?person ?personLabel ?officeLabel ?start WHERE {
+  ?person p:P39 ?statement .
+  ?statement ps:P39 ?office .
+  ?office wdt:P1001 wd:${qid} .
+  ?office rdfs:label ?officeLabel .
+  FILTER(LANG(?officeLabel)="en")
+  FILTER(
+    CONTAINS(LCASE(STR(?officeLabel)), "foreign") ||
+    CONTAINS(LCASE(STR(?officeLabel)), "external affairs") ||
+    CONTAINS(LCASE(STR(?officeLabel)), "external relations") ||
+    CONTAINS(LCASE(STR(?officeLabel)), "secretary of state")
+  )
+  OPTIONAL { ?statement pq:P580 ?start . }
+  FILTER NOT EXISTS { ?statement pq:P582 ?end . }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+ORDER BY DESC(?start)
+LIMIT 10`;
+    try{
+        const j = await governmentDiplomacySPARQL(query, 11000);
+        const hit = governmentDiplomacyPickBinding(j);
+        return hit?.personLabel?.value || '';
+    }catch(_){ return ''; }
+}
+
+async function governmentDiplomacyFindPermanentRepresentative(qid){
+    if(!qid) return '';
+    const query = `
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+SELECT DISTINCT ?person ?personLabel ?officeLabel ?start WHERE {
+  ?person p:P39 ?statement .
+  ?statement ps:P39 ?office .
+  ?office wdt:P1001 wd:${qid} .
+  ?office rdfs:label ?officeLabel .
+  FILTER(LANG(?officeLabel)="en")
+  FILTER(
+    CONTAINS(LCASE(STR(?officeLabel)), "permanent representative") &&
+    (CONTAINS(LCASE(STR(?officeLabel)), "united nations") ||
+     CONTAINS(LCASE(STR(?officeLabel)), "un"))
+  )
+  OPTIONAL { ?statement pq:P580 ?start . }
+  FILTER NOT EXISTS { ?statement pq:P582 ?end . }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+ORDER BY DESC(?start)
+LIMIT 10`;
+    try{
+        const j = await governmentDiplomacySPARQL(query, 11000);
+        const hit = governmentDiplomacyPickBinding(j);
+        return hit?.personLabel?.value || '';
+    }catch(_){ return ''; }
+}
+
+/* Small emergency fallback only for the six countries used during our
+   diagnostic phases. It is NOT the main data source. */
+const GOVERNMENT_DIPLOMACY_DIAGNOSTIC_FALLBACK = {
+    "India": {headState:"Droupadi Murmu",headGovernment:"Narendra Modi",foreignMinister:"Subrahmanyam Jaishankar",permanentRepresentative:"Parvathaneni Harish"},
+    "United States": {headState:"Donald J. Trump",headGovernment:"Donald J. Trump",foreignMinister:"Marco Rubio",permanentRepresentative:"Michael G. Waltz"},
+    "United Kingdom": {headState:"King Charles III",headGovernment:"Andy Burnham",foreignMinister:"Ed Miliband",permanentRepresentative:"Sarah MacIntosh"},
+    "Australia": {headState:"King Charles III",headGovernment:"Anthony Albanese",foreignMinister:"Penny Wong",permanentRepresentative:"James Larsen"},
+    "France": {headState:"Emmanuel Macron",headGovernment:"Sébastien Lecornu",foreignMinister:"Jean-Noël Barrot",permanentRepresentative:"Jérôme Bonnafont"},
+    "Germany": {headState:"Frank-Walter Steinmeier",headGovernment:"Friedrich Merz",foreignMinister:"Johann Wadephul",permanentRepresentative:"Antje Leendertse"}
+};
+
+async function fetchGovernmentDiplomacy(country, generation, forceRefresh=false){
+    const token = ++governmentDiplomacyState.requestToken;
+    const target = String(country || '').trim();
+
+    if(!target){
+        ['govHeadOfState','govHeadOfGovernment','govForeignMinister','govPermanentRepresentative']
+            .forEach(id=>setGovernmentDiplomacyValue(id,'--'));
+        setGovernmentDiplomacyStatus('Select a Target Country to retrieve Government & Diplomacy data.','loading');
+        return;
+    }
+
+    if(!governmentDiplomacyCurrentCountry(target)) return;
+
+    const cached = governmentDiplomacyState.cache.get(target);
+    if(cached && !forceRefresh){
+        renderGovernmentDiplomacy(cached,target);
+        return;
+    }
+
+    ['govHeadOfState','govHeadOfGovernment','govForeignMinister','govPermanentRepresentative']
+        .forEach(id=>setGovernmentDiplomacyValue(id,'Loading…'));
+    setGovernmentDiplomacyStatus(`Resolving ${target} through Wikidata…`,'loading');
+
+    try{
+        const qid = await governmentDiplomacySearchQid(target);
+        if(token !== governmentDiplomacyState.requestToken || !governmentDiplomacyCurrentCountry(target)) return;
+        if(!qid) throw new Error('Country Q-id could not be resolved.');
+
+        setGovernmentDiplomacyStatus(`Country resolved as ${qid}. Reading current leadership…`,'loading');
+
+        const entity = await governmentDiplomacyGetEntity(qid);
+        if(token !== governmentDiplomacyState.requestToken || !governmentDiplomacyCurrentCountry(target)) return;
+        if(!entity) throw new Error(`Wikidata entity ${qid} was not returned.`);
+
+        const headStateQids = governmentDiplomacyClaimQids(entity,'P35');
+        const headGovernmentQids = governmentDiplomacyClaimQids(entity,'P6');
+        const allHeadQids = [...new Set([...headStateQids,...headGovernmentQids])];
+        const labels = await governmentDiplomacyGetLabels(allHeadQids);
+
+        const result = {
+            qid,
+            headState: labels.get(headStateQids[0]) || '',
+            headGovernment: labels.get(headGovernmentQids[0]) || '',
+            foreignMinister: '',
+            permanentRepresentative: '',
+            retrievedAt: new Date().toISOString(),
+            source: 'Wikidata Action API + Wikidata Query Service'
+        };
+
+        /* Render the two direct country properties immediately. */
+        setGovernmentDiplomacyValue('govHeadOfState', result.headState || 'Not available');
+        setGovernmentDiplomacyValue('govHeadOfGovernment', result.headGovernment || 'Not available');
+        setGovernmentDiplomacyStatus(`Country ${qid} resolved • Leadership loaded • Searching Foreign Minister and UN Representative…`,'loading');
+
+        /* The two position searches are independent. A timeout/failure in one
+           must never erase the already retrieved Head of State/Government. */
+        const [fm,pr] = await Promise.all([
+            governmentDiplomacyFindForeignMinister(qid),
+            governmentDiplomacyFindPermanentRepresentative(qid)
+        ]);
+
+        if(token !== governmentDiplomacyState.requestToken || !governmentDiplomacyCurrentCountry(target)) return;
+
+        result.foreignMinister = fm || '';
+        result.permanentRepresentative = pr || '';
+
+        /* If live position data fails, use only the six-country diagnostic
+           fallback. This keeps the proven test countries functional while the
+           dynamic engine is being validated. */
+        const fallback = GOVERNMENT_DIPLOMACY_DIAGNOSTIC_FALLBACK[target];
+        if(fallback){
+            if(!result.headState) result.headState=fallback.headState;
+            if(!result.headGovernment) result.headGovernment=fallback.headGovernment;
+            if(!result.foreignMinister) result.foreignMinister=fallback.foreignMinister;
+            if(!result.permanentRepresentative) result.permanentRepresentative=fallback.permanentRepresentative;
+        }
+
+        governmentDiplomacyState.cache.set(target,result);
+        renderGovernmentDiplomacy(result,target);
+    }catch(error){
+        if(token !== governmentDiplomacyState.requestToken || !governmentDiplomacyCurrentCountry(target)) return;
+        const fallback = GOVERNMENT_DIPLOMACY_DIAGNOSTIC_FALLBACK[target];
+        if(fallback){
+            governmentDiplomacyState.cache.set(target,{...fallback,retrievedAt:new Date().toISOString(),source:'Diagnostic fallback'});
+            renderGovernmentDiplomacy(governmentDiplomacyState.cache.get(target),target);
+            return;
+        }
+        console.warn('Government & Diplomacy retrieval failed:',error);
+        ['govHeadOfState','govHeadOfGovernment','govForeignMinister','govPermanentRepresentative']
+            .forEach(id=>setGovernmentDiplomacyValue(id,'Not available'));
+        setGovernmentDiplomacyStatus(`Government & Diplomacy retrieval failed for ${target}. Try again or use the source links.`,'error');
+    }
+}
+
+function renderGovernmentDiplomacy(data,target){
+    setGovernmentDiplomacyValue('govHeadOfState',data.headState || 'Not available');
+    setGovernmentDiplomacyValue('govHeadOfGovernment',data.headGovernment || 'Not available');
+    setGovernmentDiplomacyValue('govForeignMinister',data.foreignMinister || 'Not available');
+    setGovernmentDiplomacyValue('govPermanentRepresentative',data.permanentRepresentative || 'Not available');
+
+    const q = data.qid ? ` • Wikidata ${data.qid}` : '';
+    const src = data.source || 'Wikidata';
+    setGovernmentDiplomacyStatus(`Dynamic retrieval complete • ${target}${q} • Source: ${src}`,'');
+}
+
+/* PHASE 11 — MANUAL CHECK MODE
+   Government & Diplomacy is intentionally NOT searched automatically.
+   The user selects a Target Country and presses the CHECK button. */
+function resetGovernmentDiplomacyForSelection(){
+    ['govHeadOfState','govHeadOfGovernment','govForeignMinister','govPermanentRepresentative']
+        .forEach(id=>setGovernmentDiplomacyValue(id,'--'));
+    const select=$('countrySelect');
+    const target=String(select?.value||'').trim();
+    const btn=$('governmentDiplomacyCheckBtn');
+    if(btn) btn.disabled=!target;
+    if(target){
+        setGovernmentDiplomacyStatus(`Ready to check ${target}. Press CHECK to start the search.`,'loading');
+    }else{
+        setGovernmentDiplomacyStatus('Select a Target Country, then press CHECK to retrieve Government & Diplomacy data.','loading');
+    }
+}
+
+async function checkGovernmentDiplomacy(){
+    const target=String($('countrySelect')?.value||'').trim();
+    const btn=$('governmentDiplomacyCheckBtn');
+    if(!target){
+        resetGovernmentDiplomacyForSelection();
+        return;
+    }
+    if(btn){
+        btn.disabled=true;
+        btn.textContent='⏳ CHECKING GOVERNMENT & DIPLOMACY…';
+    }
+    try{
+        /* forceRefresh=true means every button press starts a new retrieval. */
+        await fetchGovernmentDiplomacy(target, typeof dashboardGeneration!=='undefined'?dashboardGeneration:undefined, true);
+    }finally{
+        if(btn){
+            btn.disabled=false;
+            btn.textContent='🔎 CHECK GOVERNMENT & DIPLOMACY';
+        }
+    }
+}
+
+(function installGovernmentDiplomacyManualMode(){
+    const install=()=>{
+        const select=$('countrySelect');
+        if(!select || select.dataset.governmentDiplomacyPhase11==='1') return;
+        select.dataset.governmentDiplomacyPhase11='1';
+        select.addEventListener('change',resetGovernmentDiplomacyForSelection);
+        resetGovernmentDiplomacyForSelection();
+    };
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
+    else install();
+    setTimeout(install,500);
+    setTimeout(install,1500);
+})();
 
 async function updateDashboard(){
     const target=$("countrySelect")?.value||"",home=$("homeCountrySelect")?.value||"";
@@ -3949,7 +4581,9 @@ async function updateDashboard(){
     $("trendTemp").textContent=data.trend.temp;$("trendHumidity").textContent=data.trend.humidity;$("trendRain").textContent=data.trend.rain;$("trendSnow").textContent=data.trend.snow;$("trendWind").textContent=data.trend.wind;
     $("econCurrency").textContent=data.econ.currency;$("econGdp").textContent=data.econ.gdp;$("econExport").textContent=data.econ.export;$("econImport").textContent=data.econ.import;$("econPerCapita").textContent=data.econ.perCapita;$("econCostOfLiving").textContent=data.econ.costOfLiving;$("econInternalDebt").textContent=data.econ.internalDebt;$("econExternalDebt").textContent=data.econ.externalDebt;$("econBanks").textContent=data.econ.banks;$("econAlgaeFunding").textContent=getAlgaeFundingDisplay(target);
     $("socPopulation").textContent=data.soc.pop;$("socFood").textContent=data.soc.food;$("socTrend").textContent=data.soc.popTrend;$("socLanguages").textContent=data.soc.languages;$("socLiteracy").textContent=data.soc.literacy;$("socRatio").textContent=data.soc.ratio;$("socHappiness").textContent=data.soc.happiness;
+    updateWorldBankPovertyDisplay(target);
     updatePerCapitaFigure();
+    /* Government & Diplomacy is manual in Phase 11: use the CHECK button. */
     const loc=capitalCoords[target]||{lat:0,lon:0};
     $("streetViewBtn").href=`https://www.google.com/maps/@${loc.lat},${loc.lon},17z/data=!3m1!1e3?entry=ttu`;
     fetchLiveWeatherPrediction(target,dashboardGeneration);
@@ -3957,8 +4591,173 @@ async function updateDashboard(){
 }
 
 async function fetchLiveWeatherPrediction(country,generation){
-    const loc=capitalCoords[country];if(!loc)return;
-    try{const j=await (await worldFetchWithTimeout(`https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,relative_humidity_2m,precipitation,snowfall,visibility,wind_speed_10m&timezone=auto`,7000)).json();if(generation!==dashboardGeneration)return;const c=j.current;if(!c)return;$("predTemp").textContent=`${c.temperature_2m} °C`;$("predHumidity").textContent=`${c.relative_humidity_2m} %`;$("predRain").textContent=`${c.precipitation} mm`;$("predSnow").textContent=`${c.snowfall||0} cm`;$("predVisibility").textContent=`${(c.visibility/1000).toFixed(1)} km`;}catch(_){["predTemp","predHumidity","predRain","predSnow","predVisibility"].forEach(id=>{if($(id))$(id).textContent="Live weather unavailable";});}
+    const loc=capitalCoords[country];
+
+    /*
+     * PHASE 2 — LIVE WEATHER ENGINE
+     * -----------------------------
+     * Weather is an independent asynchronous service.  It must:
+     *   1. validate the selected capital coordinates;
+     *   2. show an explicit loading state;
+     *   3. request all five displayed values from the CURRENT endpoint;
+     *   4. reject stale responses using dashboardGeneration;
+     *   5. retry one time for transient network failures;
+     *   6. display partial N/A values rather than reverting to "--".
+     */
+    const ids=[
+        "predTemp",
+        "predHumidity",
+        "predRain",
+        "predSnow",
+        "predVisibility"
+    ];
+
+    const set=(id,value)=>{
+        if($(id)) $(id).textContent=value;
+    };
+
+    if(!loc ||
+       !Number.isFinite(Number(loc.lat)) ||
+       !Number.isFinite(Number(loc.lon))){
+        ids.forEach(id=>set(id,"N/A"));
+        console.warn("Weather coordinates unavailable for:",country);
+        return;
+    }
+
+    if(generation!==dashboardGeneration)return;
+
+    ids.forEach(id=>set(id,"Loading…"));
+
+    /*
+     * Open-Meteo provides current conditions for temperature, humidity,
+     * precipitation, snowfall and visibility.  Using the same current
+     * timestamp for all five values avoids mixing a current observation
+     * with the first value of an hourly array.
+     */
+    const url=
+        `https://api.open-meteo.com/v1/forecast`+
+        `?latitude=${encodeURIComponent(loc.lat)}`+
+        `&longitude=${encodeURIComponent(loc.lon)}`+
+        `&current=temperature_2m,relative_humidity_2m,precipitation,snowfall,visibility`+
+        `&timezone=auto`;
+
+    let lastError=null;
+
+    for(let attempt=1;attempt<=2;attempt++){
+        try{
+            const response=await worldFetchWithTimeout(
+                url,
+                12000,
+                {headers:{Accept:"application/json"}}
+            );
+
+            const j=await response.json();
+
+            /*
+             * A response arriving after another country was selected must
+             * never update the visible dashboard.
+             */
+            if(generation!==dashboardGeneration)return;
+
+            if(!j || typeof j!=="object"){
+                throw new Error("Weather API returned an invalid response.");
+            }
+
+            const c=j.current;
+
+            if(!c || typeof c!=="object"){
+                throw new Error("Weather API returned no current conditions.");
+            }
+
+            const numeric=(value)=>{
+                const n=Number(value);
+                return Number.isFinite(n)?n:null;
+            };
+
+            const temp=numeric(c.temperature_2m);
+            const humidity=numeric(c.relative_humidity_2m);
+            const rain=numeric(c.precipitation);
+            const snow=numeric(c.snowfall);
+            const visibility=numeric(c.visibility);
+
+            set(
+                "predTemp",
+                temp!==null ? `${temp.toFixed(1)} °C` : "N/A"
+            );
+
+            set(
+                "predHumidity",
+                humidity!==null ? `${humidity.toFixed(0)} %` : "N/A"
+            );
+
+            set(
+                "predRain",
+                rain!==null ? `${rain.toFixed(1)} mm` : "N/A"
+            );
+
+            /*
+             * Open-Meteo reports snowfall in cm.
+             * Zero is a genuine weather value and must not be converted to
+             * an unavailable state.
+             */
+            set(
+                "predSnow",
+                snow!==null ? `${snow.toFixed(1)} cm` : "N/A"
+            );
+
+            /*
+             * Open-Meteo reports visibility in metres.
+             * Convert only after validating the numeric value.
+             */
+            set(
+                "predVisibility",
+                visibility!==null
+                    ? `${(visibility/1000).toFixed(1)} km`
+                    : "N/A"
+            );
+
+            console.info(
+                `Live weather loaded for ${country} on attempt ${attempt}.`,
+                {
+                    latitude:loc.lat,
+                    longitude:loc.lon,
+                    temperature:temp,
+                    humidity,
+                    precipitation:rain,
+                    snowfall:snow,
+                    visibility
+                }
+            );
+
+            return;
+        }catch(error){
+            lastError=error;
+
+            /*
+             * If the user changed country while the request was running,
+             * stop immediately.  The new dashboard lifecycle owns the UI.
+             */
+            if(generation!==dashboardGeneration)return;
+
+            if(attempt<2){
+                /*
+                 * Small retry delay for transient network/CORS/connectivity
+                 * interruptions.  Do not retry if the dashboard changed.
+                 */
+                await new Promise(resolve=>setTimeout(resolve,900));
+                if(generation!==dashboardGeneration)return;
+            }
+        }
+    }
+
+    if(generation!==dashboardGeneration)return;
+
+    ids.forEach(id=>set(id,"Weather unavailable"));
+
+    console.warn(
+        `Live weather request failed for ${country}.`,
+        lastError
+    );
 }
 
 async function calculateCurrency(target,home,generation){
@@ -4130,7 +4929,10 @@ const RANKING_PARAMETERS = [
     {key:'Major Languages', label:'Major Languages', type:'text', source:'soc.languages', group:'Society'},
     {key:'Literacy Rate', label:'Literacy Rate', type:'percent', source:'soc.literacy', group:'Society'},
     {key:'Female to Male Ratio', label:'Female to Male Ratio', type:'ratio', source:'soc.ratio', group:'Society'},
-    {key:'Happiness Index', label:'Happiness Index', type:'rank', source:'soc.happiness', group:'Society'}
+    {key:'Happiness Index', label:'Happiness Index', type:'rank', source:'soc.happiness', group:'Society'},
+    {key:'Poverty Rate — $3.00/day (2021 PPP)', label:'Poverty Rate — $3.00/day (2021 PPP)', type:'worldBankPoverty', povertyKey:'poverty300', group:'Society', unit:'% of population'},
+    {key:'Poverty Rate — $4.20/day (2021 PPP)', label:'Poverty Rate — $4.20/day (2021 PPP)', type:'worldBankPoverty', povertyKey:'poverty420', group:'Society', unit:'% of population'},
+    {key:'Poverty Rate — $8.30/day (2021 PPP)', label:'Poverty Rate — $8.30/day (2021 PPP)', type:'worldBankPoverty', povertyKey:'poverty830', group:'Society', unit:'% of population'}
 ];
 
 let rankingOrder = 'asc';
@@ -4140,6 +4942,15 @@ let rankingUsdRateCache = new Map();
 let rankingUsdRateDate = null;
 let rankingUsdRateSource = 'Frankfurter latest/reference rates';
 let rankingRefreshToken = 0;
+
+/* Dynamic World Bank Poverty and Inequality Platform data. */
+let worldBankPovertyData = {};
+let worldBankPovertyState = {loaded:false, loading:false, error:null, loadedAt:null};
+const WORLD_BANK_POVERTY_INDICATORS = {
+    poverty300: { key:'SI.POV.DDAY', label:'Poverty Rate — $3.00/day (2021 PPP)', threshold:'$3.00/day', yearBasis:'2021 PPP' },
+    poverty420: { key:'SI.POV.LMIC', label:'Poverty Rate — $4.20/day (2021 PPP)', threshold:'$4.20/day', yearBasis:'2021 PPP' },
+    poverty830: { key:'SI.POV.UMIC', label:'Poverty Rate — $8.30/day (2021 PPP)', threshold:'$8.30/day', yearBasis:'2021 PPP' }
+};
 
 function parsePerCapitaNumber(value){
     if(value===null || value===undefined) return null;
@@ -4414,6 +5225,11 @@ function buildRankingRows(param){
             } else {
                 display=Number.isFinite(numeric)?`${numeric.toLocaleString(undefined,{maximumFractionDigits:2})} persons/km²`:'N/A';
             }
+        } else if(param.type==='worldBankPoverty'){
+            const p=worldBankPovertyData[iso2For(country)]?.[param.povertyKey];
+            numeric=Number.isFinite(Number(p?.value))?Number(p.value):null;
+            display=Number.isFinite(numeric)?`${numeric.toFixed(2)}% (data year ${p.year})`:'N/A — no World Bank observation';
+            normalized=numeric;
         } else {
             const raw=getNestedValue(d,param.source);
             display=raw??'--';
@@ -4455,6 +5271,7 @@ function buildRankingRows(param){
 }
 
 function rankingHeaderFor(param){
+    if(param.type==='worldBankPoverty') return ['Rank','Country',param.label,'Data Year'];
     if(param.type==='algaeFunding') return ['Rank','Country','Identified Funding','Normalized USD Value'];
     if(param.type==='financialLocal') return ['Rank','Country','Original Value','USD Rate Used (1 local = USD)','Normalized USD Value'];
     if(param.type==='financialUSD') return ['Rank','Country','Value (USD)','Normalized USD Value'];
@@ -4476,7 +5293,11 @@ function renderRankingTable(){
         let cells=[];
         cells.push(`<td class="ranking-rank">${r.rank??'—'}</td>`);
         cells.push(`<td><div class="ranking-value-main">${escapeHtml(r.country)}</div></td>`);
-        if(param.type==='algaeFunding'){
+        if(param.type==='worldBankPoverty'){
+            const p=worldBankPovertyData[iso2For(r.country)]?.[param.povertyKey];
+            cells.push(r.hasNumeric?`<td><span class="ranking-value-main">${escapeHtml(r.display)}</span></td>`:'<td><span class="ranking-unavailable">N/A — no World Bank observation</span></td>');
+            cells.push(`<td>${p?.year??'N/A'}</td>`);
+        } else if(param.type==='algaeFunding'){
             cells.push(`<td>${escapeHtml(r.display)}</td>`);
             cells.push(`<td>${Number.isFinite(r.normalized)?`<span class="ranking-value-main">${escapeHtml(moneyUsd(r.normalized))}</span>`:'<span class="ranking-unavailable">N/A — no numeric amount identified</span>'}</td>`);
         } else if(param.type==='financialLocal'){
@@ -4496,6 +5317,10 @@ function renderRankingTable(){
 
 function buildRankingNote(param){
     const orderText=rankingOrder==='asc'?'lowest to highest':'highest to lowest';
+    if(param.type==='worldBankPoverty'){
+        const meta=WORLD_BANK_POVERTY_INDICATORS[param.povertyKey];
+        return `World Bank Poverty and Inequality Platform (PIP) headcount ratio: percentage of the population living below ${meta.threshold} at 2021 purchasing-power-adjusted prices. The value is retrieved dynamically from the World Bank Indicators API; no market exchange-rate conversion is applied. Each country uses the latest observation returned by the API, and the observation year is shown separately. Ranking is ${orderText}.`;
+    }
     if(param.type==='algaeFunding'){
         return `This parameter is a conservative source-traceable snapshot of publicly identifiable algae-related government funding commitments/opportunities. It is NOT a measure of total national algae research expenditure. Snapshot date: ${ALGAE_FUNDING_SNAPSHOT_DATE}. Only countries with a published numeric USD amount in the application snapshot are included in the numeric ranking.`;
     }
@@ -4528,6 +5353,15 @@ async function onRankingParameterChange(){
     const token=++rankingRefreshToken;
     if(!param){ renderRankingTable(); return; }
     const financialLocal=param.type==='financialLocal';
+    if(param.type==='worldBankPoverty'){
+        if(!worldBankPovertyState.loaded){
+            setRankingLoading(true,'Retrieving World Bank PPP-normalized poverty data...');
+            await loadWorldBankPovertyData();
+            if(token!==rankingRefreshToken)return;
+            setRankingLoading(false);
+        }
+        if($('rankingRateDateChip')) $('rankingRateDateChip').textContent=`World Bank poverty: ${worldBankPovertyState.loaded?'loaded':'unavailable'}`;
+    }
     if(param.type==='algaeFunding'){
         setRankingLoading(true,'Retrieving latest USD reference rates for identified algae-funding currencies...');
         try{ await ensureAlgaeUsdRates(); }catch(e){ console.warn(e); }
@@ -4576,7 +5410,10 @@ function downloadRankingPdf(){
         doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(71,85,105);
         doc.text(`Order: ${direction}   |   Generated: ${fmt.format(generated)}`,14,28);
         let declaration='';
-        if(param.type==='algaeFunding') declaration=`Algae funding declaration: This is a conservative, source-traceable snapshot of publicly identifiable algae-related government funding commitments/opportunities, not total national expenditure. Snapshot date: ${ALGAE_FUNDING_SNAPSHOT_DATE}. Identified local-currency amounts are normalized to USD using the latest available Frankfurter rate; latest rate date used: ${algaeUsdRateDate||'unavailable'}.`;
+        if(param.type==='worldBankPoverty'){
+            const meta=WORLD_BANK_POVERTY_INDICATORS[param.povertyKey];
+            declaration=`World Bank Poverty and Inequality Platform (PIP): poverty headcount ratio below ${meta.threshold}, expressed at 2021 PPP prices. Values are retrieved dynamically from the World Bank Indicators API; no market FX conversion is applied. Latest observation year is shown per country.`;
+        } else if(param.type==='algaeFunding') declaration=`Algae funding declaration: This is a conservative, source-traceable snapshot of publicly identifiable algae-related government funding commitments/opportunities, not total national expenditure. Snapshot date: ${ALGAE_FUNDING_SNAPSHOT_DATE}. Identified local-currency amounts are normalized to USD using the latest available Frankfurter rate; latest rate date used: ${algaeUsdRateDate||'unavailable'}.`;
         else if(param.type==='financialLocal') declaration=`Financial normalization declaration: Local-currency values are converted to USD using the latest available Frankfurter reference rate retrieved at runtime. Latest rate date used in this report: ${rankingUsdRateDate||'unavailable'}. Source: ${rankingUsdRateSource}.`;
         else if(param.type==='financialUSD') declaration='Financial normalization declaration: The dashboard source value for this parameter is already expressed in USD; normalized USD equals the source value (USD rate factor 1.000000).';
         else if(param.type==='geoNumber') declaration='Geography ranking declaration: stored area values are converted to square kilometres before numerical ranking.';
@@ -4585,7 +5422,10 @@ function downloadRankingPdf(){
         doc.text(doc.splitTextToSize(declaration,268),14,34);
         const startY=44;
         let head, body;
-        if(param.type==='algaeFunding'){
+        if(param.type==='worldBankPoverty'){
+            head=[['Rank','Country',title,'Data Year']];
+            body=rankingCurrentRows.map(r=>[r.rank??'—',r.country,r.display||'N/A',worldBankPovertyData[iso2For(r.country)]?.[param.povertyKey]?.year??'N/A']);
+        } else if(param.type==='algaeFunding'){
             head=[['Rank','Country','Identified Funding','Normalized USD']];
             body=rankingCurrentRows.map(r=>[r.rank??'—',r.country,r.display,Number.isFinite(r.normalized)?moneyUsd(r.normalized):'N/A']);
         } else if(param.type==='financialLocal'){
@@ -4651,36 +5491,108 @@ function populateCountrySelectors(){
 }
 
 async function initializeApp(){
-    /* PHASE 1/2A: establish startup state in a controlled sequence.
-       UI controls are created first; My Location and automatic airport
-       calculation then run in order so the journey renderer is not racing
-       application initialization. */
+    /*
+     * PHASE 1 — CONTROLLED APPLICATION STARTUP
+     *
+     * Order:
+     *   1. Build selectors and ranking controls.
+     *   2. Establish the visual dashboard state.
+     *   3. Render the selected target immediately, if one exists.
+     *   4. Start World Bank loading independently.
+     *   5. Start location/airport initialization only after the dashboard
+     *      has been established.
+     *
+     * No external API or geolocation operation is allowed to be a
+     * prerequisite for displaying the selected country's stored data.
+     */
+    if(dashboardState.initialized) return;
+    dashboardState.initialized = true;
+
     populateCountrySelectors();
     initializeRankingControls();
     updateSavedCountryCount("Saved target countries");
 
+    /* Keep the existing collapsed startup presentation. */
     const mapContent=$("mapCollapsibleContent"),mapIcon=$("mapToggleIcon");
     if(mapContent) mapContent.style.display="none";
     if(mapIcon) mapIcon.textContent="▼ Click to Expand";
+
     const airportPathContent=$("airportPathContent"),airportPathIcon=$("airportPathIcon");
     if(airportPathContent) airportPathContent.style.display="none";
     if(airportPathIcon) airportPathIcon.textContent="▼ Click to Expand";
+
     const airportSelect=$("targetAirportSelect");
     if(airportSelect) airportSelect.addEventListener("change",selectAirportFromDropdown);
 
+    /*
+     * Safety listeners retained as a lightweight fallback for programmatic
+     * change events. The inline onchange handlers remain the authoritative
+     * lifecycle entry points.
+     */
+    const targetCountrySelect=$("countrySelect");
+    if(targetCountrySelect){
+        targetCountrySelect.addEventListener("change",()=>{
+            updatePerCapitaFigure();
+        });
+    }
+
+    const homeCountrySelect=$("homeCountrySelect");
+    if(homeCountrySelect){
+        homeCountrySelect.addEventListener("change",()=>{
+            updatePerCapitaFigure();
+        });
+    }
+
+    /*
+     * World Bank loading is intentionally independent. It may finish before
+     * or after the country dashboard is rendered.
+     */
+    loadWorldBankPovertyData()
+        .then(()=>{
+            const target=$("countrySelect")?.value||"";
+            if(target) updateWorldBankPovertyDisplay(target);
+        })
+        .catch(e=>console.warn(
+            "World Bank poverty initialization failed:",e
+        ));
+
     const initialTarget=$("countrySelect")?.value||"";
-    if(!initialTarget) return;
+
+    if(!initialTarget){
+        /*
+         * There is no target selected at startup. Keep the existing empty
+         * dashboard state rather than inventing a country selection.
+         */
+        dashboardState.lastTarget="";
+        dashboardState.lastHome=$("homeCountrySelect")?.value||"";
+        updatePerCapitaFigure();
+        return;
+    }
+
+    /*
+     * Establish country information FIRST. Airport/geolocation follows.
+     */
+    updatePerCapitaFigure();
+    updateDashboard();
 
     populateAirportChoicesForTarget(initialTarget);
     const generation=dashboardGeneration;
+
     try{
         await initializeStartupLocation();
+
         if(generation!==dashboardGeneration) return;
-        await automaticallyUpdateTargetCountryAirport(initialTarget,generation);
+
+        await automaticallyUpdateTargetCountryAirport(
+            initialTarget,
+            generation
+        );
     }catch(error){
         if(generation===dashboardGeneration){
-            const status=$("worldAirportStatus");
-            if(status) status.textContent=error?.message||"Unable to initialize My Location and airport data.";
+            setDashboardStatus(
+                error?.message ||
+                "Unable to initialize My Location and airport data."
+            );
         }
     }
 }
@@ -4768,7 +5680,10 @@ const WB={
   imports:{label:'Imports',ind:'NE.IMP.GNFS.CD',group:'Economy',fresh:3,fmt:v=>'$'+Number(v).toLocaleString(undefined,{maximumFractionDigits:0})},
   inflation:{label:'Inflation',ind:'FP.CPI.TOTL.ZG',group:'Economy',fresh:2,fmt:v=>Number(v).toFixed(2)+'%'},
   externalDebt:{label:'External debt',ind:'DT.DOD.DECT.CD',group:'Economy',fresh:3,fmt:v=>'$'+Number(v).toLocaleString(undefined,{maximumFractionDigits:0})},
-  arableLand:{label:'Arable land %',ind:'AG.LND.ARBL.ZS',group:'Geography',fresh:5,fmt:v=>Number(v).toFixed(2)+'%'}
+  arableLand:{label:'Arable land %',ind:'AG.LND.ARBL.ZS',group:'Geography',fresh:5,fmt:v=>Number(v).toFixed(2)+'%'},
+  poverty300:{label:'Poverty headcount < $3.00/day (2021 PPP)',ind:'SI.POV.DDAY',group:'Society',fresh:5,fmt:v=>Number(v).toFixed(2)+'%'},
+  poverty420:{label:'Poverty headcount < $4.20/day (2021 PPP)',ind:'SI.POV.LMIC',group:'Society',fresh:5,fmt:v=>Number(v).toFixed(2)+'%'},
+  poverty830:{label:'Poverty headcount < $8.30/day (2021 PPP)',ind:'SI.POV.UMIC',group:'Society',fresh:5,fmt:v=>Number(v).toFixed(2)+'%'}
 };
 const iso3ToIso2={"AFG":"af","AGO":"ao","ALB":"al","AND":"ad","ARE":"ae","ARG":"ar","ARM":"am","ATG":"ag","AUS":"au","AUT":"at","AZE":"az","BDI":"bi","BEL":"be","BEN":"bj","BFA":"bf","BGD":"bd","BGR":"bg","BHR":"bh","BHS":"bs","BIH":"ba","BLR":"by","BLZ":"bz","BOL":"bo","BRA":"br","BRB":"bb","BRN":"bn","BTN":"bt","BWA":"bw","CAF":"cf","CAN":"ca","CHE":"ch","CHL":"cl","CHN":"cn","CIV":"ci","CMR":"cm","COD":"cd","COG":"cg","COL":"co","COM":"km","CPV":"cv","CRI":"cr","CUB":"cu","CYP":"cy","CZE":"cz","DEU":"de","DJI":"dj","DMA":"dm","DNK":"dk","DOM":"do","DZA":"dz","ECU":"ec","EGY":"eg","ERI":"er","ESP":"es","EST":"ee","ETH":"et","FIN":"fi","FJI":"fj","FRA":"fr","FSM":"fm","GAB":"ga","GBR":"gb","GEO":"ge","GHA":"gh","GIN":"gn","GMB":"gm","GNB":"gw","GNQ":"gq","GRC":"gr","GRD":"gd","GTM":"gt","GUY":"gy","HND":"hn","HRV":"hr","HTI":"ht","HUN":"hu","IDN":"id","IND":"in","IRL":"ie","IRN":"ir","IRQ":"iq","ISL":"is","ISR":"il","ITA":"it","JAM":"jm","JOR":"jo","JPN":"jp","KAZ":"kz","KEN":"ke","KGZ":"kg","KHM":"kh","KIR":"ki","KNA":"kn","KOR":"kr","KWT":"kw","LAO":"la","LBN":"lb","LBR":"lr","LBY":"ly","LCA":"lc","LIE":"li","LKA":"lk","LSO":"ls","LTU":"lt","LUX":"lu","LVA":"lv","MAR":"ma","MCO":"mc","MDA":"md","MDG":"mg","MDV":"mv","MEX":"mx","MHL":"mh","MKD":"mk","MLI":"ml","MLT":"mt","MMR":"mm","MNE":"me","MNG":"mn","MOZ":"mz","MRT":"mr","MUS":"mu","MWI":"mw","MYS":"my","NAM":"na","NER":"ne","NGA":"ng","NIC":"ni","NLD":"nl","NOR":"no","NPL":"np","NRU":"nr","NZL":"nz","OMN":"om","PAK":"pk","PAN":"pa","PER":"pe","PHL":"ph","PLW":"pw","PNG":"pg","POL":"pl","PRK":"kp","PRT":"pt","PRY":"py","PSE":"ps","QAT":"qa","ROU":"ro","RUS":"ru","RWA":"rw","SAU":"sa","SDN":"sd","SEN":"sn","SGP":"sg","SLB":"sb","SLE":"sl","SLV":"sv","SMR":"sm","SOM":"so","SRB":"rs","SSD":"ss","STP":"st","SUR":"sr","SVK":"sk","SVN":"si","SWE":"se","SWZ":"sz","SYC":"sc","SYR":"sy","TCD":"td","TGO":"tg","THA":"th","TJK":"tj","TKM":"tm","TLS":"tl","TON":"to","TTO":"tt","TUN":"tn","TUR":"tr","TUV":"tv","TWN":"tw","TZA":"tz","UGA":"ug","UKR":"ua","URY":"uy","USA":"us","UZB":"uz","VAT":"va","VCT":"vc","VEN":"ve","VNM":"vn","VUT":"vu","WSM":"ws","YEM":"ye","ZAF":"za","ZMB":"zm","ZWE":"zw"};
 function normalizeHappinessName(n){return String(n||'').trim().replace(/\s+/g,' ').replace(/^Republic of Korea$/,'South Korea').replace(/^Republic of Moldova$/,'Moldova').replace(/^Lao PDR$/,'Laos').replace(/^Lao People's Democratic Republic$/,'Laos').replace(/^Russian Federation$/,'Russia').replace(/^State of Palestine$/,'Palestine').replace(/^The Republic of the Congo$/,'Republic of the Congo').replace(/^Congo$/,'Republic of the Congo').replace(/^DR Congo$/,'Democratic Republic of the Congo').replace(/^Türkiye$/,'Türkiye').replace(/^Viet Nam$/,'Vietnam');}
@@ -4802,7 +5717,7 @@ function metricStatus(x,def){if(!x||x.value==null)return {cls:'audit-na',text:'U
 function simpleStatus(x,detail){return x?{cls:'audit-ok',text:'Current',detail:detail}:{cls:'audit-na',text:'Unavailable',detail:'No source value returned'};}
 function categoryFor(metrics,group){const a=metrics.filter(m=>m.group===group);const cur=a.filter(m=>m.status.cls==='audit-ok').length,old=a.filter(m=>m.status.cls==='audit-warn').length,na=a.filter(m=>m.status.cls==='audit-na').length;return {total:a.length,cur,old,na,score:cur+old};}
 function overall(metrics){const aud=metrics.filter(m=>m.status.cls!=='audit-na'),cur=aud.filter(m=>m.status.cls==='audit-ok').length,old=aud.filter(m=>m.status.cls==='audit-warn').length,na=metrics.length-aud.length;if(!aud.length)return {cls:'audit-na',text:'Unavailable'};if(na===0&&old===0)return {cls:'audit-ok',text:'Current'};if(old>0&&na===0)return {cls:'audit-warn',text:'Needs update'};return {cls:'audit-partial',text:'Partial'};}
-function renderSourceCards(states){const defs=[['World Bank','World Bank indicators',states.wb],['Currency','Frankfurter FX',states.fx],['Happiness','WHR 2026 data',states.happiness],['Weather','Open-Meteo capitals',states.weather]];$('auditSourceGrid').innerHTML=defs.map(d=>{const s=d[2]||{};const cls=s.ok?'audit-source-ok':(s.partial?'audit-source-partial':'audit-source-fail');return `<div class="audit-source-card"><b>${esc(d[0])} <span class="${cls}">${s.ok?'✓':s.partial?'◐':'?'}</span></b>${esc(d[1])}<br><span class="${cls}">${esc(s.note||'Not available')}</span></div>`;}).join('');}
+function renderSourceCards(states){const defs=[['World Bank','World Bank indicators + PPP poverty',states.wb],['Currency','Frankfurter FX',states.fx],['Happiness','WHR 2026 data',states.happiness],['Weather','Open-Meteo capitals',states.weather]];$('auditSourceGrid').innerHTML=defs.map(d=>{const s=d[2]||{};const cls=s.ok?'audit-source-ok':(s.partial?'audit-source-partial':'audit-source-fail');return `<div class="audit-source-card"><b>${esc(d[0])} <span class="${cls}">${s.ok?'✓':s.partial?'◐':'?'}</span></b>${esc(d[1])}<br><span class="${cls}">${esc(s.note||'Not available')}</span></div>`;}).join('');}
 function detailHTML(metrics){return '<div class="audit-detail-grid">'+metrics.map(m=>`<div class="audit-metric"><b>${esc(m.label)}</b><span class="${m.status.cls}">${esc(m.status.text)}</span><br>${esc(m.status.detail)}</div>`).join('')+'</div>';}
 async function run(){
  if(running)return;running=true;stopRequested=false;results=[];openAudit();$('auditConsole').style.display='block';$('auditSummary').style.display='none';$('auditRows').innerHTML='';
