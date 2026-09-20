@@ -910,6 +910,40 @@
         .government-diplomacy-check-btn:hover { filter:brightness(1.05); }
         .government-diplomacy-check-btn:disabled { opacity:.55; cursor:not-allowed; filter:none; box-shadow:none; }
 
+        /* ========================= POVERTY CHECK BUTTON ========================= */
+        .poverty-check-wrap {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: .3rem;
+            margin-top: .15rem;
+        }
+        .poverty-check-btn {
+            width: min(360px, 100%);
+            border: 0;
+            border-radius: 999px;
+            padding: .62rem 1.1rem;
+            background: linear-gradient(135deg,#1e3a8a,#2563eb);
+            color: #fff;
+            font-size: .74rem;
+            font-weight: 800;
+            letter-spacing: .03em;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(37,99,235,.20);
+            transition: transform .15s ease, filter .15s ease, opacity .15s ease;
+        }
+        .poverty-check-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+        .poverty-check-btn:disabled { opacity: .58; cursor: wait; transform: none; filter: none; }
+        .poverty-check-status {
+            min-height: 1.1rem;
+            font-size: .62rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        .poverty-check-status.success { color: #166534; }
+        .poverty-check-status.error { color: #b45309; }
+
         /* ========================= RANKING TAB ========================= */
         .tab-bar {
             display: flex;
@@ -1652,9 +1686,13 @@
                     <div class="data-item"><div class="data-label">5. Literacy Rate</div><div class="data-value" id="socLiteracy">--</div></div>
                     <div class="data-item"><div class="data-label">6. Female to Male Ratio</div><div class="data-value" id="socRatio">--</div></div>
                     <div class="data-item"><div class="data-label">7. Happiness Index</div><div class="data-value" id="socHappiness">--</div></div>
-                    <div class="data-item highlight-item"><div class="data-label">8. Poverty Rate — $3.00/day (2021 PPP)</div><div class="data-value" id="socPoverty300">--</div></div>
-                    <div class="data-item highlight-item"><div class="data-label">9. Poverty Rate — $4.20/day (2021 PPP)</div><div class="data-value" id="socPoverty420">--</div></div>
-                    <div class="data-item highlight-item"><div class="data-label">10. Poverty Rate — $8.30/day (2021 PPP)</div><div class="data-value" id="socPoverty830">--</div></div>
+                    <div class="data-item highlight-item"><div class="data-label">8. Poverty Rate — Percentage of the country's population living below $3.00 per person per day (2021 PPP)</div><div class="data-value" id="socPoverty300">--</div></div>
+                    <div class="data-item highlight-item"><div class="data-label">9. Poverty Rate — Percentage of the country's population living below $4.20 per person per day (2021 PPP)</div><div class="data-value" id="socPoverty420">--</div></div>
+                    <div class="data-item highlight-item"><div class="data-label">10. Poverty Rate — Percentage of the country's population living below $8.30 per person per day (2021 PPP)</div><div class="data-value" id="socPoverty830">--</div></div>
+                    <div class="poverty-check-wrap">
+                        <button type="button" class="poverty-check-btn" id="povertyCheckBtn">🔎 Check Poverty Data</button>
+                        <div class="poverty-check-status" id="povertyCheckStatus" aria-live="polite"></div>
+                    </div>
                 </div>
                 </div>
             </div>
@@ -4092,6 +4130,169 @@ function updateWorldBankPovertyDisplay(country){
     Object.entries(values).forEach(([id,value])=>{if($(id))$(id).textContent=value;});
 }
 
+async function checkSelectedCountryPovertyData(){
+    const country=String($('countrySelect')?.value||'').trim();
+    const btn=$('povertyCheckBtn');
+    const status=$('povertyCheckStatus');
+
+    const setStatus=(type,text)=>{
+        if(status){
+            status.className=`poverty-check-status${type?' '+type:''}`;
+            status.textContent=text;
+        }
+    };
+
+    if(!country){
+        setStatus('error','Please select a target country first.');
+        return;
+    }
+
+    const iso2=String(countryIso2?.[country]||'').trim().toLowerCase();
+    if(!/^[a-z]{2}$/.test(iso2)){
+        setStatus('error',`No World Bank ISO-2 code is available for ${country}.`);
+        return;
+    }
+
+    if(btn){
+        btn.disabled=true;
+        btn.textContent='⏳ Checking Poverty Data…';
+    }
+    setStatus('',`Connecting to the World Bank for ${country} (${iso2.toUpperCase()})…`);
+
+    /*
+     * IMPORTANT:
+     * This manual path deliberately does not depend on the application's
+     * large World Bank loader.  It performs three small country-specific
+     * requests.  A timeout prevents the UI from remaining permanently at
+     * "Connecting..." when a browser/network blocks a request.
+     *
+     * The normal JSON request is attempted first.  If the local HTML file
+     * cannot read the JSON response because of a browser CORS restriction,
+     * the World Bank's documented JSONP format is used as a fallback.
+     */
+    const fetchWithTimeout=async(url,ms=12000)=>{
+        const controller=new AbortController();
+        const timer=setTimeout(()=>controller.abort(),ms);
+        try{
+            const response=await fetch(url,{cache:'no-store',headers:{Accept:'application/json'},signal:controller.signal});
+            if(!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
+        }catch(error){
+            if(error?.name==='AbortError') throw new Error('request timed out after 12 seconds');
+            throw error;
+        }finally{ clearTimeout(timer); }
+    };
+
+    const fetchJsonp=({url,timeout=12000})=>new Promise((resolve,reject)=>{
+        const callbackName=`wbPovertyCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        const script=document.createElement('script');
+        let settled=false;
+        const cleanup=()=>{
+            clearTimeout(timer);
+            try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}
+            script.remove();
+        };
+        const finish=(fn,value)=>{
+            if(settled)return;
+            settled=true;
+            cleanup();
+            fn(value);
+        };
+        window[callbackName]=(data)=>finish(resolve,data);
+        script.onerror=()=>finish(reject,new Error('JSONP request could not reach the World Bank.'));
+        script.src=`${url}${url.includes('?')?'&':'?'}format=jsonP&prefix=${encodeURIComponent(callbackName)}`;
+        document.head.appendChild(script);
+        const timer=setTimeout(()=>finish(reject,new Error('JSONP request timed out after 12 seconds')),timeout);
+    });
+
+    const result={};
+    const errors=[];
+
+    const fetchOne=async (povertyKey,meta)=>{
+        const url=`https://api.worldbank.org/v2/country/${encodeURIComponent(iso2)}/indicator/${encodeURIComponent(meta.key)}?per_page=100&date=1960:2026&source=2`;
+        try{
+            let json;
+            let method='JSON';
+            try{
+                json=await fetchWithTimeout(url,12000);
+            }catch(firstError){
+                method='JSONP fallback';
+                json=await fetchJsonp({url,timeout:12000});
+            }
+
+            if(!Array.isArray(json) || !Array.isArray(json[1])){
+                throw new Error('World Bank returned an unexpected response.');
+            }
+
+            const rows=json[1]
+                .filter(row=>row && row.value!==null && row.value!=='' && Number.isFinite(Number(row.value)))
+                .sort((a,b)=>Number(b.date)-Number(a.date));
+
+            if(!rows.length) throw new Error('No non-empty observation was returned.');
+
+            const row=rows[0];
+            const year=Number(row.date);
+            result[povertyKey]={
+                value:Number(row.value),
+                year:Number.isFinite(year)?year:'N/A',
+                indicator:meta.key,
+                threshold:meta.threshold,
+                yearBasis:meta.yearBasis,
+                fetchMethod:method
+            };
+        }catch(error){
+            errors.push(`${meta.threshold}: ${error?.message||String(error)}`);
+            result[povertyKey]=null;
+        }
+    };
+
+    try{
+        await Promise.all(Object.entries(WORLD_BANK_POVERTY_INDICATORS).map(([key,meta])=>fetchOne(key,meta)));
+
+        const isoKey=iso2;
+        worldBankPovertyData[isoKey]=worldBankPovertyData[isoKey]||{};
+        Object.entries(result).forEach(([key,value])=>{
+            if(value) worldBankPovertyData[isoKey][key]=value;
+            else delete worldBankPovertyData[isoKey][key];
+        });
+
+        updateWorldBankPovertyDisplay(country);
+
+        const found=Object.values(result).filter(Boolean).length;
+        if(found===3){
+            const usedFallback=Object.values(result).some(v=>v?.fetchMethod==='JSONP fallback');
+            setStatus('success',`✓ 3 poverty indicators retrieved for ${country}${usedFallback?' (JSONP fallback used)':''}.`);
+        }else if(found>0){
+            setStatus('error',`Retrieved ${found} of 3 poverty indicators for ${country}. ${errors.join(' | ')}`);
+        }else{
+            setStatus('error',`No poverty observations were returned for ${country}. ${errors.join(' | ')}`);
+        }
+    }catch(error){
+        console.error('Targeted World Bank poverty check failed:',error);
+        updateWorldBankPovertyDisplay(country);
+        setStatus('error',`Unable to retrieve poverty data: ${error?.message||String(error)}`);
+    }finally{
+        if(btn){
+            btn.disabled=false;
+            btn.textContent='🔎 Check Poverty Data';
+        }
+    }
+}
+
+/* Dedicated manual Poverty Check button: install once after the DOM exists. */
+(function installPovertyCheckButton(){
+    const install=()=>{
+        const btn=$('povertyCheckBtn');
+        if(!btn || btn.dataset.povertyCheckInstalled==='1') return;
+        btn.dataset.povertyCheckInstalled='1';
+        btn.addEventListener('click',checkSelectedCountryPovertyData);
+    };
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
+    else install();
+    setTimeout(install,300);
+    setTimeout(install,1000);
+})();
+
 async function loadWorldBankPovertyData(force=false){
     if(worldBankPovertyState.loading) return worldBankPovertyData;
     if(worldBankPovertyState.loaded && !force) return worldBankPovertyData;
@@ -5544,17 +5745,10 @@ async function initializeApp(){
     }
 
     /*
-     * World Bank loading is intentionally independent. It may finish before
-     * or after the country dashboard is rendered.
+     * Poverty data is intentionally NOT fetched during dashboard startup.
+     * It is fetched only when the user presses the dedicated Check Poverty Data
+     * button. Ranking and Save Data For All retain their own bulk-loading paths.
      */
-    loadWorldBankPovertyData()
-        .then(()=>{
-            const target=$("countrySelect")?.value||"";
-            if(target) updateWorldBankPovertyDisplay(target);
-        })
-        .catch(e=>console.warn(
-            "World Bank poverty initialization failed:",e
-        ));
 
     const initialTarget=$("countrySelect")?.value||"";
 
