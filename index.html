@@ -880,70 +880,6 @@
         @media(max-width:760px){ .per-capita-grid{grid-template-columns:1fr 1fr;} }
         @media(max-width:520px){ .per-capita-grid{grid-template-columns:1fr;} }
 
-        /* ========================= GOVERNMENT & DIPLOMACY ========================= */
-        .government-diplomacy-note {
-            margin: 0 0 .35rem;
-            padding: .42rem .58rem;
-            border-radius: 8px;
-            background: #f8fafc;
-            border: 1px solid #dbe3ef;
-            color: #475569;
-            font-size: .66rem;
-            line-height: 1.4;
-        }
-        .government-diplomacy-status {
-            display:flex; align-items:center; justify-content:space-between; gap:.5rem;
-            margin-top:.35rem; padding:.32rem .45rem; border-radius:7px;
-            background:#eff6ff; border:1px solid #bfdbfe; color:#1e3a8a;
-            font-size:.62rem; line-height:1.25;
-        }
-        .government-diplomacy-status.loading { background:#f8fafc; border-color:#cbd5e1; color:#64748b; }
-        .government-diplomacy-status.error { background:#fff7ed; border-color:#fed7aa; color:#9a3412; }
-        .government-diplomacy-source { font-size:.6rem; color:#64748b; margin-top:.25rem; line-height:1.35; }
-        .government-diplomacy-source a { color:#2563eb; text-decoration:none; }
-        .government-diplomacy-source a:hover { text-decoration:underline; }
-        .government-diplomacy-check-btn {
-            width:100%; max-width:520px; border:0; border-radius:12px; padding:.72rem 1rem;
-            background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; font-weight:800;
-            font-size:.82rem; letter-spacing:.02em; cursor:pointer; box-shadow:0 4px 10px rgba(37,99,235,.22);
-        }
-        .government-diplomacy-check-btn:hover { filter:brightness(1.05); }
-        .government-diplomacy-check-btn:disabled { opacity:.55; cursor:not-allowed; filter:none; box-shadow:none; }
-
-        /* ========================= POVERTY CHECK BUTTON ========================= */
-        .poverty-check-wrap {
-            grid-column: 1 / -1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: .3rem;
-            margin-top: .15rem;
-        }
-        .poverty-check-btn {
-            width: min(360px, 100%);
-            border: 0;
-            border-radius: 999px;
-            padding: .62rem 1.1rem;
-            background: linear-gradient(135deg,#1e3a8a,#2563eb);
-            color: #fff;
-            font-size: .74rem;
-            font-weight: 800;
-            letter-spacing: .03em;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(37,99,235,.20);
-            transition: transform .15s ease, filter .15s ease, opacity .15s ease;
-        }
-        .poverty-check-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
-        .poverty-check-btn:disabled { opacity: .58; cursor: wait; transform: none; filter: none; }
-        .poverty-check-status {
-            min-height: 1.1rem;
-            font-size: .62rem;
-            color: var(--text-muted);
-            text-align: center;
-        }
-        .poverty-check-status.success { color: #166534; }
-        .poverty-check-status.error { color: #b45309; }
-
         /* ========================= RANKING TAB ========================= */
         .tab-bar {
             display: flex;
@@ -1664,11 +1600,11 @@
                     
                     <div class="data-item highlight-item">
                         <div class="data-label">11. Target Currency equivalent in Home Currency</div>
-                        <div class="data-value" id="currTargetToHome" style="color:#0369a1; font-weight:700;">Select Home Country...</div>
+                        <div class="data-value" id="currTargetToHome" style="color:#0369a1; font-weight:700;">Using My Location for Home Currency...</div>
                     </div>
                     <div class="data-item highlight-item">
                         <div class="data-label">12. Home Currency equivalent in Target Currency</div>
-                        <div class="data-value" id="currHomeToTarget" style="color:#0369a1; font-weight:700;">Select Home Country...</div>
+                        <div class="data-value" id="currHomeToTarget" style="color:#0369a1; font-weight:700;">Using My Location for Home Currency...</div>
                     </div>
                 </div>
                 </div>
@@ -1686,35 +1622,7 @@
                     <div class="data-item"><div class="data-label">5. Literacy Rate</div><div class="data-value" id="socLiteracy">--</div></div>
                     <div class="data-item"><div class="data-label">6. Female to Male Ratio</div><div class="data-value" id="socRatio">--</div></div>
                     <div class="data-item"><div class="data-label">7. Happiness Index</div><div class="data-value" id="socHappiness">--</div></div>
-                    <div class="data-item highlight-item"><div class="data-label">8. Poverty Rate — Percentage of the country's population living below $3.00 per person per day (2021 PPP)</div><div class="data-value" id="socPoverty300">--</div></div>
-                    <div class="data-item highlight-item"><div class="data-label">9. Poverty Rate — Percentage of the country's population living below $4.20 per person per day (2021 PPP)</div><div class="data-value" id="socPoverty420">--</div></div>
-                    <div class="data-item highlight-item"><div class="data-label">10. Poverty Rate — Percentage of the country's population living below $8.30 per person per day (2021 PPP)</div><div class="data-value" id="socPoverty830">--</div></div>
-                    <div class="poverty-check-wrap">
-                        <button type="button" class="poverty-check-btn" id="povertyCheckBtn">🔎 Check Poverty Data</button>
-                        <div class="poverty-check-status" id="povertyCheckStatus" aria-live="polite"></div>
-                    </div>
                 </div>
-                </div>
-            </div>
-
-            <!-- GOVERNMENT & DIPLOMACY -->
-            <div class="category-section">
-                <div class="category-title" onclick="toggleSection('governmentDiplomacyCollapsibleContent', 'governmentDiplomacyToggleIcon')">
-                    <span>Government &amp; Diplomacy</span><span id="governmentDiplomacyToggleIcon">▼ Click to Expand</span>
-                </div>
-                <div id="governmentDiplomacyCollapsibleContent" class="collapsible-content">
-                    <div class="government-diplomacy-note">Current country-level government and diplomatic information is retrieved dynamically. Select a Target Country and press <strong>CHECK</strong> to start the search. No Government &amp; Diplomacy search is started automatically.</div>
-                    <div style="display:flex;justify-content:center;margin:.55rem 0 .7rem;">
-                        <button type="button" id="governmentDiplomacyCheckBtn" class="government-diplomacy-check-btn" onclick="checkGovernmentDiplomacy()">🔎 CHECK GOVERNMENT &amp; DIPLOMACY</button>
-                    </div>
-                    <div class="grid">
-                        <div class="data-item"><div class="data-label">1. Head of State</div><div class="data-value" id="govHeadOfState">--</div></div>
-                        <div class="data-item"><div class="data-label">2. Head of Government</div><div class="data-value" id="govHeadOfGovernment">--</div></div>
-                        <div class="data-item"><div class="data-label">3. Foreign Minister</div><div class="data-value" id="govForeignMinister">--</div></div>
-                        <div class="data-item highlight-item"><div class="data-label">4. Permanent Representative to UN</div><div class="data-value" id="govPermanentRepresentative">--</div></div>
-                    </div>
-                    <div id="governmentDiplomacyStatus" class="government-diplomacy-status loading" aria-live="polite">Select a Target Country to retrieve Government &amp; Diplomacy data.</div>
-                    <div class="government-diplomacy-source">Structured data source: <a href="https://www.wikidata.org/" target="_blank" rel="noopener">Wikidata</a>. Official UN reference: <a href="https://www.un.org/dgacm/en/node/4313" target="_blank" rel="noopener">UN Protocol &amp; Liaison Service — Blue Book</a> and <a href="https://www.un.org/dgacm/en/node/4316" target="_blank" rel="noopener">UN Heads of State, Heads of Government and Ministers for Foreign Affairs</a>.</div>
                 </div>
             </div>
 
@@ -3339,9 +3247,7 @@ const REPORT_SOURCES = [
     "Open-Meteo Weather & Climatology Forecast API",
     "FAOSTAT / UN Demographic Yearbook",
     "World Happiness Report",
-    "Live Foreign Exchange Rates & Accurate Reference Data",
-    "Wikidata — live structured Government & Diplomacy data",
-    "United Nations Protocol and Liaison Service — official Government and Blue Book references"
+    "Live Foreign Exchange Rates & Accurate Reference Data"
 ];
 
 let savedSocietyEconomyData = loadSavedSocietyEconomyData();
@@ -3966,6 +3872,386 @@ tr:nth-child(even) td{background:#f8fafc}
 .report-sources-title{font-weight:bold;color:#1e3a8a;margin-bottom:4px}
 .report-source-item{margin:2px 0}
 </style>
+
+<style id="visual3DEnhancement">
+/* =========================================================
+   VISUAL-ONLY 3D ENHANCEMENT
+   No functional selectors, IDs, JavaScript or data changed.
+   ========================================================= */
+
+:root{
+  --v3d-bg-1:#eef4ff;
+  --v3d-bg-2:#f8fbff;
+  --v3d-surface:#ffffff;
+  --v3d-border:rgba(148,163,184,.42);
+  --v3d-shadow:
+    0 3px 7px rgba(15,23,42,.08),
+    0 12px 26px rgba(30,58,138,.08),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  --v3d-shadow-hover:
+    0 6px 12px rgba(15,23,42,.11),
+    0 20px 38px rgba(37,99,235,.14),
+    inset 0 1px 0 rgba(255,255,255,1);
+  --v3d-blue-1:#1e3a8a;
+  --v3d-blue-2:#2563eb;
+  --v3d-blue-3:#60a5fa;
+}
+
+/* Overall page depth */
+body{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(96,165,250,.18),transparent 28%),
+    radial-gradient(circle at 92% 4%,rgba(129,140,248,.14),transparent 25%),
+    linear-gradient(145deg,var(--v3d-bg-1),var(--v3d-bg-2) 48%,#eef2ff);
+}
+
+/* Main title */
+h1{
+  text-shadow:
+    0 1px 0 #fff,
+    0 3px 8px rgba(30,58,138,.18);
+  letter-spacing:.025em;
+}
+
+/* Top navigation and tab surfaces */
+.top-navigation-tabs,
+.tab-bar{
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.96),rgba(226,234,255,.92));
+  border:1px solid rgba(148,163,184,.48);
+  box-shadow:var(--v3d-shadow);
+  transform:translateZ(0);
+}
+
+.top-navigation-tabs .tab-btn,
+.tab-btn{
+  text-shadow:0 1px 0 rgba(255,255,255,.75);
+}
+
+.top-navigation-tabs .tab-btn.active,
+.tab-btn.active{
+  background:
+    linear-gradient(145deg,#2563eb,#1e3a8a);
+  box-shadow:
+    0 3px 0 #172554,
+    0 8px 16px rgba(37,99,235,.24),
+    inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+/* Select/control surfaces */
+select,
+.journey-setting,
+.airport-selection-row,
+.aircraft-sound-control,
+.aircraft-volume-control,
+.ranking-control-card{
+  box-shadow:
+    0 2px 4px rgba(15,23,42,.06),
+    inset 0 1px 2px rgba(15,23,42,.035);
+  transition:
+    box-shadow .18s ease,
+    border-color .18s ease,
+    transform .18s ease;
+}
+
+select:hover,
+.journey-setting:hover,
+.airport-selection-row:hover,
+.aircraft-sound-control:hover,
+.aircraft-volume-control:hover,
+.ranking-control-card:hover{
+  border-color:rgba(37,99,235,.48);
+  box-shadow:
+    0 4px 8px rgba(15,23,42,.08),
+    0 10px 20px rgba(37,99,235,.08),
+    inset 0 1px 0 #fff;
+}
+
+select:focus{
+  box-shadow:
+    0 0 0 2px rgba(37,99,235,.16),
+    0 5px 12px rgba(37,99,235,.12),
+    inset 0 1px 0 #fff;
+}
+
+/* Main cards */
+.card,
+.ranking-panel,
+.data-storage-panel,
+.sources-section{
+  border:1px solid var(--v3d-border);
+  box-shadow:var(--v3d-shadow);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.99),rgba(248,250,252,.96));
+}
+
+/* Card headers */
+.card-header{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.88),rgba(239,246,255,.72));
+  border-radius:10px;
+  padding:9px 10px;
+  box-shadow:
+    0 2px 5px rgba(15,23,42,.045),
+    inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+.card-header h2{
+  text-shadow:0 2px 5px rgba(30,58,138,.13);
+}
+
+/* App icon becomes a raised object */
+.app-icon{
+  background:
+    linear-gradient(145deg,#ffffff,#dbeafe);
+  border-color:#93c5fd;
+  box-shadow:
+    0 3px 0 #bfdbfe,
+    0 8px 16px rgba(37,99,235,.16),
+    inset 0 1px 0 #fff;
+}
+
+/* Section headings */
+.category-title,
+.facility-title{
+  padding:5px 8px;
+  border:1px solid rgba(148,163,184,.28);
+  border-radius:7px;
+  background:
+    linear-gradient(145deg,rgba(239,246,255,.95),rgba(255,255,255,.9));
+  box-shadow:
+    0 2px 4px rgba(15,23,42,.05),
+    inset 0 1px 0 #fff;
+  text-shadow:0 1px 2px rgba(30,58,138,.10);
+}
+
+.category-title:hover,
+.facility-title:hover{
+  box-shadow:
+    0 4px 8px rgba(15,23,42,.08),
+    0 8px 16px rgba(37,99,235,.08);
+}
+
+/* Data cards */
+.data-item{
+  background:
+    linear-gradient(145deg,#ffffff,#f1f5f9);
+  border:1px solid rgba(148,163,184,.38);
+  box-shadow:
+    0 2px 4px rgba(15,23,42,.055),
+    0 6px 12px rgba(15,23,42,.035),
+    inset 0 1px 0 #fff;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
+}
+
+.data-item:hover{
+  transform:translateY(-2px);
+  border-color:rgba(96,165,250,.55);
+  box-shadow:var(--v3d-shadow-hover);
+}
+
+.data-label{
+  text-shadow:0 1px 1px rgba(255,255,255,.8);
+}
+
+.data-value{
+  text-shadow:0 1px 1px rgba(255,255,255,.9);
+}
+
+/* Highlight cards */
+.highlight-item{
+  background:
+    linear-gradient(145deg,#eff6ff,#dbeafe);
+  border-color:#93c5fd;
+  box-shadow:
+    0 3px 0 #bfdbfe,
+    0 9px 18px rgba(37,99,235,.10),
+    inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+/* Buttons */
+button,
+.location-btn,
+.route-btn{
+  box-shadow:
+    0 3px 0 rgba(15,23,42,.16),
+    0 6px 12px rgba(15,23,42,.10),
+    inset 0 1px 0 rgba(255,255,255,.24);
+  transition:
+    transform .14s ease,
+    box-shadow .14s ease,
+    filter .14s ease;
+}
+
+button:hover,
+.location-btn:hover,
+.route-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:
+    0 4px 0 rgba(15,23,42,.15),
+    0 10px 18px rgba(37,99,235,.14),
+    inset 0 1px 0 rgba(255,255,255,.32);
+  filter:brightness(1.025);
+}
+
+button:active,
+.location-btn:active,
+.route-btn:active{
+  transform:translateY(1px);
+  box-shadow:
+    0 1px 0 rgba(15,23,42,.18),
+    0 3px 7px rgba(15,23,42,.10),
+    inset 0 2px 4px rgba(15,23,42,.10);
+}
+
+/* Storage controls */
+.data-storage-panel{
+  background:
+    linear-gradient(145deg,#ffffff,#eef4ff);
+}
+
+.storage-btn{
+  box-shadow:
+    0 2px 0 rgba(15,23,42,.14),
+    0 5px 10px rgba(15,23,42,.09),
+    inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+/* Ranking table */
+.ranking-table-wrap{
+  box-shadow:
+    0 4px 10px rgba(15,23,42,.08),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.ranking-table th{
+  background:
+    linear-gradient(145deg,#2563eb,#1e3a8a);
+  text-shadow:0 1px 2px rgba(0,0,0,.24);
+  box-shadow:
+    inset 0 -1px 0 rgba(255,255,255,.15),
+    inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+.ranking-table tbody tr:hover td{
+  box-shadow:inset 0 0 0 999px rgba(219,234,254,.30);
+}
+
+/* Chips */
+.ranking-chip{
+  box-shadow:
+    0 2px 4px rgba(37,99,235,.08),
+    inset 0 1px 0 #fff;
+}
+
+/* Journey settings */
+.journey-animation-settings-toggle{
+  background:
+    linear-gradient(145deg,#ffffff,#eef4ff);
+  box-shadow:
+    0 3px 7px rgba(15,23,42,.07),
+    inset 0 1px 0 #fff;
+}
+
+.journey-animation-settings-panel{
+  box-shadow:
+    0 3px 8px rgba(15,23,42,.06),
+    inset 0 1px 0 #fff;
+}
+
+/* Airport/map frame */
+.airport-map-frame{
+  border-color:rgba(96,165,250,.55);
+  box-shadow:
+    0 4px 10px rgba(15,23,42,.10),
+    0 12px 24px rgba(37,99,235,.08),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+/* Map markers */
+.map-location-marker,
+.map-airport-marker{
+  box-shadow:
+    0 3px 0 rgba(15,23,42,.18),
+    0 7px 14px rgba(15,23,42,.22),
+    inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+/* Source panel */
+.sources-section{
+  box-shadow:
+    0 3px 8px rgba(15,23,42,.07),
+    inset 0 1px 0 #fff;
+}
+
+/* Audit interface */
+#latestStatusAuditBtn{
+  background:
+    linear-gradient(145deg,#334155,#0f172a);
+  box-shadow:
+    0 3px 0 #020617,
+    0 9px 20px rgba(15,23,42,.20),
+    inset 0 1px 0 rgba(255,255,255,.14);
+}
+
+#auditPanel{
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.48),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.audit-card,
+.audit-source-card,
+.audit-metric{
+  box-shadow:
+    0 3px 8px rgba(0,0,0,.12),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* Location/route controls */
+.inline-location-timer,
+.location-timer-card{
+  box-shadow:
+    0 10px 24px rgba(15,23,42,.22),
+    inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+/* Aircraft controls */
+.aircraft-sound-test{
+  box-shadow:
+    0 3px 0 #bfdbfe,
+    0 7px 14px rgba(37,99,235,.10),
+    inset 0 1px 0 #fff;
+}
+
+/* Range sliders */
+input[type="range"]{
+  filter:drop-shadow(0 2px 3px rgba(15,23,42,.10));
+}
+
+/* Gentle depth for empty state */
+.empty-state{
+  background:
+    linear-gradient(145deg,#ffffff,#f1f5f9);
+  box-shadow:
+    0 4px 10px rgba(15,23,42,.05),
+    inset 0 1px 0 #fff;
+}
+
+/* Preserve usability on touch devices: hover depth is not forced */
+@media (hover:none){
+  .data-item:hover,
+  button:hover,
+  .location-btn:hover,
+  .route-btn:hover{
+    transform:none;
+  }
+}
+</style>
+
 </head>
 <body>
 <h1>Global Country Intelligence Dashboard — Society &amp; Economy Data</h1>
@@ -4092,7 +4378,7 @@ function resetDashboardForTargetChange(){
     journeyReferenceCapital="";
     clearAirportMapLayers();selectedAirport=null;selectedAirportList=[];
     const select=$("targetAirportSelect");if(select){select.innerHTML='<option value="">-- Select Airport --</option>';select.disabled=true;}
-    ["countryName","geoArea","geoLand","geoCultivable","geoCapital","geoMajorCities","geoAirports","trendTemp","trendHumidity","trendRain","trendSnow","trendWind","predTemp","predHumidity","predRain","predSnow","predVisibility","econCurrency","econGdp","econExport","econImport","econPerCapita","econCostOfLiving","econInternalDebt","econExternalDebt","econBanks","econAlgaeFunding","socPopulation","socFood","socTrend","socLanguages","socLiteracy","socRatio","socHappiness","socPoverty300","socPoverty420","socPoverty830","worldUserLocationAirport","worldNearestAirport","worldAirportDistance","worldUserLocationRail","worldNearestRail","worldRailDistance","pcGDP","pcArableLand","pcTotalLand","pcExport","pcImport","pcExternalDebt","pcInternalDebt","pcIlliterateDensity","pcLiterateDensity"].forEach(id=>{if($(id))$(id).textContent="--";});
+    ["countryName","geoArea","geoLand","geoCultivable","geoCapital","geoMajorCities","geoAirports","trendTemp","trendHumidity","trendRain","trendSnow","trendWind","predTemp","predHumidity","predRain","predSnow","predVisibility","econCurrency","econGdp","econExport","econImport","econPerCapita","econCostOfLiving","econInternalDebt","econExternalDebt","econBanks","econAlgaeFunding","socPopulation","socFood","socTrend","socLanguages","socLiteracy","socRatio","socHappiness","worldUserLocationAirport","worldNearestAirport","worldAirportDistance","worldUserLocationRail","worldNearestRail","worldRailDistance","pcGDP","pcArableLand","pcTotalLand","pcExport","pcImport","pcExternalDebt","pcInternalDebt","pcIlliterateDensity","pcLiterateDensity"].forEach(id=>{if($(id))$(id).textContent="--";});
     updateJourneyAnimationTimeDisplay();
 
     /* Keep the Airport tab collapsed after a Target Country change. */
@@ -4117,181 +4403,91 @@ function getWorldBankPoverty(country, povertyKey){
 
 function formatWorldBankPoverty(country, povertyKey){
     const p=getWorldBankPoverty(country,povertyKey);
-    if(!p || !Number.isFinite(Number(p.value))) return 'N/A — no latest World Bank observation';
+    if(!p || !Number.isFinite(Number(p.value))) return '--';
     return `${Number(p.value).toFixed(2)}% of population (data year ${p.year})`;
 }
 
-function updateWorldBankPovertyDisplay(country){
-    const values={
-        socPoverty300:formatWorldBankPoverty(country,'poverty300'),
-        socPoverty420:formatWorldBankPoverty(country,'poverty420'),
-        socPoverty830:formatWorldBankPoverty(country,'poverty830')
-    };
-    Object.entries(values).forEach(([id,value])=>{if($(id))$(id).textContent=value;});
+async function fetchWorldBankPovertyObservation(iso2, indicator){
+    const url=`https://api.worldbank.org/v2/country/${encodeURIComponent(String(iso2).toLowerCase())}/indicator/${encodeURIComponent(indicator)}?format=json&per_page=100`;
+    const response=await worldFetchWithTimeout(url,15000,{headers:{Accept:'application/json'}});
+    const json=await response.json();
+    if(!Array.isArray(json) || !Array.isArray(json[1])){
+        throw new Error(`Invalid World Bank response for ${indicator}`);
+    }
+
+    let latest=null;
+    for(const row of json[1]){
+        if(row?.value===null || row?.value==='' || row?.value===undefined) continue;
+        const value=Number(row.value);
+        const year=Number(row.date);
+        if(!Number.isFinite(value) || !Number.isFinite(year)) continue;
+        if(!latest || year>latest.year){
+            latest={value,year,indicator};
+        }
+    }
+    return latest;
 }
 
-async function checkSelectedCountryPovertyData(){
-    const country=String($('countrySelect')?.value||'').trim();
-    const btn=$('povertyCheckBtn');
-    const status=$('povertyCheckStatus');
+const worldBankPovertyCountryRequests=new Map();
+const worldBankPovertyCountryCompleted=new Set();
 
-    const setStatus=(type,text)=>{
-        if(status){
-            status.className=`poverty-check-status${type?' '+type:''}`;
-            status.textContent=text;
-        }
-    };
+async function ensureWorldBankPovertyForCountry(country){
+    const iso2=iso2For(country);
+    if(!iso2) return worldBankPovertyData;
 
-    if(!country){
-        setStatus('error','Please select a target country first.');
-        return;
-    }
+    if(worldBankPovertyCountryCompleted.has(iso2)) return worldBankPovertyData[iso2]||{};
 
-    const iso2=String(countryIso2?.[country]||'').trim().toLowerCase();
-    if(!/^[a-z]{2}$/.test(iso2)){
-        setStatus('error',`No World Bank ISO-2 code is available for ${country}.`);
-        return;
-    }
+    const existingRequest=worldBankPovertyCountryRequests.get(iso2);
+    if(existingRequest) return existingRequest;
 
-    if(btn){
-        btn.disabled=true;
-        btn.textContent='⏳ Checking Poverty Data…';
-    }
-    setStatus('',`Connecting to the World Bank for ${country} (${iso2.toUpperCase()})…`);
-
-    /*
-     * IMPORTANT:
-     * This manual path deliberately does not depend on the application's
-     * large World Bank loader.  It performs three small country-specific
-     * requests.  A timeout prevents the UI from remaining permanently at
-     * "Connecting..." when a browser/network blocks a request.
-     *
-     * The normal JSON request is attempted first.  If the local HTML file
-     * cannot read the JSON response because of a browser CORS restriction,
-     * the World Bank's documented JSONP format is used as a fallback.
-     */
-    const fetchWithTimeout=async(url,ms=12000)=>{
-        const controller=new AbortController();
-        const timer=setTimeout(()=>controller.abort(),ms);
+    const request=(async()=>{
         try{
-            const response=await fetch(url,{cache:'no-store',headers:{Accept:'application/json'},signal:controller.signal});
-            if(!response.ok) throw new Error(`HTTP ${response.status}`);
-            return await response.json();
-        }catch(error){
-            if(error?.name==='AbortError') throw new Error('request timed out after 12 seconds');
-            throw error;
-        }finally{ clearTimeout(timer); }
-    };
+            const entries=Object.entries(WORLD_BANK_POVERTY_INDICATORS);
+            const results=await Promise.all(entries.map(async([povertyKey,meta])=>{
+                try{
+                    const observation=await fetchWorldBankPovertyObservation(iso2,meta.key);
+                    return [povertyKey, observation ? {
+                        ...observation,
+                        threshold:meta.threshold,
+                        yearBasis:meta.yearBasis
+                    } : null];
+                }catch(error){
+                    console.warn(`World Bank ${meta.key} request failed for ${country}:`,error);
+                    return [povertyKey,null];
+                }
+            }));
 
-    const fetchJsonp=({url,timeout=12000})=>new Promise((resolve,reject)=>{
-        const callbackName=`wbPovertyCallback_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-        const script=document.createElement('script');
-        let settled=false;
-        const cleanup=()=>{
-            clearTimeout(timer);
-            try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}
-            script.remove();
-        };
-        const finish=(fn,value)=>{
-            if(settled)return;
-            settled=true;
-            cleanup();
-            fn(value);
-        };
-        window[callbackName]=(data)=>finish(resolve,data);
-        script.onerror=()=>finish(reject,new Error('JSONP request could not reach the World Bank.'));
-        script.src=`${url}${url.includes('?')?'&':'?'}format=jsonP&prefix=${encodeURIComponent(callbackName)}`;
-        document.head.appendChild(script);
-        const timer=setTimeout(()=>finish(reject,new Error('JSONP request timed out after 12 seconds')),timeout);
-    });
+            const countryDataOut={};
+            results.forEach(([povertyKey,observation])=>{
+                if(observation) countryDataOut[povertyKey]=observation;
+            });
 
-    const result={};
-    const errors=[];
-
-    const fetchOne=async (povertyKey,meta)=>{
-        const url=`https://api.worldbank.org/v2/country/${encodeURIComponent(iso2)}/indicator/${encodeURIComponent(meta.key)}?per_page=100&date=1960:2026&source=2`;
-        try{
-            let json;
-            let method='JSON';
-            try{
-                json=await fetchWithTimeout(url,12000);
-            }catch(firstError){
-                method='JSONP fallback';
-                json=await fetchJsonp({url,timeout:12000});
-            }
-
-            if(!Array.isArray(json) || !Array.isArray(json[1])){
-                throw new Error('World Bank returned an unexpected response.');
-            }
-
-            const rows=json[1]
-                .filter(row=>row && row.value!==null && row.value!=='' && Number.isFinite(Number(row.value)))
-                .sort((a,b)=>Number(b.date)-Number(a.date));
-
-            if(!rows.length) throw new Error('No non-empty observation was returned.');
-
-            const row=rows[0];
-            const year=Number(row.date);
-            result[povertyKey]={
-                value:Number(row.value),
-                year:Number.isFinite(year)?year:'N/A',
-                indicator:meta.key,
-                threshold:meta.threshold,
-                yearBasis:meta.yearBasis,
-                fetchMethod:method
+            const currentGeneration=dashboardGeneration;
+            worldBankPovertyData={
+                ...worldBankPovertyData,
+                [iso2]:{
+                    ...(worldBankPovertyData[iso2]||{}),
+                    ...countryDataOut
+                }
             };
-        }catch(error){
-            errors.push(`${meta.threshold}: ${error?.message||String(error)}`);
-            result[povertyKey]=null;
+
+            /* Only the currently displayed country may update the visible UI. */
+            const currentTarget=$('countrySelect')?.value||'';
+            worldBankPovertyCountryCompleted.add(iso2);
+
+            if(currentTarget===country && currentGeneration===dashboardGeneration){
+                updateWorldBankPovertyDisplayWithoutRefetch(country);
+            }
+
+            return worldBankPovertyData[iso2];
+        }finally{
+            worldBankPovertyCountryRequests.delete(iso2);
         }
-    };
+    })();
 
-    try{
-        await Promise.all(Object.entries(WORLD_BANK_POVERTY_INDICATORS).map(([key,meta])=>fetchOne(key,meta)));
-
-        const isoKey=iso2;
-        worldBankPovertyData[isoKey]=worldBankPovertyData[isoKey]||{};
-        Object.entries(result).forEach(([key,value])=>{
-            if(value) worldBankPovertyData[isoKey][key]=value;
-            else delete worldBankPovertyData[isoKey][key];
-        });
-
-        updateWorldBankPovertyDisplay(country);
-
-        const found=Object.values(result).filter(Boolean).length;
-        if(found===3){
-            const usedFallback=Object.values(result).some(v=>v?.fetchMethod==='JSONP fallback');
-            setStatus('success',`✓ 3 poverty indicators retrieved for ${country}${usedFallback?' (JSONP fallback used)':''}.`);
-        }else if(found>0){
-            setStatus('error',`Retrieved ${found} of 3 poverty indicators for ${country}. ${errors.join(' | ')}`);
-        }else{
-            setStatus('error',`No poverty observations were returned for ${country}. ${errors.join(' | ')}`);
-        }
-    }catch(error){
-        console.error('Targeted World Bank poverty check failed:',error);
-        updateWorldBankPovertyDisplay(country);
-        setStatus('error',`Unable to retrieve poverty data: ${error?.message||String(error)}`);
-    }finally{
-        if(btn){
-            btn.disabled=false;
-            btn.textContent='🔎 Check Poverty Data';
-        }
-    }
+    worldBankPovertyCountryRequests.set(iso2,request);
+    return request;
 }
-
-/* Dedicated manual Poverty Check button: install once after the DOM exists. */
-(function installPovertyCheckButton(){
-    const install=()=>{
-        const btn=$('povertyCheckBtn');
-        if(!btn || btn.dataset.povertyCheckInstalled==='1') return;
-        btn.dataset.povertyCheckInstalled='1';
-        btn.addEventListener('click',checkSelectedCountryPovertyData);
-    };
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
-    else install();
-    setTimeout(install,300);
-    setTimeout(install,1000);
-})();
 
 async function loadWorldBankPovertyData(force=false){
     if(worldBankPovertyState.loading) return worldBankPovertyData;
@@ -4302,22 +4498,22 @@ async function loadWorldBankPovertyData(force=false){
 
     try{
         const requests=Object.entries(WORLD_BANK_POVERTY_INDICATORS).map(async ([povertyKey,meta])=>{
-            const url=`https://api.worldbank.org/v2/country/all/indicator/${encodeURIComponent(meta.key)}?format=json&per_page=1000&mrnev=1`;
+            /*
+             * MRNEV asks the World Bank for the most recent non-empty value.
+             * A larger page size is retained because the endpoint can return
+             * many country/region records when country=all is requested.
+             */
+            const url=`https://api.worldbank.org/v2/country/all/indicator/${encodeURIComponent(meta.key)}?format=json&per_page=4000&MRNEV=1`;
             const response=await worldFetchWithTimeout(url,15000,{headers:{Accept:'application/json'}});
             const json=await response.json();
             if(!Array.isArray(json)||!Array.isArray(json[1])){
                 throw new Error(`Invalid World Bank response for ${meta.key}`);
             }
 
-            /*
-             * Do not assume the API response is ordered by year.  The World Bank
-             * endpoint can return more than one observation for a country.  For
-             * each country/indicator explicitly retain the latest NON-NULL
-             * observation.  This makes the result deterministic even if the API
-             * changes its ordering or mrnev behaviour.
-             */
             for(const row of json[1]){
-                if(row?.value==null || row?.value==='' || !Number.isFinite(Number(row.value))) continue;
+                if(row?.value===null || row?.value==='' || row?.value===undefined) continue;
+                const value=Number(row.value);
+                if(!Number.isFinite(value)) continue;
 
                 const iso3=String(row.countryiso3code||row.country?.id||'').toUpperCase();
                 const iso2=(iso3ToIso2[iso3]||String(row.countryiso2code||'')).toLowerCase();
@@ -4327,7 +4523,7 @@ async function loadWorldBankPovertyData(force=false){
                 if(!Number.isFinite(year)) continue;
 
                 const candidate={
-                    value:Number(row.value),
+                    value,
                     year,
                     indicator:meta.key,
                     threshold:meta.threshold,
@@ -4349,9 +4545,7 @@ async function loadWorldBankPovertyData(force=false){
             loadedAt:new Date().toISOString()
         };
 
-        /* Refresh the visible country after the asynchronous load completes. */
-        const currentTarget=$("countrySelect")?.value||"";
-        if(currentTarget) updateWorldBankPovertyDisplay(currentTarget);
+        const currentTarget=$('countrySelect')?.value||'';
         return out;
     }catch(error){
         worldBankPovertyData=out;
@@ -4362,412 +4556,10 @@ async function loadWorldBankPovertyData(force=false){
             loadedAt:new Date().toISOString()
         };
         console.warn('World Bank poverty data unavailable:',error);
-        const currentTarget=$("countrySelect")?.value||"";
-        if(currentTarget) updateWorldBankPovertyDisplay(currentTarget);
+        const currentTarget=$('countrySelect')?.value||'';
         return out;
     }
 }
-
-/* ========================= GOVERNMENT & DIPLOMACY ========================= */
-/*
- * PHASE 10 — ROBUST DYNAMIC GOVERNMENT & DIPLOMACY ENGINE
- * --------------------------------------------------------
- * Design goals:
- *   1. Do not depend on the dashboard lifecycle generation counter.
- *   2. Do not use a country-label SPARQL lookup.
- *   3. Resolve the selected country to a Wikidata Q-id with the Action API.
- *   4. Read Head of State / Head of Government directly from the country item.
- *   5. Search Foreign Minister / Permanent Representative separately so one
- *      missing field cannot block the other three.
- *   6. Every network request has a timeout and stale selections are ignored.
- *   7. Keep the original dashboard, ranking and all other modules untouched.
- */
-const governmentDiplomacyState = {
-    cache: new Map(),
-    requestToken: 0,
-    qidCache: new Map()
-};
-
-function setGovernmentDiplomacyValue(id, value){
-    const el = $(id);
-    if(el) el.textContent = value || 'Not available';
-}
-
-function setGovernmentDiplomacyStatus(message, mode='loading'){
-    const el = $('governmentDiplomacyStatus');
-    if(!el) return;
-    el.className = `government-diplomacy-status ${mode}`.trim();
-    el.textContent = message;
-}
-
-function governmentDiplomacyCurrentCountry(target){
-    return String($('countrySelect')?.value || '').trim() === String(target || '').trim();
-}
-
-function governmentDiplomacyFetch(url, timeout=10000){
-    const controller = new AbortController();
-    const timer = setTimeout(()=>controller.abort(), timeout);
-    return fetch(url, {
-        signal: controller.signal,
-        cache: 'no-store',
-        headers: { 'Accept': 'application/json' }
-    }).finally(()=>clearTimeout(timer));
-}
-
-function governmentDiplomacyEscapedLiteral(value){
-    return JSON.stringify(String(value || ''));
-}
-
-async function governmentDiplomacySearchQid(target){
-    const cached = governmentDiplomacyState.qidCache.get(target);
-    if(cached) return cached;
-
-    /* Prefer the application's own ISO-2 mapping when available. */
-    const iso2 = (()=>{
-        try { return String(countryIso2?.[target] || '').toUpperCase(); }
-        catch(_){ return ''; }
-    })();
-
-    /* Wikidata Action API search is deliberately used here instead of SPARQL
-       text matching. Wikidata itself recommends search for fuzzy/text lookup. */
-    const searches = [target];
-    if(iso2) searches.push(`${target} country ${iso2}`);
-
-    for(const term of searches){
-        const url = 'https://www.wikidata.org/w/api.php?' + new URLSearchParams({
-            action: 'wbsearchentities',
-            search: term,
-            language: 'en',
-            uselang: 'en',
-            type: 'item',
-            limit: '10',
-            format: 'json',
-            origin: '*'
-        }).toString();
-
-        try{
-            const r = await governmentDiplomacyFetch(url, 9000);
-            if(!r.ok) continue;
-            const j = await r.json();
-            const results = Array.isArray(j?.search) ? j.search : [];
-            const wanted = target.toLowerCase();
-            const exact = results.find(x => String(x?.label || '').toLowerCase() === wanted);
-            const countryLike = results.find(x => {
-                const d = String(x?.description || '').toLowerCase();
-                const l = String(x?.label || '').toLowerCase();
-                return d.includes('country') || d.includes('sovereign state') || l === wanted;
-            });
-            const hit = exact || countryLike || results[0];
-            if(hit?.id && /^Q\d+$/.test(hit.id)){
-                governmentDiplomacyState.qidCache.set(target, hit.id);
-                return hit.id;
-            }
-        }catch(_){ /* try the next search/fallback */ }
-    }
-
-    return '';
-}
-
-async function governmentDiplomacyGetEntity(qid){
-    if(!qid) return null;
-    const url = 'https://www.wikidata.org/w/api.php?' + new URLSearchParams({
-        action: 'wbgetentities',
-        ids: qid,
-        props: 'claims|labels',
-        languages: 'en',
-        format: 'json',
-        origin: '*'
-    }).toString();
-    const r = await governmentDiplomacyFetch(url, 9000);
-    if(!r.ok) throw new Error(`Wikidata entity HTTP ${r.status}`);
-    const j = await r.json();
-    return j?.entities?.[qid] || null;
-}
-
-function governmentDiplomacyClaimQids(entity, property){
-    const claims = entity?.claims?.[property];
-    if(!Array.isArray(claims)) return [];
-    return claims
-        .filter(c => c?.mainsnak?.snaktype === 'value')
-        .map(c => c?.mainsnak?.datavalue?.value?.id)
-        .filter(x => /^Q\d+$/.test(String(x || '')));
-}
-
-async function governmentDiplomacyGetLabels(qids){
-    const ids = [...new Set((qids || []).filter(x => /^Q\d+$/.test(String(x || ''))))];
-    if(!ids.length) return new Map();
-    const url = 'https://www.wikidata.org/w/api.php?' + new URLSearchParams({
-        action: 'wbgetentities',
-        ids: ids.slice(0,50).join('|'),
-        props: 'labels',
-        languages: 'en',
-        format: 'json',
-        origin: '*'
-    }).toString();
-    const r = await governmentDiplomacyFetch(url, 9000);
-    if(!r.ok) throw new Error(`Wikidata labels HTTP ${r.status}`);
-    const j = await r.json();
-    const map = new Map();
-    for(const qid of ids){
-        const label = j?.entities?.[qid]?.labels?.en?.value;
-        if(label) map.set(qid,label);
-    }
-    return map;
-}
-
-async function governmentDiplomacySPARQL(query, timeout=12000){
-    const url = 'https://query.wikidata.org/sparql?' + new URLSearchParams({
-        query,
-        format: 'json'
-    }).toString();
-    const r = await governmentDiplomacyFetch(url, timeout);
-    if(!r.ok) throw new Error(`Wikidata SPARQL HTTP ${r.status}`);
-    return r.json();
-}
-
-function governmentDiplomacyPickBinding(json, personVar='personLabel', officeVar='officeLabel'){
-    const rows = Array.isArray(json?.results?.bindings) ? json.results.bindings : [];
-    if(!rows.length) return null;
-    return rows.find(x => x?.[personVar]?.value) || null;
-}
-
-async function governmentDiplomacyFindForeignMinister(qid){
-    if(!qid) return '';
-    const query = `
-PREFIX wd: <http://www.wikidata.org/entity/>
-PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-PREFIX p: <http://www.wikidata.org/prop/>
-PREFIX ps: <http://www.wikidata.org/prop/statement/>
-PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX wikibase: <http://wikiba.se/ontology#>
-SELECT DISTINCT ?person ?personLabel ?officeLabel ?start WHERE {
-  ?person p:P39 ?statement .
-  ?statement ps:P39 ?office .
-  ?office wdt:P1001 wd:${qid} .
-  ?office rdfs:label ?officeLabel .
-  FILTER(LANG(?officeLabel)="en")
-  FILTER(
-    CONTAINS(LCASE(STR(?officeLabel)), "foreign") ||
-    CONTAINS(LCASE(STR(?officeLabel)), "external affairs") ||
-    CONTAINS(LCASE(STR(?officeLabel)), "external relations") ||
-    CONTAINS(LCASE(STR(?officeLabel)), "secretary of state")
-  )
-  OPTIONAL { ?statement pq:P580 ?start . }
-  FILTER NOT EXISTS { ?statement pq:P582 ?end . }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY DESC(?start)
-LIMIT 10`;
-    try{
-        const j = await governmentDiplomacySPARQL(query, 11000);
-        const hit = governmentDiplomacyPickBinding(j);
-        return hit?.personLabel?.value || '';
-    }catch(_){ return ''; }
-}
-
-async function governmentDiplomacyFindPermanentRepresentative(qid){
-    if(!qid) return '';
-    const query = `
-PREFIX wd: <http://www.wikidata.org/entity/>
-PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-PREFIX p: <http://www.wikidata.org/prop/>
-PREFIX ps: <http://www.wikidata.org/prop/statement/>
-PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX wikibase: <http://wikiba.se/ontology#>
-SELECT DISTINCT ?person ?personLabel ?officeLabel ?start WHERE {
-  ?person p:P39 ?statement .
-  ?statement ps:P39 ?office .
-  ?office wdt:P1001 wd:${qid} .
-  ?office rdfs:label ?officeLabel .
-  FILTER(LANG(?officeLabel)="en")
-  FILTER(
-    CONTAINS(LCASE(STR(?officeLabel)), "permanent representative") &&
-    (CONTAINS(LCASE(STR(?officeLabel)), "united nations") ||
-     CONTAINS(LCASE(STR(?officeLabel)), "un"))
-  )
-  OPTIONAL { ?statement pq:P580 ?start . }
-  FILTER NOT EXISTS { ?statement pq:P582 ?end . }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-ORDER BY DESC(?start)
-LIMIT 10`;
-    try{
-        const j = await governmentDiplomacySPARQL(query, 11000);
-        const hit = governmentDiplomacyPickBinding(j);
-        return hit?.personLabel?.value || '';
-    }catch(_){ return ''; }
-}
-
-/* Small emergency fallback only for the six countries used during our
-   diagnostic phases. It is NOT the main data source. */
-const GOVERNMENT_DIPLOMACY_DIAGNOSTIC_FALLBACK = {
-    "India": {headState:"Droupadi Murmu",headGovernment:"Narendra Modi",foreignMinister:"Subrahmanyam Jaishankar",permanentRepresentative:"Parvathaneni Harish"},
-    "United States": {headState:"Donald J. Trump",headGovernment:"Donald J. Trump",foreignMinister:"Marco Rubio",permanentRepresentative:"Michael G. Waltz"},
-    "United Kingdom": {headState:"King Charles III",headGovernment:"Andy Burnham",foreignMinister:"Ed Miliband",permanentRepresentative:"Sarah MacIntosh"},
-    "Australia": {headState:"King Charles III",headGovernment:"Anthony Albanese",foreignMinister:"Penny Wong",permanentRepresentative:"James Larsen"},
-    "France": {headState:"Emmanuel Macron",headGovernment:"Sébastien Lecornu",foreignMinister:"Jean-Noël Barrot",permanentRepresentative:"Jérôme Bonnafont"},
-    "Germany": {headState:"Frank-Walter Steinmeier",headGovernment:"Friedrich Merz",foreignMinister:"Johann Wadephul",permanentRepresentative:"Antje Leendertse"}
-};
-
-async function fetchGovernmentDiplomacy(country, generation, forceRefresh=false){
-    const token = ++governmentDiplomacyState.requestToken;
-    const target = String(country || '').trim();
-
-    if(!target){
-        ['govHeadOfState','govHeadOfGovernment','govForeignMinister','govPermanentRepresentative']
-            .forEach(id=>setGovernmentDiplomacyValue(id,'--'));
-        setGovernmentDiplomacyStatus('Select a Target Country to retrieve Government & Diplomacy data.','loading');
-        return;
-    }
-
-    if(!governmentDiplomacyCurrentCountry(target)) return;
-
-    const cached = governmentDiplomacyState.cache.get(target);
-    if(cached && !forceRefresh){
-        renderGovernmentDiplomacy(cached,target);
-        return;
-    }
-
-    ['govHeadOfState','govHeadOfGovernment','govForeignMinister','govPermanentRepresentative']
-        .forEach(id=>setGovernmentDiplomacyValue(id,'Loading…'));
-    setGovernmentDiplomacyStatus(`Resolving ${target} through Wikidata…`,'loading');
-
-    try{
-        const qid = await governmentDiplomacySearchQid(target);
-        if(token !== governmentDiplomacyState.requestToken || !governmentDiplomacyCurrentCountry(target)) return;
-        if(!qid) throw new Error('Country Q-id could not be resolved.');
-
-        setGovernmentDiplomacyStatus(`Country resolved as ${qid}. Reading current leadership…`,'loading');
-
-        const entity = await governmentDiplomacyGetEntity(qid);
-        if(token !== governmentDiplomacyState.requestToken || !governmentDiplomacyCurrentCountry(target)) return;
-        if(!entity) throw new Error(`Wikidata entity ${qid} was not returned.`);
-
-        const headStateQids = governmentDiplomacyClaimQids(entity,'P35');
-        const headGovernmentQids = governmentDiplomacyClaimQids(entity,'P6');
-        const allHeadQids = [...new Set([...headStateQids,...headGovernmentQids])];
-        const labels = await governmentDiplomacyGetLabels(allHeadQids);
-
-        const result = {
-            qid,
-            headState: labels.get(headStateQids[0]) || '',
-            headGovernment: labels.get(headGovernmentQids[0]) || '',
-            foreignMinister: '',
-            permanentRepresentative: '',
-            retrievedAt: new Date().toISOString(),
-            source: 'Wikidata Action API + Wikidata Query Service'
-        };
-
-        /* Render the two direct country properties immediately. */
-        setGovernmentDiplomacyValue('govHeadOfState', result.headState || 'Not available');
-        setGovernmentDiplomacyValue('govHeadOfGovernment', result.headGovernment || 'Not available');
-        setGovernmentDiplomacyStatus(`Country ${qid} resolved • Leadership loaded • Searching Foreign Minister and UN Representative…`,'loading');
-
-        /* The two position searches are independent. A timeout/failure in one
-           must never erase the already retrieved Head of State/Government. */
-        const [fm,pr] = await Promise.all([
-            governmentDiplomacyFindForeignMinister(qid),
-            governmentDiplomacyFindPermanentRepresentative(qid)
-        ]);
-
-        if(token !== governmentDiplomacyState.requestToken || !governmentDiplomacyCurrentCountry(target)) return;
-
-        result.foreignMinister = fm || '';
-        result.permanentRepresentative = pr || '';
-
-        /* If live position data fails, use only the six-country diagnostic
-           fallback. This keeps the proven test countries functional while the
-           dynamic engine is being validated. */
-        const fallback = GOVERNMENT_DIPLOMACY_DIAGNOSTIC_FALLBACK[target];
-        if(fallback){
-            if(!result.headState) result.headState=fallback.headState;
-            if(!result.headGovernment) result.headGovernment=fallback.headGovernment;
-            if(!result.foreignMinister) result.foreignMinister=fallback.foreignMinister;
-            if(!result.permanentRepresentative) result.permanentRepresentative=fallback.permanentRepresentative;
-        }
-
-        governmentDiplomacyState.cache.set(target,result);
-        renderGovernmentDiplomacy(result,target);
-    }catch(error){
-        if(token !== governmentDiplomacyState.requestToken || !governmentDiplomacyCurrentCountry(target)) return;
-        const fallback = GOVERNMENT_DIPLOMACY_DIAGNOSTIC_FALLBACK[target];
-        if(fallback){
-            governmentDiplomacyState.cache.set(target,{...fallback,retrievedAt:new Date().toISOString(),source:'Diagnostic fallback'});
-            renderGovernmentDiplomacy(governmentDiplomacyState.cache.get(target),target);
-            return;
-        }
-        console.warn('Government & Diplomacy retrieval failed:',error);
-        ['govHeadOfState','govHeadOfGovernment','govForeignMinister','govPermanentRepresentative']
-            .forEach(id=>setGovernmentDiplomacyValue(id,'Not available'));
-        setGovernmentDiplomacyStatus(`Government & Diplomacy retrieval failed for ${target}. Try again or use the source links.`,'error');
-    }
-}
-
-function renderGovernmentDiplomacy(data,target){
-    setGovernmentDiplomacyValue('govHeadOfState',data.headState || 'Not available');
-    setGovernmentDiplomacyValue('govHeadOfGovernment',data.headGovernment || 'Not available');
-    setGovernmentDiplomacyValue('govForeignMinister',data.foreignMinister || 'Not available');
-    setGovernmentDiplomacyValue('govPermanentRepresentative',data.permanentRepresentative || 'Not available');
-
-    const q = data.qid ? ` • Wikidata ${data.qid}` : '';
-    const src = data.source || 'Wikidata';
-    setGovernmentDiplomacyStatus(`Dynamic retrieval complete • ${target}${q} • Source: ${src}`,'');
-}
-
-/* PHASE 11 — MANUAL CHECK MODE
-   Government & Diplomacy is intentionally NOT searched automatically.
-   The user selects a Target Country and presses the CHECK button. */
-function resetGovernmentDiplomacyForSelection(){
-    ['govHeadOfState','govHeadOfGovernment','govForeignMinister','govPermanentRepresentative']
-        .forEach(id=>setGovernmentDiplomacyValue(id,'--'));
-    const select=$('countrySelect');
-    const target=String(select?.value||'').trim();
-    const btn=$('governmentDiplomacyCheckBtn');
-    if(btn) btn.disabled=!target;
-    if(target){
-        setGovernmentDiplomacyStatus(`Ready to check ${target}. Press CHECK to start the search.`,'loading');
-    }else{
-        setGovernmentDiplomacyStatus('Select a Target Country, then press CHECK to retrieve Government & Diplomacy data.','loading');
-    }
-}
-
-async function checkGovernmentDiplomacy(){
-    const target=String($('countrySelect')?.value||'').trim();
-    const btn=$('governmentDiplomacyCheckBtn');
-    if(!target){
-        resetGovernmentDiplomacyForSelection();
-        return;
-    }
-    if(btn){
-        btn.disabled=true;
-        btn.textContent='⏳ CHECKING GOVERNMENT & DIPLOMACY…';
-    }
-    try{
-        /* forceRefresh=true means every button press starts a new retrieval. */
-        await fetchGovernmentDiplomacy(target, typeof dashboardGeneration!=='undefined'?dashboardGeneration:undefined, true);
-    }finally{
-        if(btn){
-            btn.disabled=false;
-            btn.textContent='🔎 CHECK GOVERNMENT & DIPLOMACY';
-        }
-    }
-}
-
-(function installGovernmentDiplomacyManualMode(){
-    const install=()=>{
-        const select=$('countrySelect');
-        if(!select || select.dataset.governmentDiplomacyPhase11==='1') return;
-        select.dataset.governmentDiplomacyPhase11='1';
-        select.addEventListener('change',resetGovernmentDiplomacyForSelection);
-        resetGovernmentDiplomacyForSelection();
-    };
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
-    else install();
-    setTimeout(install,500);
-    setTimeout(install,1500);
-})();
 
 async function updateDashboard(){
     const target=$("countrySelect")?.value||"",home=$("homeCountrySelect")?.value||"";
@@ -4782,9 +4574,7 @@ async function updateDashboard(){
     $("trendTemp").textContent=data.trend.temp;$("trendHumidity").textContent=data.trend.humidity;$("trendRain").textContent=data.trend.rain;$("trendSnow").textContent=data.trend.snow;$("trendWind").textContent=data.trend.wind;
     $("econCurrency").textContent=data.econ.currency;$("econGdp").textContent=data.econ.gdp;$("econExport").textContent=data.econ.export;$("econImport").textContent=data.econ.import;$("econPerCapita").textContent=data.econ.perCapita;$("econCostOfLiving").textContent=data.econ.costOfLiving;$("econInternalDebt").textContent=data.econ.internalDebt;$("econExternalDebt").textContent=data.econ.externalDebt;$("econBanks").textContent=data.econ.banks;$("econAlgaeFunding").textContent=getAlgaeFundingDisplay(target);
     $("socPopulation").textContent=data.soc.pop;$("socFood").textContent=data.soc.food;$("socTrend").textContent=data.soc.popTrend;$("socLanguages").textContent=data.soc.languages;$("socLiteracy").textContent=data.soc.literacy;$("socRatio").textContent=data.soc.ratio;$("socHappiness").textContent=data.soc.happiness;
-    updateWorldBankPovertyDisplay(target);
     updatePerCapitaFigure();
-    /* Government & Diplomacy is manual in Phase 11: use the CHECK button. */
     const loc=capitalCoords[target]||{lat:0,lon:0};
     $("streetViewBtn").href=`https://www.google.com/maps/@${loc.lat},${loc.lon},17z/data=!3m1!1e3?entry=ttu`;
     fetchLiveWeatherPrediction(target,dashboardGeneration);
@@ -4962,35 +4752,105 @@ async function fetchLiveWeatherPrediction(country,generation){
 }
 
 async function calculateCurrency(target,home,generation){
-    if(!target||!home){$("currTargetToHome").textContent="Please select both countries above.";$("currHomeToTarget").textContent="Please select both countries above.";return;}
-
-    /*
-     * "My Location" is a geographic reference point, not a country.
-     * For the currency panel only, identify the country containing the
-     * detected coordinates and use that country's stored currency data.
-     * This keeps the existing currency feature functional without treating
-     * the special dropdown value as a key in countryData.
-     */
-    let homeCountryForCurrency=home;
-    if(home===MY_LOCATION_HOME_VALUE){
-        try{
-            const location=await getWorldUserLocation("airport");
-            const iso2=await reverseCountry(location);
-            const matchedCountry=Object.keys(countryIso2||{}).find(c=>String(countryIso2[c]||'').toLowerCase()===String(iso2||'').toLowerCase());
-            if(matchedCountry && countryData[matchedCountry]) homeCountryForCurrency=matchedCountry;
-        }catch(_){ }
-    }
-
-    if(!countryData[target]?.econ || !countryData[homeCountryForCurrency]?.econ){
-        $("currTargetToHome").textContent="Currency data for the selected reference location is unavailable.";
-        $("currHomeToTarget").textContent="Currency data for the selected reference location is unavailable.";
+    const targetEl=$('currTargetToHome');
+    const homeEl=$('currHomeToTarget');
+    if(!target){
+        if(targetEl) targetEl.textContent='Select a Target Country first.';
+        if(homeEl) homeEl.textContent='Select a Target Country first.';
         return;
     }
 
-    const t=countryData[target].econ,h=countryData[homeCountryForCurrency].econ;const tc=(t.currency.match(/\(([^)]+)\)/)||[])[1],hc=(h.currency.match(/\(([^)]+)\)/)||[])[1];
-    if(!tc||!hc)return;if(tc===hc){$("currTargetToHome").textContent=`1 ${tc} = 1.000 ${hc}`;$("currHomeToTarget").textContent=`1 ${hc} = 1.000 ${tc}`;return;}
-    $("currTargetToHome").textContent="Fetching exchange rate...";$("currHomeToTarget").textContent="Fetching exchange rate...";
-    try{const j=await (await worldFetchWithTimeout(`https://api.frankfurter.dev/v1/latest?base=${hc}&symbols=${tc}`,7000)).json();if(generation!==dashboardGeneration)return;const r=j?.rates?.[tc];if(!Number.isFinite(r))throw new Error();$("currHomeToTarget").textContent=`1 ${hc} = ${r.toFixed(3)} ${tc}`;$("currTargetToHome").textContent=`1 ${tc} = ${(1/r).toFixed(3)} ${hc}`;}catch(_){const a=h.rateToUSD/t.rateToUSD,b=t.rateToUSD/h.rateToUSD;$("currTargetToHome").textContent=`1 ${tc} = ${a.toFixed(3)} ${hc} (fallback)`;$("currHomeToTarget").textContent=`1 ${hc} = ${b.toFixed(3)} ${tc} (fallback)`;}
+    /*
+     * Home-country priority:
+     *   1. Explicitly selected country -> use that country.
+     *   2. Explicit "My Location" -> detect the country from device location.
+     *   3. Blank Home Country -> automatically use My Location.
+     */
+    let homeCountryForCurrency=home;
+
+    if(!home || home===MY_LOCATION_HOME_VALUE){
+        if(targetEl) targetEl.textContent='Detecting Home Currency from My Location...';
+        if(homeEl) homeEl.textContent='Detecting Home Currency from My Location...';
+
+        try{
+            const location=await getWorldUserLocation('currency');
+            if(generation!==dashboardGeneration) return;
+
+            const iso2=await reverseCountry(location);
+            if(generation!==dashboardGeneration) return;
+
+            const detectedIso2=String(iso2||'').toLowerCase();
+            const matchedCountry=Object.keys(countryIso2||{}).find(
+                country=>String(countryIso2[country]||'').toLowerCase()===detectedIso2
+            );
+
+            if(matchedCountry && countryData[matchedCountry]){
+                homeCountryForCurrency=matchedCountry;
+            }else{
+                throw new Error('The country at My Location could not be matched to the dashboard country list.');
+            }
+        }catch(error){
+            if(generation!==dashboardGeneration) return;
+            const message=error?.message||'My Location could not be determined.';
+            if(targetEl) targetEl.textContent=`Home Currency unavailable: ${message}`;
+            if(homeEl) homeEl.textContent=`Home Currency unavailable: ${message}`;
+            return;
+        }
+    }
+
+    if(generation!==dashboardGeneration) return;
+
+    if(!countryData[target]?.econ || !countryData[homeCountryForCurrency]?.econ){
+        if(targetEl) targetEl.textContent='Currency data for the selected reference location is unavailable.';
+        if(homeEl) homeEl.textContent='Currency data for the selected reference location is unavailable.';
+        return;
+    }
+
+    const t=countryData[target].econ;
+    const h=countryData[homeCountryForCurrency].econ;
+    const tc=(t.currency.match(/\(([^)]+)\)/)||[])[1];
+    const hc=(h.currency.match(/\(([^)]+)\)/)||[])[1];
+
+    if(!tc||!hc){
+        if(targetEl) targetEl.textContent='Currency code unavailable.';
+        if(homeEl) homeEl.textContent='Currency code unavailable.';
+        return;
+    }
+
+    if(targetEl) targetEl.textContent='Fetching exchange rate...';
+    if(homeEl) homeEl.textContent='Fetching exchange rate...';
+
+    if(tc===hc){
+        if(targetEl) targetEl.textContent=`1 ${tc} = 1.000 ${hc}`;
+        if(homeEl) homeEl.textContent=`1 ${hc} = 1.000 ${tc}`;
+        return;
+    }
+
+    try{
+        const j=await (await worldFetchWithTimeout(
+            `https://api.frankfurter.dev/v1/latest?base=${encodeURIComponent(hc)}&symbols=${encodeURIComponent(tc)}`,
+            7000
+        )).json();
+
+        if(generation!==dashboardGeneration) return;
+
+        const r=j?.rates?.[tc];
+        if(!Number.isFinite(r)) throw new Error('No exchange-rate observation returned.');
+
+        if(homeEl) homeEl.textContent=`1 ${hc} = ${r.toFixed(3)} ${tc}`;
+        if(targetEl) targetEl.textContent=`1 ${tc} = ${(1/r).toFixed(3)} ${hc}`;
+    }catch(_){
+        if(generation!==dashboardGeneration) return;
+        const a=Number(h.rateToUSD)/Number(t.rateToUSD);
+        const b=Number(t.rateToUSD)/Number(h.rateToUSD);
+        if(Number.isFinite(a)&&Number.isFinite(b)){
+            if(targetEl) targetEl.textContent=`1 ${tc} = ${a.toFixed(3)} ${hc} (fallback)`;
+            if(homeEl) homeEl.textContent=`1 ${hc} = ${b.toFixed(3)} ${tc} (fallback)`;
+        }else{
+            if(targetEl) targetEl.textContent='Exchange rate unavailable.';
+            if(homeEl) homeEl.textContent='Exchange rate unavailable.';
+        }
+    }
 }
 
 async function worldQueryNearestFacility(lat,lon,type,targetCountry){
@@ -5745,10 +5605,13 @@ async function initializeApp(){
     }
 
     /*
-     * Poverty data is intentionally NOT fetched during dashboard startup.
-     * It is fetched only when the user presses the dedicated Check Poverty Data
-     * button. Ranking and Save Data For All retain their own bulk-loading paths.
+     * World Bank loading is intentionally independent. It may finish before
+     * or after the country dashboard is rendered.
      */
+    loadWorldBankPovertyData()
+        .catch(e=>console.warn(
+            "World Bank poverty initialization failed:",e
+        ));
 
     const initialTarget=$("countrySelect")?.value||"";
 
