@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Disbursement Control Panel</title>
+    <!-- Tailwind CSS CDN for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS (xlsx) Library for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+            button, input[type="range"], input[type="number"] {
+                display: none !important;
+            }
+            div[class*="max-h-"] {
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            .shadow-xl, .shadow-md, .shadow-sm {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+            tr {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-2 sm:p-4 md:p-6 lg:p-8 flex items-center justify-center font-sans">
+
+    <!-- Main Dashboard Container -->
+    <div class="max-w-6xl w-full mx-auto bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+        
+        <!-- Dashboard Header -->
+        <header class="bg-slate-900 text-white p-4 sm:p-6 md:p-8 sm:px-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Disbursement Control Panel</h1>
+                <p class="text-slate-400 mt-1 text-xs sm:text-sm">Real-time financial modeling for property-backed disbursements.</p>
+            </div>
+            <!-- Print Report Button in Header -->
+            <button onclick="window.print()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-white px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl text-xs sm:text-sm font-medium shadow transition-colors flex items-center justify-center gap-2 border border-slate-700">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print the Report
+            </button>
+        </header>
+
+        <!-- Content Grid (Side-by-Side Layout for Laptops, Stacked for Mobile) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
+            
+            <!-- LEFT COLUMN: CONTROL PANEL (Inputs) -->
+            <div class="lg:col-span-4 p-4 sm:p-6 md:p-8 bg-slate-50/50">
+                <h2 class="text-base sm:text-lg font-semibold text-slate-800 mb-5">Configuration Parameters</h2>
+                
+                <div class="space-y-4 sm:space-y-6">
+                    <!-- Property Valuation -->
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-slate-700 mb-1.5">Present Property Valuation (₹)</label>
+                        <input type="number" id="propertyValue" value="5000000" step="100000" min="10000" 
+                               class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors focus:outline-none"
+                               oninput="calculateMetrics()">
+                    </div>
+
+                    <!-- Loan-to-Value Ratio -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="text-xs sm:text-sm font-medium text-slate-700">Loan-to-Value ratio</label>
+                            <span id="ltvValue" class="text-xs sm:text-sm font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">60%</span>
+                        </div>
+                        <input type="range" id="ltvRatio" value="60" min="10" max="90" step="5" 
+                               class="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg appearance-none"
+                               oninput="document.getElementById('ltvValue').innerText = this.value + '%'; calculateMetrics()">
+                    </div>
+
+                    <!-- Tenure -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="text-xs sm:text-sm font-medium text-slate-700">Tenure</label>
+                            <span id="tenureValue" class="text-xs sm:text-sm font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">15 Years</span>
+                        </div>
+                        <input type="range" id="tenureYears" value="15" min="1" max="30" step="1" 
+                               class="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg appearance-none"
+                               oninput="updateTenureMax(); document.getElementById('tenureValue').innerText = this.value + ' Years'; calculateMetrics()">
+                    </div>
+
+                    <!-- Interest Rate -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="text-xs sm:text-sm font-medium text-slate-700">Interest Rate (% p.a.)</label>
+                            <span id="rateValue" class="text-xs sm:text-sm font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">8.5%</span>
+                        </div>
+                        <input type="range" id="interestRate" value="8.5" min="1.0" max="18.0" step="0.1" 
+                               class="w-full accent-blue-600 cursor-pointer h-2 bg-slate-200 rounded-lg appearance-none"
+                               oninput="document.getElementById('rateValue').innerText = this.value + '%'; calculateMetrics()">
+                    </div>
+
+                    <!-- Premature End of Tenure -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="text-xs sm:text-sm font-medium text-slate-700">Premature End (Month)</label>
+                            <span id="prematureLabel" class="text-xs sm:text-sm font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">180 Months</span>
+                        </div>
+                        <input type="number" id="prematureMonth" value="180" min="1" max="360" step="1"
+                               class="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 text-sm sm:text-base border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors focus:outline-none"
+                               oninput="calculateMetrics()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: RESULTS & METRICS PANEL -->
+            <div class="lg:col-span-8 p-4 sm:p-6 md:p-8 flex flex-col justify-between">
+                
+                <div>
+                    <h2 class="text-base sm:text-lg font-semibold text-slate-800 mb-5">Financial Projections</h2>
+                    
+                    <!-- Key Metrics Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                        
+                        <!-- Max Eligible Loan -->
+                        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-2 h-2 rounded-full bg-slate-400"></div>
+                                <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Max Eligible Loan (₹)</p>
+                            </div>
+                            <h3 id="maxLoanOutput" class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 break-words">₹3,000,000</h3>
+                        </div>
+
+                        <!-- Monthly Disbursement / Installment -->
+                        <div class="bg-blue-600 p-4 sm:p-5 rounded-2xl shadow-md text-white">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-2 h-2 rounded-full bg-blue-300 animate-pulse"></div>
+                                <p class="text-xs font-medium text-blue-100 uppercase tracking-wider">Monthly Payout (₹)</p>
+                            </div>
+                            <h3 id="monthlyDisbursementOutput" class="text-xl sm:text-2xl md:text-3xl font-bold break-words">₹29,550</h3>
+                        </div>
+
+                        <!-- Total Monthly Payout -->
+                        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Monthly Payout (₹)</p>
+                            </div>
+                            <h3 id="totalPayoutOutput" class="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 break-words">₹5,319,000</h3>
+                        </div>
+
+                        <!-- Total Interest Accrued -->
+                        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-2 h-2 rounded-full bg-rose-400"></div>
+                                <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Interest (₹)</p>
+                            </div>
+                            <h3 id="totalInterestOutput" class="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 break-words">₹2,319,000</h3>
+                        </div>
+
+                    </div>
+
+                    <!-- Total Payout Including Monthly Payout and Applicable Interest Levied -->
+                    <div class="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl shadow-md mb-5">
+                        <div class="flex items-center gap-2 mb-1">
+                            <div class="w-2 h-2 rounded-full bg-amber-400"></div>
+                            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Payout Including Monthly Payout and Applicable Interest Levied (₹)</p>
+                        </div>
+                        <h3 id="totalCombinedOutput" class="text-xl sm:text-2xl md:text-3xl font-bold break-words">₹7,638,000</h3>
+                    </div>
+
+                    <!-- Summary Table Section (Month-by-Month Schedule) -->
+                    <div class="mb-5">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
+                            <h3 id="scheduleTitle" class="text-sm sm:text-base font-bold text-slate-800">Month-by-Month Amortization Schedule</h3>
+                            <button onclick="downloadExcel()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium shadow transition-colors flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download as Excel
+                            </button>
+                        </div>
+
+                        <!-- Formula Reference Box Displayed Above Table -->
+                        <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 mb-3 text-[11px] sm:text-xs font-mono text-slate-700 space-y-1 overflow-x-auto">
+                            <p class="font-bold text-slate-900 mb-1">Schedule Column Formulas:</p>
+                            <p>• Monthly Payout (₹) = Max Eligible Loan (₹) × [Monthly Rate × (1 + Monthly Rate)^n] / [(1 + Monthly Rate)^n - 1]</p>
+                            <p>• Interest Calculated (₹) = Prior Balance (₹) × (Annual Interest Rate / 12)</p>
+                            <p>• Interest Payment Remaining (₹) = Cumulative Sum of Interest Calculated Across All Months Up to Date</p>
+                            <p>• Amount Disbursed Till Date (₹) = Cumulative Sum of Monthly Payout Across All Months Up to Date</p>
+                        </div>
+
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl max-h-60 sm:max-h-72">
+                            <table id="summaryTable" class="w-full text-left border-collapse text-xs sm:text-sm whitespace-nowrap">
+                                <thead class="sticky top-0 bg-slate-100 z-10">
+                                    <tr class="text-slate-700 border-b border-slate-200">
+                                        <th class="p-2.5 sm:p-3 font-semibold align-top">Month</th>
+                                        <th class="p-2.5 sm:p-3 font-semibold text-right align-top">Monthly Payout (₹)</th>
+                                        <th class="p-2.5 sm:p-3 font-semibold text-right align-top">Interest Calculated (₹)</th>
+                                        <th class="p-2.5 sm:p-3 font-semibold text-right align-top">Interest Payment Remaining (₹)</th>
+                                        <th class="p-2.5 sm:p-3 font-semibold text-right align-top">Amount Disbursed Till Date (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="summaryTableBody" class="divide-y divide-slate-200 text-slate-600">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Breakdown Note -->
+                <div class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 mt-auto">
+                    <h3 class="text-xs sm:text-sm font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Reverse Mortgage Calculation Summary
+                    </h3>
+                    <p id="summaryText" class="text-xs sm:text-sm leading-relaxed text-slate-600">
+                        Property Valuation : <strong class="text-slate-900">₹50,00,000.00</strong>, Loan-to-Value Ratio : <strong class="text-slate-900">60%</strong>, Max Eligible Loan : <strong class="text-slate-900">₹30,00,000.00</strong>, Tenure : <strong class="text-slate-900">15 Years</strong>, Interest Rate : <strong class="text-slate-900">8.5%</strong>, Premature End Month : <strong class="text-slate-900">180</strong>, Monthly Payout : <strong class="text-slate-900">₹29,542.19</strong>, Total Monthly Payout : <strong class="text-slate-900">₹53,17,594.20</strong>, Total Interest : <strong class="text-slate-900">₹53,70,366.39</strong>, Total Payout Including Monthly Payout and Applicable Interest Levied : <strong class="text-slate-900">₹1,06,87,960.59</strong>.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Calculation Engine -->
+    <script>
+        let monthlySchedule = [];
+        let currentMetrics = {};
+
+        function formatCurrencyINR(amount) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+        function updateTenureMax() {
+            const tenureYears = parseInt(document.getElementById('tenureYears').value) || 1;
+            const totalMonths = tenureYears * 12;
+            const prematureInput = document.getElementById('prematureMonth');
+            prematureInput.max = totalMonths;
+            if (parseInt(prematureInput.value) > totalMonths) {
+                prematureInput.value = totalMonths;
+            }
+            document.getElementById('prematureLabel').innerText = prematureInput.value + ' Months';
+        }
+
+        function calculateMetrics() {
+            const propertyValue = parseFloat(document.getElementById('propertyValue').value) || 0;
+            const ltv = parseFloat(document.getElementById('ltvRatio').value) / 100;
+            const tenureYears = parseFloat(document.getElementById('tenureYears').value) || 1;
+            const annualRate = parseFloat(document.getElementById('interestRate').value) / 100;
+
+            const maxLoan = propertyValue * ltv;
+            const fullMonths = tenureYears * 12;
+            const monthlyRate = annualRate / 12;
+
+            let monthlyDisbursement = 0;
+            if (monthlyRate === 0) {
+                monthlyDisbursement = maxLoan / fullMonths;
+            } else {
+                monthlyDisbursement = maxLoan * (monthlyRate * Math.pow(1 + monthlyRate, fullMonths)) / (Math.pow(1 + monthlyRate, fullMonths) - 1);
+            }
+
+            let prematureInput = document.getElementById('prematureMonth');
+            prematureInput.max = fullMonths;
+            let prematureMonths = parseInt(prematureInput.value) || fullMonths;
+            if (prematureMonths > fullMonths) {
+                prematureMonths = fullMonths;
+                prematureInput.value = fullMonths;
+            }
+            if (prematureMonths < 1) {
+                prematureMonths = 1;
+                prematureInput.value = 1;
+            }
+            document.getElementById('prematureLabel').innerText = prematureMonths + ' Months';
+
+            // Month-by-month simulation up to prematureMonths
+            monthlySchedule = [];
+            let currentBalance = 0;
+            let cumulativeDisbursed = 0;
+            let totalInterestAccrued = 0;
+
+            for (let m = 1; m <= prematureMonths; m++) {
+                let interestThisMonth = currentBalance * monthlyRate;
+                totalInterestAccrued += interestThisMonth;
+
+                currentBalance += interestThisMonth + monthlyDisbursement;
+                cumulativeDisbursed += monthlyDisbursement;
+
+                monthlySchedule.push({
+                    month: m,
+                    monthlyPayout: monthlyDisbursement,
+                    interestCalculated: interestThisMonth,
+                    interestRemaining: totalInterestAccrued,
+                    amountDisbursedTillDate: cumulativeDisbursed
+                });
+            }
+
+            const totalMonthlyPayout = cumulativeDisbursed;
+            const totalInterest = totalInterestAccrued;
+            const totalCombinedPayout = currentBalance;
+
+            currentMetrics = {
+                propertyValue,
+                ltv: ltv * 100,
+                tenureYears,
+                annualRate: annualRate * 100,
+                prematureMonths,
+                maxLoan,
+                monthlyDisbursement,
+                totalMonthlyPayout,
+                totalInterest,
+                totalCombinedPayout
+            };
+
+            // Update UI Outputs
+            document.getElementById('maxLoanOutput').innerText = formatCurrencyINR(maxLoan);
+            document.getElementById('monthlyDisbursementOutput').innerText = formatCurrencyINR(monthlyDisbursement);
+            document.getElementById('totalPayoutOutput').innerText = formatCurrencyINR(totalMonthlyPayout);
+            document.getElementById('totalInterestOutput').innerText = formatCurrencyINR(totalInterest);
+            document.getElementById('totalCombinedOutput').innerText = formatCurrencyINR(totalCombinedPayout);
+
+            document.getElementById('scheduleTitle').innerText = `Month-by-Month Amortization Schedule (Premature End: Month ${prematureMonths})`;
+
+            // Populate Month-by-Month Summary Table
+            const tableBody = document.getElementById('summaryTableBody');
+            tableBody.innerHTML = '';
+
+            monthlySchedule.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = row.month % 2 === 0 ? 'bg-slate-50/50 hover:bg-slate-100/60' : 'hover:bg-slate-100/60';
+                tr.innerHTML = `
+                    <td class="p-2.5 sm:p-3 font-medium">Month ${row.month}</td>
+                    <td class="p-2.5 sm:p-3 text-right">${formatCurrencyINR(row.monthlyPayout)}</td>
+                    <td class="p-2.5 sm:p-3 text-right">${formatCurrencyINR(row.interestCalculated)}</td>
+                    <td class="p-2.5 sm:p-3 text-right">${formatCurrencyINR(row.interestRemaining)}</td>
+                    <td class="p-2.5 sm:p-3 text-right">${formatCurrencyINR(row.amountDisbursedTillDate)}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Update Dynamic Summary Text
+            document.getElementById('summaryText').innerHTML = `
+                Property Valuation : <strong class="text-slate-900">${formatCurrencyINR(propertyValue)}</strong>, Loan-to-Value Ratio : <strong class="text-slate-900">${(ltv * 100)}%</strong>, Max Eligible Loan : <strong class="text-slate-900">${formatCurrencyINR(maxLoan)}</strong>, Tenure : <strong class="text-slate-900">${tenureYears} Years</strong>, Interest Rate : <strong class="text-slate-900">${(annualRate * 100).toFixed(1)}%</strong>, Premature End Month : <strong class="text-slate-900">${prematureMonths}</strong>, Monthly Payout : <strong class="text-slate-900">${formatCurrencyINR(monthlyDisbursement)}</strong>, Total Monthly Payout : <strong class="text-slate-900">${formatCurrencyINR(totalMonthlyPayout)}</strong>, Total Interest : <strong class="text-slate-900">${formatCurrencyINR(totalInterest)}</strong>, Total Payout Including Monthly Payout and Applicable Interest Levied : <strong class="text-slate-900">${formatCurrencyINR(totalCombinedPayout)}</strong>.
+            `;
+        }
+
+        function downloadExcel() {
+            const excelRows = [
+                ["Month", "Monthly Payout (INR)", "Interest Calculated (INR)", "Interest Payment Remaining (INR)", "Amount Disbursed Till Date (INR)"]
+            ];
+
+            monthlySchedule.forEach(row => {
+                excelRows.push([
+                    row.month,
+                    parseFloat(row.monthlyPayout.toFixed(2)),
+                    parseFloat(row.interestCalculated.toFixed(2)),
+                    parseFloat(row.interestRemaining.toFixed(2)),
+                    parseFloat(row.amountDisbursedTillDate.toFixed(2))
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(excelRows);
+            XLSX.utils.book_append_sheet(wb, ws, "Schedule");
+            XLSX.writeFile(wb, "Reverse_Mortgage_Premature_Schedule.xlsx");
+        }
+
+        // Run initial calculation on page load
+        window.onload = function() {
+            updateTenureMax();
+            calculateMetrics();
+        };
+    </script>
+</body>
+</html>

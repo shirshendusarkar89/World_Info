@@ -1,0 +1,4031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Radio — Expanded Worldwide Stations (English Retrieval Fixed)</title>
+<style>
+:root{
+  --bg:#07131b;
+  --panel:#0d202a;
+  --panel2:#123443;
+  --bezel:#061018;
+  --accent:#ff7a2f;
+  --accent2:#ffd84a;
+  --cyan:#54d9ff;
+  --green:#62f2a2;
+  --text:#f4f7f9;
+  --muted:#9bb0bb;
+  --line:#285364;
+  --danger:#ff6878;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:
+radial-gradient(circle at 70% 15%,#173b4b 0,#0b1e29 28%,#07131b 70%);color:var(--text)}
+body{padding:22px}
+button,select{font:inherit}
+.app{max-width:1450px;margin:auto}
+.header{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:8px 4px 18px;
+}
+.brand{display:flex;align-items:center;gap:14px}
+.brandMark{
+  width:48px;height:48px;border:1px solid #4e7180;border-radius:13px;
+  display:grid;place-items:center;background:linear-gradient(145deg,#173b4b,#091821);
+  box-shadow:inset 0 0 18px #0008,0 0 20px #0008;font-size:26px
+}
+h1{margin:0;font-size:27px;letter-spacing:2px}
+.subtitle{color:var(--muted);font-size:12px;letter-spacing:2px;margin-top:3px}
+.badge{font-size:11px;color:#b8cbd3;border:1px solid #345764;border-radius:999px;padding:7px 11px;letter-spacing:1px}
+
+.shell{
+ display:grid;grid-template-columns:390px 1fr;gap:18px;
+}
+.controls,.radio{
+ background:linear-gradient(145deg,#102a36,#081820);
+ border:1px solid #315665;border-radius:20px;
+ box-shadow:0 18px 45px #0008,inset 0 1px #ffffff10;
+}
+.controls{padding:18px}
+.sectionTitle{font-size:11px;letter-spacing:2px;color:#87a9b7;margin:2px 0 14px}
+.selector{
+ position:relative;padding:16px 14px 17px;margin-bottom:13px;
+ border:1px solid #254956;border-radius:15px;
+ background:linear-gradient(160deg,#102b37,#0b2029);
+}
+.selector.active{border-color:#477789;box-shadow:0 0 0 1px #54d9ff18,inset 0 0 24px #54d9ff08}
+.selector.disabled{opacity:.42;filter:saturate(.5)}
+.selHead{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.icon{width:25px;height:25px;color:var(--cyan);display:grid;place-items:center}
+.label{font-size:13px;letter-spacing:1.4px;font-weight:700}
+.state{margin-left:auto;font-size:9px;letter-spacing:1px;color:#6e8995}
+.navrow{display:grid;grid-template-columns:42px 1fr 42px;gap:7px;align-items:center}
+.navbtn{
+ height:38px;border-radius:10px;border:1px solid #365b6a;background:#0a1a22;color:#cfe1e8;
+ cursor:pointer;font-size:20px;transition:.18s
+}
+.navbtn:hover:not(:disabled){background:#173a48;border-color:#5a8ea2;transform:translateY(-1px)}
+.navbtn:disabled{opacity:.28;cursor:not-allowed}
+select{
+ width:100%;height:38px;padding:0 10px;border-radius:10px;
+ color:#f4f7f9;background:#0b1b23;border:1px solid #365b6a;outline:none;
+ cursor:pointer
+}
+select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #54d9ff14}
+.helper{font-size:10px;color:#7894a0;margin-top:8px}
+.people{font-size:12px;color:#9db7c2;margin-left:4px}
+.smallBtn{
+ flex:1;padding:9px;border:1px solid #345966;background:#0a1a22;color:#a9c2cb;
+ border-radius:10px;cursor:pointer;font-size:11px;letter-spacing:.5px
+}
+.smallBtn:hover{border-color:#5c8999;color:white}
+
+.radio{padding:16px;min-width:0}
+.bezel{
+ position:relative;min-height:660px;border-radius:15px;padding:22px;
+ background:
+ radial-gradient(circle at 50% 43%,#17485b 0,#0d3545 25%,#0a2633 58%,#071820 100%);
+ border:8px solid #071117;
+ box-shadow:inset 0 0 0 2px #355b68,inset 0 0 55px #000b,0 4px 20px #0009;
+ overflow:hidden
+}
+.bezel:before{
+ content:"";position:absolute;inset:13px;border:1px solid #ffffff12;border-radius:9px;pointer-events:none
+}
+.displayTop{
+ display:grid;grid-template-columns:1.05fr 1fr 1fr 1.5fr .85fr;gap:12px;
+ padding:5px 8px 14px;border-bottom:1px solid #ffffff16
+}
+.metric{min-width:0}
+.metricLabel{font-size:9px;letter-spacing:2px;color:#89aab6;margin-bottom:6px}
+.metricValue{font-family:Georgia,serif;font-size:clamp(14px,1.7vw,23px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff3e9}
+.metricValue.accent{color:var(--accent);text-shadow:0 0 13px #ff7a2f55}
+.metricValue.cyan{color:#a7edff}
+.metricIcon{margin-right:5px}
+.dial{
+ margin:18px 5% 0;height:365px;position:relative;
+ display:flex;flex-direction:column;justify-content:center
+}
+.scale{
+ position:absolute;left:4%;right:4%;top:23px;height:100px;
+ border-top:2px solid #a5d2dc;
+ background:repeating-linear-gradient(90deg,transparent 0,transparent calc(10% - 1px),#9ec9d4 calc(10% - 1px),#9ec9d4 10%);
+ opacity:.7
+}
+.scale:after{
+ content:"";position:absolute;left:0;right:0;top:20px;height:1px;
+ background:repeating-linear-gradient(90deg,#7ea7b3 0,#7ea7b3 1px,transparent 1px,transparent 2%);
+}
+.scaleLabels{position:absolute;left:3.7%;right:3.7%;top:125px;display:flex;justify-content:space-between;color:#8eabb4;font:11px Georgia,serif}
+.pointer{
+ position:absolute;top:0;height:300px;width:4px;
+ left:28%;background:linear-gradient(#ffcf68,#ff6bca);
+ box-shadow:0 0 14px #ff62cf,0 0 4px #fff;
+ transform:translateX(-50%);transition:left .65s cubic-bezier(.2,.8,.2,1);z-index:4
+}
+.pointer:before{
+ content:"";position:absolute;top:-2px;left:50%;transform:translate(-50%,-100%);
+ border-left:15px solid transparent;border-right:15px solid transparent;border-bottom:20px solid #62f2a2;
+ filter:drop-shadow(0 0 7px #39f58a)
+}
+.pointer:after{
+ content:"";position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);
+ width:10px;height:10px;border-radius:50%;background:#fff27a;box-shadow:0 0 14px #fff27a,0 0 24px #39f58a
+}
+.stationCenter{text-align:center;margin-top:75px;position:relative;z-index:2}
+.onair{display:inline-flex;align-items:center;gap:7px;font-size:10px;letter-spacing:2px;color:var(--green);margin-bottom:11px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.stationName{font-size:clamp(28px,4vw,55px);font-weight:800;letter-spacing:3px;text-transform:uppercase;text-shadow:0 3px 20px #000}
+.city{font-size:14px;color:#a6c2cb;margin-top:7px;letter-spacing:2px}
+.spectrum{
+ height:120px;margin:40px auto 0;max-width:760px;
+ display:flex;align-items:center;justify-content:center;gap:5px
+}
+.bar{
+ width:7px;height:var(--h);min-height:14px;border-radius:2px;
+ background:linear-gradient(to top,#d7ff19,#ffff38,#ffdd43);
+ box-shadow:0 0 8px #efff2e66;
+ animation:pulse var(--d) ease-in-out infinite alternate
+}
+.bar:nth-child(3n){animation-delay:-.25s}.bar:nth-child(4n){animation-delay:-.5s}
+@keyframes pulse{from{transform:scaleY(.55);opacity:.65}to{transform:scaleY(1);opacity:1}}
+.bottomInfo{
+ position:absolute;left:30px;right:30px;bottom:25px;
+ display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:15px
+}
+.analogKnob{
+ width:74px;height:74px;border-radius:50%;border:7px solid #172a31;
+ background:radial-gradient(circle at 35% 30%,#78929b,#263d45 35%,#0c171c 70%);
+ box-shadow:inset 0 0 0 2px #91aab0,0 4px 10px #000;
+ position:relative
+}
+.analogKnob:after{content:"";position:absolute;left:50%;top:8px;width:3px;height:22px;background:#f3d9a4;transform:translateX(-50%);border-radius:3px}
+.readout{font-family:Georgia,serif;color:#d7edf2;font-size:13px}
+.readout.right{text-align:right}
+.readout strong{display:block;color:#ffb06f;font-size:16px;margin-top:4px}
+.phaseNote{font-size:10px;color:#607f8c;letter-spacing:1px;margin-top:8px}
+
+@media(max-width:950px){
+ .shell{grid-template-columns:1fr}
+ .controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+ .selector{margin:0}
+ .bezel{min-height:600px}
+}
+@media(max-width:650px){
+ body{padding:10px}.header{align-items:flex-start}.badge{display:none}
+ .controls{display:block}.selector{margin-bottom:10px}
+ .displayTop{grid-template-columns:1fr 1fr}
+ .metric:nth-child(n+5){display:none}
+ .bezel{padding:14px;border-width:5px;min-height:570px}
+ .dial{margin-left:0;margin-right:0}
+ .spectrum{gap:3px}
+ .bar{width:4px}
+}
+
+
+
+
+/* ===== SELECT YOUR CHANNEL COLLAPSIBLE PANEL ===== */
+.channelSelector{
+  width:100%;
+  border:1px solid #315e70;
+  border-radius:15px;
+  background:linear-gradient(145deg,#102d39,#081a22);
+  box-shadow:inset 0 1px #ffffff12,0 0 18px #54d9ff10;
+  overflow:hidden;
+}
+.channelSelectorSummary{
+  list-style:none;
+  min-height:44px;
+  padding:10px 13px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+  color:#e9f6fa;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.25px;
+  text-transform:uppercase;
+  background:linear-gradient(180deg,#143746,#0b202a);
+  border-bottom:1px solid transparent;
+  transition:background .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.channelSelectorSummary::-webkit-details-marker{display:none}
+.channelSelectorSummary:hover{
+  background:linear-gradient(180deg,#184455,#0d2631);
+  box-shadow:inset 0 0 20px #54d9ff0b,0 0 12px #54d9ff10;
+}
+.channelSelectorSummary:focus-visible{
+  outline:2px solid #54d9ff;
+  outline-offset:-2px;
+}
+.channelCaret{
+  flex:0 0 auto;
+  color:#54d9ff;
+  font-size:12px;
+  line-height:1;
+  text-shadow:0 0 8px #54d9ff80;
+  transition:transform .18s ease;
+}
+.channelSelectorTitle{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.channelSelectorDot{
+  flex:0 0 auto;
+  color:#54d9ff;
+  font-size:13px;
+  line-height:1;
+}
+.channelSelectorAction{
+  flex:0 0 auto;
+  color:#a9c2cb;
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:.7px;
+  text-transform:none;
+}
+.channelSelector[open]{
+  border-color:#3b7083;
+  box-shadow:inset 0 1px #ffffff12,0 0 22px #54d9ff16;
+}
+.channelSelector[open] .channelSelectorSummary{
+  border-bottom-color:#ffffff12;
+}
+.channelSelector[open] .channelCaret{
+  transform:rotate(180deg);
+}
+.channelSelector[open] .channelSelectorAction{
+  font-size:0;
+}
+.channelSelector[open] .channelSelectorAction:after{
+  content:'Collapse';
+  font-size:9px;
+}
+.channelSelectorBody{
+  padding:12px 0 0;
+}
+@media(max-width:650px){
+  .channelSelectorSummary{
+    min-height:42px;
+    padding:9px 10px;
+    gap:6px;
+    font-size:10px;
+    letter-spacing:1px;
+  }
+  .channelSelectorAction,.channelSelector[open] .channelSelectorAction:after{font-size:8px}
+  .channelSelectorBody{padding-top:10px}
+}
+
+/* ===== PRE-CONFIGURED LANGUAGE COLLAPSIBLE PANEL ===== */
+.preconfig{
+  margin-top:10px;
+  width:100%;
+  border:1px solid #315e70;
+  border-radius:15px;
+  background:linear-gradient(145deg,#102d39,#081a22);
+  box-shadow:inset 0 1px #ffffff12,0 0 18px #54d9ff10;
+  overflow:hidden;
+}
+.preconfig>summary{
+  list-style:none;
+}
+.preconfig>summary::-webkit-details-marker{display:none}
+.preconfigSummary{
+  min-height:44px;
+  padding:10px 13px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+  color:#e9f6fa;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1.25px;
+  text-transform:uppercase;
+  background:linear-gradient(180deg,#143746,#0b202a);
+  border-bottom:1px solid transparent;
+  transition:background .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.preconfigSummary:hover{
+  background:linear-gradient(180deg,#184455,#0d2631);
+  box-shadow:inset 0 0 20px #54d9ff0b,0 0 12px #54d9ff10;
+}
+.preconfigSummary:focus-visible{
+  outline:2px solid #54d9ff;
+  outline-offset:-2px;
+}
+.preconfigCaret{
+  flex:0 0 auto;
+  color:#54d9ff;
+  font-size:12px;
+  line-height:1;
+  text-shadow:0 0 8px #54d9ff80;
+  transition:transform .18s ease;
+}
+.preconfigTitle{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.preconfigDot{
+  flex:0 0 auto;
+  color:#54d9ff;
+  font-size:13px;
+  line-height:1;
+}
+.preconfigAction{
+  flex:0 0 auto;
+  color:#a9c2cb;
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:.7px;
+  text-transform:none;
+}
+.preconfig[open]{
+  border-color:#3b7083;
+  box-shadow:inset 0 1px #ffffff12,0 0 22px #54d9ff16;
+}
+.preconfig[open] .preconfigSummary{
+  border-bottom-color:#ffffff12;
+}
+.preconfig[open] .preconfigCaret{
+  transform:rotate(180deg);
+}
+.preconfig[open] .preconfigAction{
+  font-size:0;
+}
+.preconfig[open] .preconfigAction:after{
+  content:'Collapse';
+  font-size:9px;
+}
+.preconfigBody{
+  padding:2px 12px 13px;
+  border-top:1px solid #ffffff0d;
+}
+.preconfigLanguages{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+  padding:10px 0 12px;
+}
+.preconfigLang{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:7px;
+  min-width:0;
+  padding:7px 8px;
+  border:1px solid transparent;
+  border-radius:9px;
+  color:#c9dde4;
+  font-size:10px;
+  cursor:pointer;
+}
+.preconfigLang:hover{background:#102b36;border-color:#294f5e}
+.preconfigLang input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.preconfigRadio{
+  width:17px;height:17px;min-width:17px;border-radius:50%;
+  border:2px solid #427486;
+  background:#0b1b23;
+  box-shadow:inset 0 0 0 3px #0b1b23;
+}
+.preconfigLang input:checked + .preconfigRadio{
+  border-color:#54d9ff;
+  background:#2b9ac2;
+  box-shadow:inset 0 0 0 3px #0b1b23,0 0 9px #54d9ff35;
+}
+.preconfigLangName{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.preconfigSelectors{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.preconfigField.stationField{grid-column:1 / -1}
+.preconfigField{min-width:0}
+.preconfigFieldLabel{
+  display:flex;align-items:center;justify-content:space-between;
+  margin:0 2px 5px;
+  color:#7899a6;font-size:8px;letter-spacing:1.4px;
+}
+.preconfigNav{
+  display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:5px;align-items:center;
+}
+.preconfigNav .navbtn{height:34px;font-size:19px}
+.preconfigNav select{height:34px;font-size:11px;padding:0 7px}
+.preconfigHint{
+  min-height:18px;margin-top:7px;color:#637f8b;font-size:8px;line-height:1.3;
+}
+@media(max-width:650px){
+  .preconfigSummary{
+    min-height:42px;
+    padding:9px 10px;
+    gap:6px;
+    font-size:10px;
+    letter-spacing:1px;
+  }
+  .preconfigAction,.preconfig[open] .preconfigAction:after{font-size:8px}
+}
+@media(max-width:700px){
+  .preconfigLanguages{grid-template-columns:1fr 1fr;gap:5px}
+  .preconfigSelectors{grid-template-columns:1fr}
+  .preconfigBody{padding-left:9px;padding-right:9px}
+  .preconfigLang{padding:7px 6px}
+}
+
+/* ===== Phase 2 cascade status ===== */
+.cascadeStatus{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:8px 2px 4px;color:#7f9ba6;font-size:8px;letter-spacing:.5px}
+.stepDot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:1px solid #365966;background:#0a1a22;color:#78939e;font-size:9px}
+.stepDot.done{border-color:#54d9ff;color:#54d9ff;background:#10313d;box-shadow:0 0 10px #54d9ff20}
+.stepDot.current{border-color:#ff7a2f;color:#fff;background:#472818;box-shadow:0 0 12px #ff7a2f30}
+.stepLine{width:12px;height:1px;background:#294a56}
+.cascadeMessage{min-height:27px;padding:6px 8px;border:1px solid #203f4b;border-radius:9px;background:#091a22;color:#8fa9b3;font-size:9px;line-height:1.3}
+
+/* ===== Mobile-first refinements ===== */
+@media (max-width: 700px){
+  html, body { width:100%; overflow-x:hidden; }
+  body { padding:8px; }
+
+  .app { width:100%; max-width:none; }
+  .header {
+    padding:4px 4px 12px;
+    gap:8px;
+  }
+  .brand { gap:9px; min-width:0; }
+  .brandMark {
+    width:40px; height:40px; min-width:40px;
+    border-radius:11px; font-size:21px;
+  }
+  h1 { font-size:20px; letter-spacing:1.5px; }
+  .subtitle {
+    font-size:8px; letter-spacing:1.1px;
+    white-space:nowrap;
+  }
+  .badge { display:none; }
+
+  .shell {
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:100%;
+  }
+
+  /* Selection controls come first and are comfortable for touch. */
+  .controls {
+    width:100%;
+    padding:10px;
+    border-radius:16px;
+  }
+  .sectionTitle {
+    font-size:9px;
+    margin:1px 2px 8px;
+    letter-spacing:1.6px;
+  }
+  .selector {
+    padding:10px 9px 11px;
+    margin-bottom:7px;
+    border-radius:12px;
+  }
+  .selHead {
+    margin-bottom:7px;
+    min-height:25px;
+  }
+  .icon {
+    width:24px; height:24px;
+    font-size:19px;
+  }
+  .label {
+    font-size:11px;
+    letter-spacing:1px;
+  }
+  .state {
+    font-size:8px;
+  }
+
+  .navrow {
+    grid-template-columns:48px minmax(0,1fr) 48px;
+    gap:6px;
+  }
+  .navbtn {
+    height:44px;
+    min-width:44px;
+    border-radius:10px;
+    font-size:24px;
+    -webkit-tap-highlight-color:transparent;
+  }
+  select {
+    height:44px;
+    min-width:0;
+    font-size:16px; /* prevents iOS Safari auto-zoom */
+    padding:0 9px;
+  }
+  .helper {
+    font-size:9px;
+    margin-top:5px;
+    line-height:1.25;
+  }
+  .removedControlsFooter {
+    gap:7px;
+    margin-top:3px;
+  }
+  .smallBtn {
+    min-height:44px;
+    padding:8px;
+    font-size:10px;
+  }
+
+  /* Radio display becomes a compact mobile radio, not a shrunken desktop panel. */
+  .radio {
+    width:100%;
+    padding:7px;
+    border-radius:16px;
+  }
+  .bezel {
+    min-height:470px;
+    height:auto;
+    padding:11px;
+    border-width:4px;
+    border-radius:12px;
+  }
+  .bezel:before { inset:8px; }
+
+  .displayTop {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px 10px;
+    padding:3px 4px 9px;
+  }
+  .metricLabel {
+    font-size:7px;
+    letter-spacing:1.2px;
+    margin-bottom:3px;
+  }
+  .metricValue {
+    font-size:13px;
+  }
+  .metric:nth-child(5) {
+    grid-column:1/-1;
+  }
+
+  .dial {
+    height:275px;
+    margin:9px 0 0;
+  }
+  .scale {
+    left:3%; right:3%; top:16px; height:72px;
+  }
+  .scaleLabels {
+    left:2.5%; right:2.5%; top:94px;
+    font-size:8px;
+  }
+  .pointer {
+    top:13px;
+    height:84px;
+    width:5px;
+  }
+  .pointer:before {
+    border-left-width:11px;
+    border-right-width:11px;
+    border-bottom-width:15px;
+  }
+
+  .stationCenter {
+    margin-top:67px;
+    padding:0 4px;
+  }
+  .onair {
+    font-size:8px;
+    letter-spacing:1.3px;
+    margin-bottom:7px;
+  }
+  .dot { width:7px; height:7px; }
+  .stationName {
+    font-size:clamp(20px,7vw,32px);
+    letter-spacing:1.5px;
+    line-height:1.05;
+    overflow-wrap:anywhere;
+  }
+  .city {
+    font-size:9px;
+    letter-spacing:1px;
+    margin-top:5px;
+  }
+  .spectrum {
+    height:72px;
+    margin:19px auto 0;
+    width:100%;
+    max-width:390px;
+    gap:2px;
+  }
+  .bar {
+    width:3px;
+    min-height:9px;
+  }
+  .phaseNote {
+    font-size:7px;
+    line-height:1.3;
+    letter-spacing:.65px;
+    margin:6px auto 0;
+    max-width:340px;
+  }
+
+    font-size:11px;
+    margin-top:2px;
+  }
+}
+
+
+@media (max-width:700px){
+  .cascadeStatus{font-size:7px;gap:4px;padding:6px 1px 3px}
+  .stepDot{width:19px;height:19px;font-size:8px}
+  .stepLine{width:8px}
+  .cascadeMessage{font-size:8px;min-height:25px;padding:5px 7px}
+}
+
+@media (max-width:360px){
+  body { padding:5px; }
+  h1 { font-size:18px; }
+  .subtitle { font-size:7px; }
+  .controls { padding:8px; }
+  .selector { padding:9px 7px 10px; }
+  .navrow { grid-template-columns:44px minmax(0,1fr) 44px; }
+  .navbtn, select { height:44px; }
+  .bezel { min-height:445px; padding:9px; }
+  .dial { height:255px; }
+  .pointer { top:12px; height:80px; width:5px; }
+  .stationCenter { margin-top:61px; }
+  .stationName { font-size:20px; }
+  .spectrum { margin-top:15px; height:64px; }
+  .metricValue { font-size:12px; }
+}
+
+/* Respect users who prefer less motion. */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after {
+    animation-duration:0.001ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
+    transition-duration:0.001ms !important;
+  }
+}
+
+
+/* ===== PHASE 3 LIVE AUDIO STATE ENGINE ===== */
+.playerBar{display:grid;grid-template-columns:96px minmax(150px,.85fr) minmax(250px,1.65fr);gap:16px;align-items:center;margin:16px auto 0;max-width:820px;padding:12px;border:1px solid #365966;border-radius:14px;background:#07171eaa;position:relative;z-index:5}
+.playBtn{position:relative;width:88px;height:88px;min-width:88px;border:2px solid #39f58a;border-radius:50%;background:radial-gradient(circle at 42% 35%,#294d40 0%,#102a24 42%,#071914 72%,#04100d 100%);color:#f4f7df;font-weight:900;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 0 8px #39f58a88,0 0 22px #39f58a55,inset 0 0 18px #39f58a22;animation:powerGlowGreen 1.65s ease-in-out infinite;transition:border-color .3s ease,box-shadow .3s ease,background .3s ease,transform .2s ease}
+.playBtn:hover:not(:disabled){transform:scale(1.04)}
+.playBtn:disabled{opacity:1;cursor:not-allowed}
+.playBtn .powerIcon{font-size:38px;line-height:36px;font-weight:500;text-shadow:0 0 8px currentColor}
+.playBtn .powerLabel{font-size:8px;letter-spacing:1.4px;line-height:10px}
+.playBtn.live{border-color:#ff4141;background:radial-gradient(circle at 42% 35%,#5b2929 0%,#351313 42%,#190909 72%,#0d0404 100%);box-shadow:0 0 8px #ff414188,0 0 24px #ff414155,inset 0 0 18px #ff414122;animation:powerGlowRed 1.25s ease-in-out infinite}
+.playBtn.connecting{border-color:#ffd45a;animation:powerGlowAmber 1s ease-in-out infinite}
+@keyframes powerGlowGreen{0%,100%{box-shadow:0 0 7px #39f58a66,0 0 18px #39f58a44,inset 0 0 14px #39f58a18}50%{box-shadow:0 0 14px #39f58acc,0 0 38px #39f58a77,inset 0 0 24px #39f58a33}}
+@keyframes powerGlowRed{0%,100%{box-shadow:0 0 7px #ff414166,0 0 18px #ff414144,inset 0 0 14px #ff414118}50%{box-shadow:0 0 15px #ff4141cc,0 0 40px #ff414177,inset 0 0 25px #ff414133}}
+@keyframes powerGlowAmber{0%,100%{box-shadow:0 0 7px #ffd45a66,0 0 18px #ffd45a44,inset 0 0 14px #ffd45a18}50%{box-shadow:0 0 14px #ffd45acc,0 0 34px #ffd45a66,inset 0 0 22px #ffd45a30}}
+.volumeWrap{display:flex;align-items:center;gap:8px;min-width:0}
+.volume{width:100%;accent-color:#39a8ff}
+.volumeValue{font-size:10px;color:#9db8c1;min-width:34px;text-align:right}
+.playerStatus{font-size:10px;letter-spacing:1px;color:#9db8c1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.playerStatus.live{color:#ff7777}
+.playerStatus.error{color:#ff7c88}
+.playerHint{font-size:9px;color:#6f8e99;text-align:center;margin-top:6px}
+.audioEl{display:none}
+/* ===== ROBUST LIVE AUDIO VISUALIZER =====
+   The spectrum is OFF by default and becomes active only when the
+   native HTMLAudioElement is demonstrably playing. A CSS animation
+   remains available as a guaranteed fallback when Web Audio analysis
+   is blocked by cross-origin stream restrictions.
+*/
+.spectrum .bar{
+  animation:none !important;
+  transform:scaleY(.06);
+  opacity:.28;
+  transition:transform .12s ease, opacity .12s ease;
+}
+.spectrum.audio-active .bar{
+  animation:pulse var(--d) ease-in-out infinite alternate !important;
+  transform-origin:center bottom;
+  opacity:1;
+}
+.spectrum.audio-buffering .bar{
+  animation:pulse .95s ease-in-out infinite alternate !important;
+  opacity:.45;
+}
+.spectrum.audio-reactive .bar{
+  animation:none !important;
+  transition:height .08s linear, transform .08s linear, opacity .08s linear;
+}
+@media(max-width:700px){
+ .playerBar{grid-template-columns:1fr;gap:10px;margin-top:10px;padding:14px 12px 16px;justify-items:center}
+ .playBtn{width:136px;min-width:136px;height:136px}
+ .playBtn .powerIcon{font-size:52px;line-height:50px}
+ .playBtn .powerLabel{font-size:10px;letter-spacing:1.6px;line-height:12px}
+ .volumeWrap{grid-column:1;width:100%;max-width:430px;min-width:0}
+ .volume{width:100%;height:34px}
+ .volumeValue{font-size:11px;min-width:40px}
+ .playerStatus{grid-column:1;text-align:center;font-size:9px;width:100%}
+}
+
+
+/* ===== PHASE 5: Vintage tuning console ===== */
+.tuningScale{
+  position:absolute;left:4%;right:4%;top:31px;height:58px;
+  pointer-events:none;z-index:3;
+}
+.tuningScale .major{
+  position:absolute;top:0;width:1px;height:28px;background:#c9e4e9aa;
+}
+.tuningScale .minor{
+  position:absolute;top:0;width:1px;height:15px;background:#8eb6c055;
+}
+.tuningScale .major::after{
+  content:attr(data-freq);position:absolute;top:33px;left:50%;
+  transform:translateX(-50%);font:10px Georgia,serif;color:#9fbac2;
+}
+.tuningGlass{
+  position:absolute;left:4%;right:4%;top:14px;height:82px;
+  border:1px solid #8eb6c222;border-radius:6px;
+  box-shadow:inset 0 0 18px #0008;
+  pointer-events:none;z-index:2;
+}
+.pointer.smooth{
+  transition:left .9s cubic-bezier(.16,.8,.22,1);
+}
+.livePulse{
+  animation:livePulse 1.15s ease-in-out infinite alternate;
+}
+@keyframes livePulse{
+  from{opacity:.55;transform:scale(.9)}
+  to{opacity:1;transform:scale(1.12)}
+}
+@media(max-width:700px){
+  .tuningScale{left:3%;right:3%;top:22px;height:50px}
+  .tuningGlass{left:3%;right:3%;top:10px;height:69px}
+  .tuningScale .major{height:22px}
+  .tuningScale .minor{height:11px}
+  .tuningScale .major::after{top:26px;font-size:7px}
+}
+
+
+/* =========================================================
+   PHASE 8 — FINAL POLISH & DEPLOYMENT READY
+   ========================================================= */
+:root{
+  --wr-bg:#070a0e;
+  --wr-panel:#0d1219;
+  --wr-panel2:#121923;
+  --wr-border:rgba(255,255,255,.12);
+  --wr-text:#edf2f7;
+  --wr-muted:#96a2b1;
+  --wr-accent:#c39a58;
+  --wr-accent2:#7bc4d6;
+  --wr-green:#6fce91;
+  --wr-danger:#df7777;
+  --wr-shadow:0 18px 50px rgba(0,0,0,.35);
+}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 50% -10%,rgba(93,125,151,.13),transparent 36%),
+    linear-gradient(180deg,#06090d 0%,#080c11 45%,#06080b 100%);
+  color:var(--wr-text);
+}
+body.wrLight{
+  --wr-bg:#eef2f5;
+  --wr-panel:#ffffff;
+  --wr-panel2:#f4f6f8;
+  --wr-border:rgba(15,25,35,.14);
+  --wr-text:#17202a;
+  --wr-muted:#596574;
+  background:#eef2f5;
+  color:var(--wr-text);
+}
+.wrTopBar{
+  position:sticky;top:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;padding:9px 14px;
+  background:rgba(7,10,14,.90);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+.wrLight .wrTopBar{background:rgba(255,255,255,.9);border-color:var(--wr-border)}
+.wrBrand{display:flex;align-items:center;gap:9px;min-width:0}
+.wrBrandMark{
+  width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,#d8bd8b,#80633b 48%,#251d12 100%);
+  box-shadow:0 0 18px rgba(195,154,88,.22);
+  flex-shrink:0;
+}
+.wrBrandText{min-width:0}
+.wrBrandText strong{display:block;letter-spacing:.08em;font-size:.86rem}
+.wrBrandText span{display:block;color:var(--wr-muted);font-size:.67rem;white-space:nowrap}
+.wrTopActions{display:flex;gap:6px;align-items:center}
+.wrTopBtn{
+  border:1px solid var(--wr-border);background:var(--wr-panel2);
+  color:var(--wr-text);border-radius:9px;padding:8px 10px;
+  cursor:pointer;min-height:38px;font-weight:700;
+}
+.wrTopBtn:hover{filter:brightness(1.12)}
+.wrStatusPill{
+  display:flex;align-items:center;gap:6px;
+  border:1px solid var(--wr-border);border-radius:999px;
+  padding:6px 9px;color:var(--wr-muted);font-size:.68rem;
+}
+.wrStatusDot{width:7px;height:7px;border-radius:50%;background:#737b84}
+.wrStatusDot.live{background:var(--wr-green);box-shadow:0 0 9px rgba(111,206,145,.75)}
+.wrStatusDot.warn{background:#e4bd61}
+.wrMainShell{max-width:1280px;margin:0 auto;padding:0 14px 28px}
+.wrHero{
+  padding:22px 4px 12px;text-align:center;
+}
+.wrHero h1{
+  margin:0;font-size:clamp(1.45rem,4vw,2.55rem);
+  letter-spacing:.09em;text-transform:uppercase;
+}
+.wrHero p{margin:7px auto 0;color:var(--wr-muted);max-width:700px;font-size:.88rem}
+.wrBreadcrumb{
+  display:flex;justify-content:center;gap:7px;flex-wrap:wrap;
+  margin-top:10px;color:var(--wr-muted);font-size:.69rem;
+}
+.wrBreadcrumb span{
+  border:1px solid var(--wr-border);padding:5px 8px;border-radius:999px;
+  background:rgba(255,255,255,.025);
+}
+.wrFooter{
+  margin-top:28px;padding:18px 4px;border-top:1px solid var(--wr-border);
+  color:var(--wr-muted);font-size:.7rem;text-align:center;
+}
+.wrFooter strong{color:var(--wr-text)}
+.wrFooterLinks{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:7px}
+.wrFooterLinks button{
+  border:0;background:none;color:var(--wr-muted);cursor:pointer;padding:3px;
+}
+.wrToast{
+  position:fixed;left:50%;bottom:18px;transform:translate(-50%,120px);
+  z-index:2000;max-width:min(92vw,500px);padding:11px 15px;
+  border:1px solid var(--wr-border);border-radius:11px;
+  background:rgba(12,17,24,.96);box-shadow:var(--wr-shadow);
+  color:#eef3f7;font-size:.78rem;text-align:center;
+  transition:transform .25s ease;
+}
+.wrToast.show{transform:translate(-50%,0)}
+.wrModalBackdrop{
+  position:fixed;inset:0;z-index:1900;display:none;
+  align-items:center;justify-content:center;padding:18px;
+  background:rgba(0,0,0,.66);backdrop-filter:blur(5px);
+}
+.wrModalBackdrop.open{display:flex}
+.wrModal{
+  width:min(100%,620px);max-height:85vh;overflow:auto;
+  border:1px solid var(--wr-border);border-radius:16px;
+  background:var(--wr-panel);box-shadow:var(--wr-shadow);padding:18px;
+}
+.wrModal h3{margin:0 0 9px}.wrModal p{color:var(--wr-muted);font-size:.82rem;line-height:1.55}
+.wrModalClose{float:right}
+.wrInstallHint{display:none}
+@media(max-width:520px){
+  .wrTopBar{padding:8px 9px}
+  .wrBrandText span{display:none}
+  .wrTopBtn{padding:8px}
+  .wrStatusPill{display:none}
+  .wrMainShell{padding-left:9px;padding-right:9px}
+  .wrHero{padding-top:16px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+
+
+
+/* ===== USER REQUEST: COMPACT START/STOP CONTROL ===== */
+.playBtn{
+  width:82px !important;
+  height:82px !important;
+  min-width:82px !important;
+  min-height:82px !important;
+  border-radius:50% !important;
+  padding:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:4px !important;
+  flex:0 0 82px !important;
+  position:relative !important;
+  overflow:visible !important;
+  background:radial-gradient(circle at 38% 30%,#5c7177 0%,#1b3035 35%,#07151a 72%,#061016 100%) !important;
+  border:2px solid #91a9ae !important;
+  box-shadow:
+    0 0 0 4px rgba(120,155,164,.16),
+    0 0 12px rgba(130,180,190,.45),
+    inset 0 0 12px rgba(210,235,240,.16) !important;
+  animation:wrCompactReadyGlow 2.2s ease-in-out infinite !important;
+  transition:box-shadow .35s ease, border-color .35s ease, transform .2s ease !important;
+}
+.playBtn:hover{transform:scale(1.04);}
+.playBtn:active{transform:scale(.97);}
+.playBtn .powerIcon{
+  font-size:25px !important;
+  line-height:1 !important;
+  color:#fff4c7 !important;
+  text-shadow:0 0 7px rgba(255,245,190,.9) !important;
+}
+.playBtn .powerLabel{
+  font-size:8px !important;
+  line-height:1 !important;
+  letter-spacing:1.4px !important;
+  font-weight:700 !important;
+  color:#f3f6f5 !important;
+  text-shadow:0 0 5px rgba(255,255,255,.45) !important;
+}
+.playBtn[data-state="playing"]{
+  border-color:#ff5a5a !important;
+  box-shadow:
+    0 0 0 4px rgba(255,70,70,.14),
+    0 0 16px rgba(255,55,55,.72),
+    0 0 30px rgba(255,30,30,.38),
+    inset 0 0 12px rgba(255,100,100,.18) !important;
+  animation:wrCompactPlayingGlow 1.45s ease-in-out infinite !important;
+}
+.playBtn[data-state="connecting"]{
+  border-color:#ffd45a !important;
+  box-shadow:
+    0 0 0 4px rgba(255,210,70,.13),
+    0 0 16px rgba(255,205,60,.65),
+    0 0 30px rgba(255,180,30,.32) !important;
+  animation:wrCompactConnectingGlow 1s ease-in-out infinite !important;
+}
+@keyframes wrCompactReadyGlow{
+  0%,100%{box-shadow:0 0 0 4px rgba(120,155,164,.12),0 0 10px rgba(70,210,130,.45),0 0 18px rgba(40,220,120,.18),inset 0 0 10px rgba(210,235,240,.14);}
+  50%{box-shadow:0 0 0 5px rgba(80,230,140,.18),0 0 20px rgba(50,255,125,.82),0 0 34px rgba(40,235,115,.38),inset 0 0 14px rgba(210,255,225,.22);}
+}
+@keyframes wrCompactPlayingGlow{
+  0%,100%{box-shadow:0 0 0 4px rgba(255,70,70,.12),0 0 12px rgba(255,50,50,.58),0 0 22px rgba(255,30,30,.25),inset 0 0 10px rgba(255,100,100,.16);}
+  50%{box-shadow:0 0 0 6px rgba(255,60,60,.2),0 0 24px rgba(255,45,45,.92),0 0 40px rgba(255,25,25,.42),inset 0 0 15px rgba(255,120,120,.24);}
+}
+@keyframes wrCompactConnectingGlow{
+  0%,100%{box-shadow:0 0 0 4px rgba(255,205,60,.12),0 0 10px rgba(255,190,40,.55);}
+  50%{box-shadow:0 0 0 6px rgba(255,215,70,.2),0 0 24px rgba(255,200,40,.9);}
+}
+@media(max-width:600px){
+  .playBtn{
+    width:82px !important;
+    height:82px !important;
+    min-width:82px !important;
+    min-height:82px !important;
+    flex-basis:82px !important;
+  }
+}
+
+/* =========================================================
+   FINAL PLAY/PAUSE CONTROL
+   Device-independent CSS button — no Unicode power glyph/image.
+   Designed to remain visually consistent on iPhone, Samsung and desktop.
+   ========================================================= */
+.playBtn{
+  width:112px !important;
+  height:112px !important;
+  min-width:112px !important;
+  min-height:112px !important;
+  flex:0 0 112px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  display:grid !important;
+  place-items:center !important;
+  position:relative !important;
+  overflow:visible !important;
+  border:2px solid #d7f5fb !important;
+  background:
+    radial-gradient(circle at 38% 30%,
+      #35535b 0%,
+      #20383f 28%,
+      #10262e 58%,
+      #07161d 100%) !important;
+  color:#f7fbfc !important;
+  box-shadow:
+    0 0 0 4px rgba(118,205,220,.10),
+    0 0 12px rgba(142,224,238,.62),
+    0 0 28px rgba(76,194,217,.36),
+    inset 0 0 16px rgba(220,246,250,.14),
+    inset 0 -8px 18px rgba(0,0,0,.28) !important;
+  animation:wrPlayPauseReadyGlow 2.2s ease-in-out infinite !important;
+  transition:
+    transform .2s ease,
+    border-color .3s ease,
+    box-shadow .35s ease,
+    background .35s ease !important;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+.playBtn::before{
+  content:"";
+  position:absolute;
+  inset:-7px;
+  border-radius:50%;
+  border:1px solid rgba(154,235,246,.24);
+  pointer-events:none;
+}
+
+.playBtn:hover:not(:disabled){
+  transform:scale(1.035) !important;
+}
+
+.playBtn:active{
+  transform:scale(.97) !important;
+}
+
+.playBtn:disabled{
+  opacity:1 !important;
+  cursor:not-allowed !important;
+}
+
+.playBtn .powerIcon{
+  display:none !important;
+}
+
+.playBtn .powerLabel{
+  display:block !important;
+  width:100% !important;
+  padding:0 7px !important;
+  margin:0 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  font-family:Inter,Segoe UI,Arial,sans-serif !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  letter-spacing:1.15px !important;
+  font-weight:800 !important;
+  color:#f7fbfc !important;
+  text-shadow:
+    0 0 5px rgba(255,255,255,.78),
+    0 0 11px rgba(151,232,242,.42) !important;
+}
+
+/* Playing state: preserve the application's existing live-state meaning,
+   but render it as a red active glow around the new control. */
+.playBtn[data-state="playing"]{
+  border-color:#ffb2b2 !important;
+  background:
+    radial-gradient(circle at 38% 30%,
+      #55383b 0%,
+      #352126 32%,
+      #1d1116 64%,
+      #0e080b 100%) !important;
+  box-shadow:
+    0 0 0 4px rgba(255,70,70,.12),
+    0 0 16px rgba(255,70,70,.82),
+    0 0 34px rgba(255,35,35,.44),
+    inset 0 0 16px rgba(255,170,170,.13) !important;
+  animation:wrPlayPausePlayingGlow 1.45s ease-in-out infinite !important;
+}
+
+.playBtn[data-state="playing"] .powerLabel{
+  color:#fff2f2 !important;
+  text-shadow:
+    0 0 5px rgba(255,235,235,.85),
+    0 0 12px rgba(255,120,120,.55) !important;
+}
+
+/* Connecting/buffering state. */
+.playBtn[data-state="connecting"]{
+  border-color:#ffe7a0 !important;
+  background:
+    radial-gradient(circle at 38% 30%,
+      #544a2d 0%,
+      #302916 35%,
+      #171309 68%,
+      #0c0a06 100%) !important;
+  box-shadow:
+    0 0 0 4px rgba(255,210,70,.12),
+    0 0 16px rgba(255,205,60,.72),
+    0 0 30px rgba(255,180,30,.34),
+    inset 0 0 15px rgba(255,230,150,.12) !important;
+  animation:wrPlayPauseConnectingGlow 1s ease-in-out infinite !important;
+}
+
+@keyframes wrPlayPauseReadyGlow{
+  0%,100%{
+    box-shadow:
+      0 0 0 4px rgba(118,205,220,.09),
+      0 0 11px rgba(142,224,238,.52),
+      0 0 24px rgba(76,194,217,.27),
+      inset 0 0 14px rgba(220,246,250,.12),
+      inset 0 -8px 18px rgba(0,0,0,.28);
+  }
+  50%{
+    box-shadow:
+      0 0 0 5px rgba(140,225,238,.15),
+      0 0 20px rgba(151,235,246,.86),
+      0 0 38px rgba(76,210,232,.46),
+      inset 0 0 19px rgba(230,252,255,.18),
+      inset 0 -8px 18px rgba(0,0,0,.24);
+  }
+}
+
+@keyframes wrPlayPausePlayingGlow{
+  0%,100%{
+    box-shadow:
+      0 0 0 4px rgba(255,70,70,.10),
+      0 0 12px rgba(255,50,50,.60),
+      0 0 23px rgba(255,30,30,.27),
+      inset 0 0 12px rgba(255,120,120,.12);
+  }
+  50%{
+    box-shadow:
+      0 0 0 6px rgba(255,60,60,.18),
+      0 0 24px rgba(255,45,45,.94),
+      0 0 42px rgba(255,25,25,.45),
+      inset 0 0 17px rgba(255,120,120,.20);
+  }
+}
+
+@keyframes wrPlayPauseConnectingGlow{
+  0%,100%{
+    box-shadow:
+      0 0 0 4px rgba(255,205,60,.10),
+      0 0 11px rgba(255,190,40,.56),
+      0 0 24px rgba(255,180,30,.25),
+      inset 0 0 12px rgba(255,225,120,.10);
+  }
+  50%{
+    box-shadow:
+      0 0 0 6px rgba(255,215,70,.18),
+      0 0 24px rgba(255,200,40,.92),
+      0 0 38px rgba(255,180,25,.38),
+      inset 0 0 17px rgba(255,235,150,.16);
+  }
+}
+
+@media(max-width:700px){
+  .playBtn{
+    width:104px !important;
+    height:104px !important;
+    min-width:104px !important;
+    min-height:104px !important;
+    flex-basis:104px !important;
+  }
+
+  .playBtn .powerLabel{
+    font-size:9px !important;
+    letter-spacing:1.05px !important;
+    padding:0 6px !important;
+  }
+}
+
+@media(max-width:360px){
+  .playBtn{
+    width:96px !important;
+    height:96px !important;
+    min-width:96px !important;
+    min-height:96px !important;
+    flex-basis:96px !important;
+  }
+
+  .playBtn .powerLabel{
+    font-size:8px !important;
+    letter-spacing:.9px !important;
+  }
+}
+
+
+
+/* =========================================================
+   FINAL VISUAL OVERRIDE — COMPACT HORIZONTAL PHYSICAL PLAY/PAUSE
+   IMPORTANT: visual layer only. No radio-operation JavaScript is changed.
+   The existing #playBtn click handler and audio state engine remain intact.
+   ========================================================= */
+.playerBar{
+  grid-template-columns:190px minmax(150px,.85fr) minmax(250px,1.65fr);
+}
+
+.playBtn{
+  width:190px !important;
+  height:58px !important;
+  min-width:190px !important;
+  min-height:58px !important;
+  flex:0 0 190px !important;
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:18px !important;
+  padding:0 18px !important;
+  border-radius:9px !important;
+  position:relative !important;
+  overflow:visible !important;
+  cursor:pointer !important;
+  border:2px solid #55e7ff !important;
+  background:
+    linear-gradient(180deg,#176384 0%,#0d4866 46%,#07334b 100%) !important;
+  color:#f7fbfc !important;
+  box-shadow:
+    0 0 0 2px rgba(83,224,247,.12),
+    0 0 10px rgba(54,218,244,.72),
+    0 0 24px rgba(31,174,211,.40),
+    inset 0 3px 0 rgba(183,244,255,.38),
+    inset 0 -7px 12px rgba(0,0,0,.42),
+    inset 3px 0 0 rgba(118,220,241,.16),
+    inset -3px 0 0 rgba(0,0,0,.25) !important;
+  animation:compactRadioReadyGlow 2.2s ease-in-out infinite !important;
+  transition:transform .18s ease,box-shadow .3s ease,border-color .3s ease,background .3s ease !important;
+}
+
+/* Beveled upper/lower highlights, echoing the supplied physical-button image. */
+.playBtn::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:4px !important;
+  border-radius:5px !important;
+  border-top:2px solid rgba(180,246,255,.38) !important;
+  border-left:1px solid rgba(110,226,247,.28) !important;
+  border-right:1px solid rgba(0,0,0,.25) !important;
+  border-bottom:2px solid rgba(0,0,0,.38) !important;
+  pointer-events:none !important;
+  box-shadow:inset 0 5px 7px rgba(255,255,255,.07),inset 0 -6px 9px rgba(0,0,0,.20) !important;
+}
+
+/* The yellow physical Play/Pause symbol. */
+.playBtn::after{
+  content:"" !important;
+  position:relative !important;
+  z-index:2 !important;
+  width:0 !important;
+  height:0 !important;
+  flex:0 0 auto !important;
+  border-top:14px solid transparent !important;
+  border-bottom:14px solid transparent !important;
+  border-left:23px solid #ffe51f !important;
+  filter:
+    drop-shadow(0 0 2px #fff6a0)
+    drop-shadow(0 0 6px #ffd400)
+    drop-shadow(0 0 12px rgba(255,211,0,.85)) !important;
+}
+
+.playBtn .powerLabel{
+  position:relative !important;
+  z-index:2 !important;
+  width:auto !important;
+  padding:0 !important;
+  margin:0 !important;
+  font-size:12px !important;
+  line-height:1 !important;
+  letter-spacing:1.25px !important;
+  font-weight:900 !important;
+  color:#f8fdff !important;
+  text-shadow:0 0 5px rgba(255,255,255,.85),0 0 10px rgba(104,224,242,.55) !important;
+}
+
+.playBtn:hover:not(:disabled){
+  transform:translateY(-1px) !important;
+  box-shadow:
+    0 0 0 2px rgba(83,224,247,.16),
+    0 0 14px rgba(54,218,244,.90),
+    0 0 30px rgba(31,174,211,.52),
+    inset 0 3px 0 rgba(183,244,255,.42),
+    inset 0 -7px 12px rgba(0,0,0,.42) !important;
+}
+
+.playBtn:active:not(:disabled){transform:translateY(1px) !important;}
+
+/* PLAYING = same physical button, but the yellow symbol becomes Pause. */
+.playBtn[data-state="playing"]{
+  border-color:#62eaff !important;
+  background:
+    linear-gradient(180deg,#176c86 0%,#0d4c64 46%,#073444 100%) !important;
+  box-shadow:
+    0 0 0 2px rgba(83,224,247,.15),
+    0 0 12px rgba(54,218,244,.82),
+    0 0 28px rgba(31,174,211,.48),
+    inset 0 3px 0 rgba(183,244,255,.40),
+    inset 0 -7px 12px rgba(0,0,0,.42) !important;
+  animation:compactRadioPlayingGlow 1.35s ease-in-out infinite !important;
+}
+
+.playBtn[data-state="playing"]::after{
+  width:8px !important;
+  height:28px !important;
+  border:0 !important;
+  border-radius:1px !important;
+  background:linear-gradient(90deg,#fff04a 0 42%,transparent 42% 58%,#fff04a 58% 100%) !important;
+  filter:
+    drop-shadow(0 0 2px #fff8a8)
+    drop-shadow(0 0 6px #ffd400)
+    drop-shadow(0 0 12px rgba(255,211,0,.85)) !important;
+}
+
+.playBtn[data-state="connecting"]{
+  border-color:#ffd75a !important;
+  animation:compactRadioConnectingGlow 1s ease-in-out infinite !important;
+}
+
+.playBtn[data-state="connecting"]::after{
+  border-left-color:#ffd83d !important;
+}
+
+@keyframes compactRadioReadyGlow{
+  0%,100%{box-shadow:0 0 0 2px rgba(83,224,247,.10),0 0 9px rgba(54,218,244,.58),0 0 20px rgba(31,174,211,.28),inset 0 3px 0 rgba(183,244,255,.32),inset 0 -7px 12px rgba(0,0,0,.42);}
+  50%{box-shadow:0 0 0 3px rgba(83,224,247,.16),0 0 15px rgba(54,218,244,.86),0 0 30px rgba(31,174,211,.44),inset 0 3px 0 rgba(183,244,255,.40),inset 0 -7px 12px rgba(0,0,0,.42);}
+}
+
+@keyframes compactRadioPlayingGlow{
+  0%,100%{box-shadow:0 0 0 2px rgba(83,224,247,.12),0 0 10px rgba(54,218,244,.66),0 0 22px rgba(31,174,211,.32),inset 0 3px 0 rgba(183,244,255,.34),inset 0 -7px 12px rgba(0,0,0,.42);}
+  50%{box-shadow:0 0 0 3px rgba(83,224,247,.19),0 0 18px rgba(54,218,244,.96),0 0 34px rgba(31,174,211,.50),inset 0 3px 0 rgba(183,244,255,.44),inset 0 -7px 12px rgba(0,0,0,.42);}
+}
+
+@keyframes compactRadioConnectingGlow{
+  0%,100%{box-shadow:0 0 0 2px rgba(255,210,70,.10),0 0 10px rgba(255,200,50,.55),0 0 20px rgba(255,180,30,.22),inset 0 3px 0 rgba(255,245,190,.28),inset 0 -7px 12px rgba(0,0,0,.42);}
+  50%{box-shadow:0 0 0 3px rgba(255,215,70,.18),0 0 18px rgba(255,205,50,.86),0 0 30px rgba(255,180,30,.38),inset 0 3px 0 rgba(255,245,190,.38),inset 0 -7px 12px rgba(0,0,0,.42);}
+}
+
+@media(max-width:700px){
+  .playerBar{
+    grid-template-columns:1fr !important;
+    gap:7px !important;
+    margin-top:7px !important;
+    padding:9px 10px 10px !important;
+  }
+  .playBtn{
+    width:min(190px,72vw) !important;
+    height:52px !important;
+    min-width:min(190px,72vw) !important;
+    min-height:52px !important;
+    flex-basis:min(190px,72vw) !important;
+    gap:14px !important;
+    padding:0 14px !important;
+  }
+  .playBtn::after{
+    border-top-width:12px !important;
+    border-bottom-width:12px !important;
+    border-left-width:20px !important;
+  }
+  .playBtn[data-state="playing"]::after{
+    width:7px !important;
+    height:24px !important;
+  }
+  .playBtn .powerLabel{
+    font-size:10px !important;
+    letter-spacing:1px !important;
+  }
+  .playerStatus{margin-top:0 !important;}
+  .volumeWrap{margin-top:0 !important;}
+}
+
+@media(max-width:360px){
+  .playBtn{
+    width:160px !important;
+    min-width:160px !important;
+    flex-basis:160px !important;
+    height:48px !important;
+    min-height:48px !important;
+    gap:11px !important;
+  }
+  .playBtn .powerLabel{font-size:9px !important;letter-spacing:.8px !important;}
+  .playBtn::after{border-top-width:11px !important;border-bottom-width:11px !important;border-left-width:18px !important;}
+  .playBtn[data-state="playing"]::after{height:22px !important;width:7px !important;}
+}
+
+</style>
+
+<meta name="theme-color" content="#070a0e">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="World Radio — discover live radio stations from around the world with live playback.">
+
+
+<style id="physical-radio-layer">
+/* =========================================================
+   PHYSICAL RADIO SHELL — VISUAL LAYER
+   The existing World Radio controls remain functional. The shell
+   uses real HTML/CSS controls; the speaker grilles and FAV/REC/SET
+   blocks are visual only for now.
+   ========================================================= */
+:root{
+  --radio-body1:#6f4a2c;
+  --radio-body2:#3b2416;
+  --radio-edge:#1c120c;
+  --radio-metal:#a58b68;
+  --radio-panel:#0c171b;
+  --radio-glow:#65dff4;
+}
+.radio{background:transparent;border:0;box-shadow:none;padding:0;min-width:0}
+.radioFinishBar{
+  display:flex;justify-content:flex-end;align-items:center;margin:0 0 8px;
+}
+.radioFinishBar label{display:flex;align-items:center;gap:7px;color:#8ea5ae;font-size:8px;letter-spacing:1.3px}
+.radioFinishBar select{
+  width:auto;height:30px;min-width:145px;padding:0 8px;font-size:10px;
+  border-radius:8px;border:1px solid #405864;background:#101b22;color:#e9f3f6;
+}
+.radioUnit{
+  display:block;
+  padding:14px;border-radius:26px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.10),transparent 15%),
+    linear-gradient(155deg,var(--radio-body1),var(--radio-body2) 58%,#1c120d);
+  border:5px solid var(--radio-edge);
+  box-shadow:0 22px 55px rgba(0,0,0,.52),inset 0 1px rgba(255,255,255,.22),inset 0 -12px 22px rgba(0,0,0,.35);
+  position:relative;overflow:hidden;
+}
+.radioUnit::before{
+  content:"";position:absolute;inset:7px;border:1px solid rgba(255,255,255,.15);border-radius:20px;pointer-events:none;z-index:0;
+}
+.radioUnit>*{position:relative;z-index:1}
+.radioUnit .bezel{
+  min-height:660px;height:100%;border-width:7px;border-radius:17px;
+  background:radial-gradient(circle at 50% 43%,#17485b 0,#0d3545 25%,#0a2633 58%,#071820 100%);
+}
+
+/* Colour-pattern presets. These change the physical cabinet only; the
+   live audio/data logic is untouched. */
+.radioUnit.finish-black{--radio-body1:#30363a;--radio-body2:#111417;--radio-edge:#090b0d}
+.radioUnit.finish-silver{--radio-body1:#a9b0b2;--radio-body2:#555e62;--radio-edge:#202529}
+.radioUnit.finish-ivory{--radio-body1:#d5c6a7;--radio-body2:#75694f;--radio-edge:#342d20}
+.radioUnit.finish-teal{--radio-body1:#1d6671;--radio-body2:#0a2b31;--radio-edge:#06171b}
+.radioUnit.finish-silver .speakerGrille,.radioUnit.finish-ivory .speakerGrille{background:linear-gradient(145deg,#46494a,#17191a)}
+.radioUnit.finish-silver .hardwareButton,.radioUnit.finish-ivory .hardwareButton{background:linear-gradient(180deg,#d0d4d4,#555b5d);color:#182024;border-color:#dfe4e4}
+
+@media(max-width:950px){
+  .radioUnit{padding:10px}
+  .radioUnit .bezel{min-height:700px}
+}
+@media(max-width:700px){
+  .radioFinishBar{justify-content:stretch}
+  .radioFinishBar label{width:100%;justify-content:space-between}
+  .radioFinishBar select{flex:1;min-width:0;height:36px;font-size:12px}
+  .radioUnit{padding:8px;border-radius:20px}
+  .radioUnit .bezel{min-height:620px;padding:11px}
+}
+@media(max-width:430px){
+  .radioUnit .bezel{min-height:590px}
+}
+</style>
+
+
+<style id="compact-radio-controls-v3">
+/* =========================================================
+   V3 — COMPACT LOWER CONTROL AREA
+   RADIO FINISH → SELECT YOUR CHANNEL → PRE-CONFIGURED LANGUAGE
+   Keep controls touch-friendly while minimizing vertical space.
+   ========================================================= */
+.controls{
+  padding:0 0 5px !important;
+  margin:0 !important;
+}
+.radioFinishBar{
+  display:grid !important;
+  grid-template-columns:auto minmax(0,1fr) !important;
+  align-items:center !important;
+  gap:7px !important;
+  width:100% !important;
+  margin:0 0 4px !important;
+  padding:0 !important;
+}
+.radioFinishBar label{
+  display:contents !important;
+}
+.radioFinishBar label > span{
+  color:#7f98a2 !important;
+  font-size:7px !important;
+  line-height:1 !important;
+  letter-spacing:1.05px !important;
+  white-space:nowrap !important;
+}
+.radioFinishBar select{
+  width:100% !important;
+  min-width:0 !important;
+  height:32px !important;
+  padding:0 9px !important;
+  border-radius:8px !important;
+  border:1px solid #304b57 !important;
+  background:linear-gradient(180deg,#14232b,#0d181f) !important;
+  color:#dce9ed !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  box-shadow:inset 0 1px rgba(255,255,255,.07),0 0 8px rgba(84,217,255,.035) !important;
+}
+.channelSelector,
+.preconfig{
+  border-radius:11px !important;
+  margin:0 !important;
+  box-shadow:inset 0 1px rgba(255,255,255,.07),0 0 10px rgba(84,217,255,.045) !important;
+}
+.channelSelector{margin-bottom:4px !important}
+.channelSelectorSummary,
+.preconfigSummary{
+  min-height:38px !important;
+  height:38px !important;
+  box-sizing:border-box !important;
+  padding:6px 10px !important;
+  gap:6px !important;
+  font-size:9px !important;
+  letter-spacing:.85px !important;
+  line-height:1 !important;
+}
+.channelCaret,.preconfigCaret{
+  font-size:10px !important;
+}
+.channelSelectorDot,.preconfigDot{
+  font-size:10px !important;
+}
+.channelSelectorAction,.preconfigAction,
+.channelSelector[open] .channelSelectorAction:after,
+.preconfig[open] .preconfigAction:after{
+  font-size:7px !important;
+  letter-spacing:.45px !important;
+}
+.channelSelectorBody{
+  padding:7px 0 0 !important;
+}
+.preconfig{
+  margin-top:4px !important;
+}
+.preconfigBody{
+  padding:1px 8px 8px !important;
+}
+.preconfigLanguages{
+  gap:4px !important;
+  padding:6px 0 7px !important;
+}
+.preconfigLang{
+  padding:5px 6px !important;
+  border-radius:7px !important;
+  font-size:9px !important;
+}
+.preconfigRadio{
+  width:14px !important;
+  height:14px !important;
+  min-width:14px !important;
+}
+.preconfigSelectors{
+  gap:6px !important;
+}
+.preconfigFieldLabel{
+  margin:0 2px 3px !important;
+  font-size:7px !important;
+  letter-spacing:1px !important;
+}
+.preconfigNav{
+  grid-template-columns:29px minmax(0,1fr) 29px !important;
+  gap:4px !important;
+}
+.preconfigNav .navbtn{
+  height:30px !important;
+  font-size:17px !important;
+}
+.preconfigNav select{
+  height:30px !important;
+  font-size:10px !important;
+  padding:0 6px !important;
+}
+.preconfigHint{
+  min-height:0 !important;
+  margin-top:5px !important;
+  font-size:7px !important;
+  line-height:1.2 !important;
+}
+/* The expanded cascade remains functional but becomes denser. */
+.channelSelector .selector{
+  margin-bottom:5px !important;
+  padding:7px 8px !important;
+  border-radius:9px !important;
+}
+.channelSelector .selHead{
+  gap:6px !important;
+  margin-bottom:5px !important;
+}
+.channelSelector .selHead .icon{font-size:11px !important}
+.channelSelector .selHead .label{font-size:8px !important;letter-spacing:.9px !important}
+.channelSelector .selHead .state{font-size:7px !important}
+.channelSelector .navrow{
+  grid-template-columns:32px minmax(0,1fr) 32px !important;
+  gap:4px !important;
+}
+.channelSelector .navbtn{height:30px !important;font-size:17px !important}
+.channelSelector select{height:30px !important;font-size:10px !important}
+.channelSelector .helper{font-size:7px !important;margin-top:4px !important}
+.cascadeStatus{padding:5px 2px 3px !important;font-size:7px !important;gap:4px !important}
+.stepDot{width:17px !important;height:17px !important;font-size:8px !important}
+.stepLine{width:8px !important}
+.cascadeMessage{min-height:22px !important;padding:4px 6px !important;font-size:7px !important}
+@media(max-width:700px){
+  .radioFinishBar{grid-template-columns:auto minmax(0,1fr) !important;gap:6px !important}
+  .radioFinishBar label > span{font-size:7px !important}
+  .radioFinishBar select{height:31px !important;font-size:10px !important}
+  .channelSelectorSummary,.preconfigSummary{height:37px !important;min-height:37px !important;padding:6px 9px !important;font-size:8.5px !important}
+}
+</style>
+
+
+
+<style id="world-radio-language-control-v2">
+/* =========================================================
+   LANGUAGE CONTROL V2
+   Joined Prev | Language | Next control.
+   All dimensions are fluid and constrained to the parent width
+   so the control cannot create horizontal scrolling on mobile.
+   ========================================================= */
+
+.languageSelector{
+  min-width:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+}
+
+.languageSelHead{
+  min-width:0 !important;
+}
+
+.languageSelHead .label{
+  min-width:0;
+}
+
+.languageNav{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(60px,.74fr) minmax(0,1.72fr) minmax(60px,.74fr);
+  gap:0;
+  align-items:stretch;
+  overflow:hidden;
+  border:1px solid #2e6072;
+  border-radius:11px;
+  background:#071821;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.12),
+    inset 0 -2px 5px rgba(0,0,0,.45),
+    0 0 12px rgba(84,217,255,.08);
+}
+
+.languageNavBtn,
+.languageSelectShell{
+  min-width:0;
+  width:100%;
+  height:42px;
+  box-sizing:border-box;
+}
+
+.languageNavBtn{
+  appearance:none;
+  border:0;
+  margin:0;
+  padding:0 clamp(3px,1vw,9px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:clip;
+  color:#e4f4f8;
+  font-size:clamp(9px,1.05vw,12px);
+  font-weight:800;
+  letter-spacing:.35px;
+  line-height:1;
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  text-shadow:0 1px 4px rgba(0,0,0,.7);
+  background:
+    linear-gradient(180deg,#1b556d 0%,#124057 44%,#0a2a3a 100%);
+  box-shadow:
+    inset 0 1px rgba(195,239,249,.30),
+    inset 0 -2px 5px rgba(0,0,0,.45);
+  transition:
+    filter .18s ease,
+    box-shadow .18s ease,
+    background .18s ease,
+    transform .12s ease;
+}
+
+.languageNavPrev{
+  border-right:1px solid #47798a;
+  border-radius:9px 0 0 9px;
+}
+
+.languageNavNext{
+  border-left:1px solid #47798a;
+  border-radius:0 9px 9px 0;
+}
+
+.languageNavBtn:hover:not(:disabled){
+  filter:brightness(1.14);
+  box-shadow:
+    inset 0 1px rgba(220,249,255,.38),
+    inset 0 -2px 5px rgba(0,0,0,.42),
+    0 0 10px rgba(84,217,255,.13);
+}
+
+.languageNavBtn:active:not(:disabled){
+  transform:translateY(1px);
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,.52),
+    inset 0 -1px rgba(220,249,255,.12);
+}
+
+.languageNavBtn:disabled{
+  opacity:.28;
+  cursor:not-allowed;
+  filter:saturate(.55);
+}
+
+.languageNavBtn:focus-visible,
+.languageSelectShell:focus-within{
+  outline:2px solid #54d9ff;
+  outline-offset:-2px;
+  position:relative;
+  z-index:4;
+}
+
+/* Central segment. The native select remains the real functional control. */
+.languageSelectShell{
+  position:relative;
+  background:
+    linear-gradient(180deg,#173b4b 0%,#102d39 46%,#0a202b 100%);
+  box-shadow:
+    inset 0 1px rgba(210,244,250,.18),
+    inset 0 -2px 5px rgba(0,0,0,.38);
+}
+
+.languageSelectShell::after{
+  content:"";
+  position:absolute;
+  right:12px;
+  top:50%;
+  width:8px;
+  height:8px;
+  border-right:2px solid #a9e9f7;
+  border-bottom:2px solid #a9e9f7;
+  transform:translateY(-68%) rotate(45deg);
+  pointer-events:none;
+  filter:drop-shadow(0 0 4px rgba(84,217,255,.45));
+}
+
+.languageSelectShell select{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  display:block;
+  width:100%;
+  height:100%;
+  min-width:0;
+  margin:0;
+  padding:0 38px 0 14px;
+  border:0 !important;
+  border-radius:0 !important;
+  outline:none;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#f3f8fa;
+  background:transparent !important;
+  box-shadow:none !important;
+  cursor:pointer;
+  font-size:clamp(10px,1.1vw,13px);
+  font-weight:700;
+}
+
+.languageSelectShell select:disabled{
+  cursor:not-allowed;
+  opacity:.72;
+}
+
+/* Small helper remains below the joined control. */
+.languageHelper{
+  margin-top:6px !important;
+}
+
+@media(max-width:700px){
+  .languageNav{
+    grid-template-columns:minmax(58px,.72fr) minmax(0,1.76fr) minmax(58px,.72fr);
+    border-radius:10px;
+  }
+
+  .languageNavBtn,
+  .languageSelectShell{
+    height:44px;
+  }
+
+  .languageNavBtn{
+    font-size:clamp(8.5px,2.7vw,11px);
+    letter-spacing:.15px;
+    padding-left:2px;
+    padding-right:2px;
+  }
+
+  .languageSelectShell select{
+    font-size:16px;
+    padding-left:10px;
+    padding-right:31px;
+  }
+
+  .languageSelectShell::after{
+    right:10px;
+    width:7px;
+    height:7px;
+  }
+
+  .languageHelper{
+    font-size:8px !important;
+    line-height:1.2 !important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+}
+
+@media(max-width:360px){
+  .languageNav{
+    grid-template-columns:minmax(54px,.70fr) minmax(0,1.82fr) minmax(54px,.70fr);
+  }
+
+  .languageNavBtn{
+    font-size:8px;
+    letter-spacing:0;
+  }
+
+  .languageSelectShell select{
+    font-size:16px;
+    padding-left:8px;
+    padding-right:28px;
+  }
+
+  .languageSelectShell::after{
+    right:9px;
+  }
+}
+
+@media(max-width:320px){
+  .languageNav{
+    grid-template-columns:minmax(50px,.68fr) minmax(0,1.88fr) minmax(50px,.68fr);
+  }
+
+  .languageNavBtn{
+    font-size:7.5px;
+  }
+
+  .languageSelectShell select{
+    padding-left:7px;
+    padding-right:25px;
+  }
+}
+</style>
+
+
+<style id="world-radio-journey-controls-v1">
+/* =========================================================
+   WORLD RADIO — UNIFIED CASCADE NAVIGATION
+   Country / Category / Station use the same joined control
+   design as the Language selector. Existing select/button IDs
+   are preserved so all JavaScript behaviour remains unchanged.
+   ========================================================= */
+.journeyNav{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  display:grid !important;
+  grid-template-columns:minmax(60px,.74fr) minmax(0,1.72fr) minmax(60px,.74fr) !important;
+  gap:0 !important;
+  align-items:stretch !important;
+  overflow:hidden;
+  border:1px solid #2e6072;
+  border-radius:11px;
+  background:#071821;
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.12),
+    inset 0 -2px 5px rgba(0,0,0,.45),
+    0 0 12px rgba(84,217,255,.08);
+}
+
+.journeyNavBtn,
+.journeySelectShell{
+  min-width:0;
+  width:100%;
+  height:42px !important;
+  box-sizing:border-box;
+}
+
+.journeyNavBtn{
+  appearance:none;
+  border:0 !important;
+  margin:0 !important;
+  padding:0 clamp(3px,1vw,9px) !important;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:clip;
+  color:#e4f4f8 !important;
+  font-size:clamp(9px,1.05vw,12px) !important;
+  font-weight:800 !important;
+  letter-spacing:.35px;
+  line-height:1 !important;
+  cursor:pointer;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  text-shadow:0 1px 4px rgba(0,0,0,.7);
+  background:
+    linear-gradient(180deg,#1b556d 0%,#124057 44%,#0a2a3a 100%) !important;
+  box-shadow:
+    inset 0 1px rgba(195,239,249,.30),
+    inset 0 -2px 5px rgba(0,0,0,.45) !important;
+  transition:
+    filter .18s ease,
+    box-shadow .18s ease,
+    background .18s ease,
+    transform .12s ease;
+}
+
+.journeyNavPrev{
+  border-right:1px solid #47798a !important;
+  border-radius:9px 0 0 9px !important;
+}
+
+.journeyNavNext{
+  border-left:1px solid #47798a !important;
+  border-radius:0 9px 9px 0 !important;
+}
+
+.journeyNavBtn:hover:not(:disabled){
+  filter:brightness(1.14);
+  box-shadow:
+    inset 0 1px rgba(220,249,255,.38),
+    inset 0 -2px 5px rgba(0,0,0,.42),
+    0 0 10px rgba(84,217,255,.13) !important;
+}
+
+.journeyNavBtn:active:not(:disabled){
+  transform:translateY(1px);
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,.52),
+    inset 0 -1px rgba(220,249,255,.12) !important;
+}
+
+.journeyNavBtn:disabled{
+  opacity:.42 !important;
+  cursor:not-allowed;
+  filter:saturate(.55);
+}
+
+.journeyNavBtn:focus-visible,
+.journeySelectShell:focus-within{
+  outline:2px solid #54d9ff;
+  outline-offset:-2px;
+  position:relative;
+  z-index:4;
+}
+
+.journeySelectShell{
+  position:relative;
+  background:
+    linear-gradient(180deg,#173b4b 0%,#102d39 46%,#0a202b 100%);
+  box-shadow:
+    inset 0 1px rgba(210,244,250,.18),
+    inset 0 -2px 5px rgba(0,0,0,.38);
+}
+
+.journeySelectShell::after{
+  content:"";
+  position:absolute;
+  right:12px;
+  top:50%;
+  width:8px;
+  height:8px;
+  border-right:2px solid #a9e9f7;
+  border-bottom:2px solid #a9e9f7;
+  transform:translateY(-68%) rotate(45deg);
+  pointer-events:none;
+  filter:drop-shadow(0 0 4px rgba(84,217,255,.45));
+}
+
+.journeySelectShell select{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  -moz-appearance:none !important;
+  display:block;
+  width:100%;
+  height:100% !important;
+  min-width:0;
+  margin:0;
+  padding:0 38px 0 16px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  outline:none;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-align:left !important;
+  text-align-last:left !important;
+  color:#f3f8fa !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  cursor:pointer;
+  font-size:clamp(11px,1.15vw,15px) !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+}
+
+.journeySelectShell select:disabled{
+  cursor:not-allowed;
+  opacity:.72;
+}
+
+@media(max-width:700px){
+  .journeyNav{
+    grid-template-columns:minmax(58px,.72fr) minmax(0,1.76fr) minmax(58px,.72fr) !important;
+    border-radius:10px;
+  }
+
+  .journeyNavBtn,
+  .journeySelectShell{
+    height:44px !important;
+  }
+
+  .journeyNavBtn{
+    font-size:clamp(8.5px,2.7vw,11px) !important;
+    letter-spacing:.15px;
+    padding-left:2px !important;
+    padding-right:2px !important;
+  }
+
+  .journeySelectShell select{
+    font-size:16px !important;
+    padding-left:14px !important;
+    padding-right:34px !important;
+  }
+
+  .journeySelectShell::after{
+    right:10px;
+    width:7px;
+    height:7px;
+  }
+}
+
+@media(max-width:360px){
+  .journeyNav{
+    grid-template-columns:minmax(54px,.70fr) minmax(0,1.82fr) minmax(54px,.70fr) !important;
+  }
+
+  .journeyNavBtn{
+    font-size:8px !important;
+    letter-spacing:0;
+  }
+
+  .journeySelectShell select{
+    font-size:16px !important;
+    padding-left:10px !important;
+    padding-right:29px !important;
+  }
+
+  .journeySelectShell::after{
+    right:9px;
+  }
+}
+
+@media(max-width:320px){
+  .journeyNav{
+    grid-template-columns:minmax(50px,.68fr) minmax(0,1.88fr) minmax(50px,.68fr) !important;
+  }
+
+  .journeyNavBtn{
+    font-size:7.5px !important;
+  }
+
+  .journeySelectShell select{
+    padding-left:9px !important;
+    padding-right:26px !important;
+  }
+}
+</style>
+
+
+<style id="world-radio-final-four-tab-navigation">
+/* =========================================================
+   FINAL 4-TAB UNIFIED NAVIGATION
+   Language + Country/People + Category + Station
+   Same physical-radio joined control design for all four.
+   Existing element IDs and JavaScript hooks are unchanged.
+   ========================================================= */
+
+/* Common dimensions and geometry */
+.languageNav,
+.journeyNav{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  display:grid !important;
+  grid-template-columns:minmax(82px,.74fr) minmax(0,1.72fr) minmax(82px,.74fr) !important;
+  gap:0 !important;
+  align-items:stretch !important;
+  overflow:hidden !important;
+  border:1px solid #2e6072 !important;
+  border-radius:12px !important;
+  background:#071821 !important;
+  box-shadow:inset 0 1px rgba(255,255,255,.12),inset 0 -2px 5px rgba(0,0,0,.45),0 0 12px rgba(84,217,255,.08) !important;
+}
+
+.languageNavBtn,
+.journeyNavBtn,
+.languageSelectShell,
+.journeySelectShell{
+  min-width:0 !important;
+  width:100% !important;
+  height:52px !important;
+  box-sizing:border-box !important;
+}
+
+/* Prev / Next segments */
+.languageNavBtn,
+.journeyNavBtn{
+  appearance:none !important;
+  border:0 !important;
+  margin:0 !important;
+  padding:0 10px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+  text-overflow:clip !important;
+  color:#f1fbfd !important;
+  font-size:15px !important;
+  font-weight:800 !important;
+  letter-spacing:.2px !important;
+  line-height:1 !important;
+  text-align:center !important;
+  cursor:pointer !important;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  text-shadow:0 1px 4px rgba(0,0,0,.7);
+  background:linear-gradient(180deg,#1b556d 0%,#124057 44%,#0a2a3a 100%) !important;
+  box-shadow:inset 0 1px rgba(195,239,249,.30),inset 0 -2px 5px rgba(0,0,0,.45) !important;
+  transition:filter .18s ease,box-shadow .18s ease,background .18s ease,transform .12s ease;
+}
+
+.languageNavPrev,
+.journeyNavPrev{
+  border-right:1px solid #47798a !important;
+  border-radius:11px 0 0 11px !important;
+}
+.languageNavNext,
+.journeyNavNext{
+  border-left:1px solid #47798a !important;
+  border-radius:0 11px 11px 0 !important;
+}
+
+.languageNavBtn:hover:not(:disabled),
+.journeyNavBtn:hover:not(:disabled){
+  filter:brightness(1.14);
+  box-shadow:inset 0 1px rgba(220,249,255,.38),inset 0 -2px 5px rgba(0,0,0,.42),0 0 10px rgba(84,217,255,.13) !important;
+}
+.languageNavBtn:active:not(:disabled),
+.journeyNavBtn:active:not(:disabled){
+  transform:translateY(1px);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.52),inset 0 -1px rgba(220,249,255,.12) !important;
+}
+.languageNavBtn:disabled,
+.journeyNavBtn:disabled{
+  opacity:.42 !important;
+  cursor:not-allowed !important;
+  filter:saturate(.55);
+}
+
+/* Middle dropdown segment */
+.languageSelectShell,
+.journeySelectShell{
+  position:relative !important;
+  background:linear-gradient(180deg,#173b4b 0%,#102d39 46%,#0a202b 100%) !important;
+  box-shadow:inset 0 1px rgba(210,244,250,.18),inset 0 -2px 5px rgba(0,0,0,.38) !important;
+}
+
+.languageSelectShell::after,
+.journeySelectShell::after{
+  content:"" !important;
+  position:absolute !important;
+  right:17px !important;
+  top:50% !important;
+  width:11px !important;
+  height:11px !important;
+  border-right:3px solid #a9e9f7 !important;
+  border-bottom:3px solid #a9e9f7 !important;
+  transform:translateY(-68%) rotate(45deg) !important;
+  pointer-events:none !important;
+  filter:drop-shadow(0 0 4px rgba(84,217,255,.45));
+}
+
+.languageSelectShell select,
+.journeySelectShell select{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  -moz-appearance:none !important;
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+  padding:0 48px 0 20px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  outline:none !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+  text-align:left !important;
+  text-align-last:left !important;
+  color:#f3f8fa !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  cursor:pointer !important;
+  font-size:18px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+}
+
+.languageSelectShell select:disabled,
+.journeySelectShell select:disabled{
+  cursor:not-allowed !important;
+  opacity:.72;
+}
+
+.languageNavBtn:focus-visible,
+.journeyNavBtn:focus-visible,
+.languageSelectShell:focus-within,
+.journeySelectShell:focus-within{
+  outline:2px solid #54d9ff !important;
+  outline-offset:-2px !important;
+  position:relative;
+  z-index:4;
+}
+
+/* Keep the four selector blocks visually consistent */
+.channelSelector .selector{
+  min-width:0 !important;
+}
+
+@media(max-width:700px){
+  .languageNav,
+  .journeyNav{
+    grid-template-columns:minmax(72px,.72fr) minmax(0,1.76fr) minmax(72px,.72fr) !important;
+    border-radius:10px !important;
+  }
+
+  .languageNavBtn,
+  .journeyNavBtn,
+  .languageSelectShell,
+  .journeySelectShell{
+    height:50px !important;
+  }
+
+  .languageNavBtn,
+  .journeyNavBtn{
+    font-size:13px !important;
+    padding-left:4px !important;
+    padding-right:4px !important;
+  }
+
+  .languageSelectShell select,
+  .journeySelectShell select{
+    font-size:16px !important;
+    padding-left:15px !important;
+    padding-right:40px !important;
+  }
+
+  .languageSelectShell::after,
+  .journeySelectShell::after{
+    right:13px !important;
+    width:9px !important;
+    height:9px !important;
+    border-width:2px !important;
+  }
+}
+
+@media(max-width:360px){
+  .languageNav,
+  .journeyNav{
+    grid-template-columns:minmax(62px,.70fr) minmax(0,1.82fr) minmax(62px,.70fr) !important;
+  }
+  .languageNavBtn,
+  .journeyNavBtn{
+    font-size:11px !important;
+  }
+  .languageSelectShell select,
+  .journeySelectShell select{
+    font-size:16px !important;
+    padding-left:12px !important;
+    padding-right:34px !important;
+  }
+}
+
+@media(max-width:320px){
+  .languageNav,
+  .journeyNav{
+    grid-template-columns:minmax(56px,.68fr) minmax(0,1.88fr) minmax(56px,.68fr) !important;
+  }
+  .languageNavBtn,
+  .journeyNavBtn{
+    font-size:10px !important;
+  }
+}
+</style>
+
+
+<style id="final-unified-radio-navigation">
+/*
+  FINAL FOUR-SELECTOR NAVIGATION
+  Exact common geometry:
+       24%          52%          24%
+  Prev |       WIDE SELECTOR       | Next
+*/
+.unifiedRadioNav{
+  width:100% !important;
+  height:46px !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:grid !important;
+  grid-template-columns:minmax(76px,24%) minmax(0,52%) minmax(76px,24%) !important;
+  align-items:stretch !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+  border:1px solid #47798a !important;
+  border-radius:10px !important;
+  background:linear-gradient(180deg,#143746 0%,#0b202a 100%) !important;
+  box-shadow:
+    inset 0 1px rgba(220,249,255,.12),
+    inset 0 -2px 5px rgba(0,0,0,.42) !important;
+}
+
+.unifiedRadioNavBtn{
+  min-width:0 !important;
+  width:100% !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 6px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-sizing:border-box !important;
+  color:#eaf7fa !important;
+  background:linear-gradient(180deg,#173f50 0%,#0e2935 100%) !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  letter-spacing:.15px !important;
+  line-height:1 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  cursor:pointer !important;
+}
+
+.unifiedRadioNavBtn:first-child{
+  border-right:1px solid #47798a !important;
+}
+.unifiedRadioNavBtn:last-child{
+  border-left:1px solid #47798a !important;
+}
+.unifiedRadioNavBtn:hover:not(:disabled){
+  filter:brightness(1.14) !important;
+}
+.unifiedRadioNavBtn:active:not(:disabled){
+  transform:translateY(1px);
+}
+.unifiedRadioNavBtn:disabled{
+  opacity:.28 !important;
+  cursor:not-allowed !important;
+}
+
+/* Wide central selector */
+.unifiedRadioSelectShell{
+  position:relative !important;
+  min-width:0 !important;
+  width:100% !important;
+  height:100% !important;
+  overflow:hidden !important;
+  box-sizing:border-box !important;
+  background:linear-gradient(180deg,#173b4b 0%,#102d39 46%,#0a202b 100%) !important;
+  box-shadow:
+    inset 0 1px rgba(210,244,250,.18),
+    inset 0 -2px 5px rgba(0,0,0,.38) !important;
+}
+
+.unifiedRadioSelectShell:after{
+  content:"" !important;
+  position:absolute !important;
+  right:15px !important;
+  top:50% !important;
+  width:8px !important;
+  height:8px !important;
+  border-right:2px solid #a9e9f7 !important;
+  border-bottom:2px solid #a9e9f7 !important;
+  transform:translateY(-68%) rotate(45deg) !important;
+  pointer-events:none !important;
+}
+
+.unifiedRadioSelectShell select{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  -moz-appearance:none !important;
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+  padding:0 42px 0 16px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  outline:none !important;
+  box-sizing:border-box !important;
+  color:#f3f8fa !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  font-family:inherit !important;
+  font-size:15px !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  text-align:left !important;
+  text-align-last:left !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+  cursor:pointer !important;
+}
+
+.unifiedRadioSelectShell select:disabled{
+  cursor:not-allowed !important;
+  opacity:.72 !important;
+}
+
+.unifiedRadioSelectShell:focus-within{
+  outline:2px solid #54d9ff !important;
+  outline-offset:-2px !important;
+  position:relative;
+  z-index:4;
+}
+
+/* Mobile: keep the same proportions while guaranteeing button text stays inside. */
+@media(max-width:700px){
+  .unifiedRadioNav{
+    height:46px !important;
+    grid-template-columns:minmax(72px,25%) minmax(0,50%) minmax(72px,25%) !important;
+  }
+
+  .unifiedRadioNavBtn{
+    font-size:11px !important;
+    padding:0 3px !important;
+    letter-spacing:0 !important;
+  }
+
+  .unifiedRadioSelectShell select{
+    font-size:16px !important;
+    padding-left:12px !important;
+    padding-right:34px !important;
+  }
+
+  .unifiedRadioSelectShell:after{
+    right:11px !important;
+    width:7px !important;
+    height:7px !important;
+  }
+}
+
+@media(max-width:380px){
+  .unifiedRadioNav{
+    grid-template-columns:minmax(68px,25%) minmax(0,50%) minmax(68px,25%) !important;
+  }
+
+  .unifiedRadioNavBtn{
+    font-size:10px !important;
+  }
+
+  .unifiedRadioSelectShell select{
+    padding-left:10px !important;
+    padding-right:30px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== PHASE 8 GLOBAL HEADER ===== -->
+<div class="app">
+<!-- ===== PHASE 8 PRODUCT HEADER ===== -->
+<section class="wrHero">
+  <h1>World Radio</h1>
+  <p>Explore live radio from around the world through a modern interface inspired by the soul of the classic radio receiver.</p>
+</section>
+<main class="shell">
+      <div class="radioFinishBar">
+        <label for="radioFinish"><span>RADIO FINISH</span>
+          <select id="radioFinish" aria-label="Change radio unit colour pattern">
+            <option value="walnut">Classic Walnut</option>
+            <option value="black">Black Metal</option>
+            <option value="silver">Silver &amp; Charcoal</option>
+            <option value="ivory">Ivory Vintage</option>
+            <option value="teal">Deep Teal</option>
+          </select>
+        </label>
+      </div>
+
+    <section class="controls">
+      <details class="channelSelector" id="channelSelector">
+        <summary class="channelSelectorSummary">
+          <span class="channelCaret" aria-hidden="true">▼</span>
+          <span class="channelSelectorTitle">SELECT YOUR CHANNEL</span>
+          <span class="channelSelectorDot" aria-hidden="true">•</span>
+          <span class="channelSelectorAction">Expand</span>
+        </summary>
+        <div class="channelSelectorBody">
+          <div class="sectionTitle">SELECT YOUR RADIO JOURNEY</div>
+
+      <div class="selector active languageSelector" id="box-language">
+        <div class="selHead languageSelHead">
+          <div class="icon">🌐</div><div class="label">LANGUAGE</div><div class="state" id="state-language">READY</div>
+        </div>
+
+        <div class="unifiedRadioNav" id="languageNav" role="group" aria-label="Language navigation">
+          <button class="unifiedRadioNavBtn" id="prev-language" type="button" aria-label="Previous language">‹‹&nbsp; Prev</button>
+
+          <div class="unifiedRadioSelectShell">
+            <select id="language" aria-label="Select language"></select>
+          </div>
+
+          <button class="unifiedRadioNavBtn" id="next-language" type="button" aria-label="Next language">Next&nbsp; ››</button>
+        </div>
+
+        <div class="helper languageHelper">Dropdown optional — use the arrows to browse.</div>
+      </div>
+
+      <div class="selector disabled" id="box-country">
+        <div class="selHead">
+          <div class="icon">👤</div><div class="label">COUNTRY / PEOPLE</div><div class="state" id="state-country">WAITING</div>
+        </div>
+        <div class="unifiedRadioNav">
+          <button class="unifiedRadioNavBtn" id="prev-country" type="button" aria-label="Previous country" disabled>‹‹&nbsp; Prev</button>
+          <div class="unifiedRadioSelectShell">
+            <select id="country" disabled></select>
+          </div>
+          <button class="unifiedRadioNavBtn" id="next-country" type="button" aria-label="Next country" disabled>Next&nbsp; ››</button>
+        </div>
+        <div class="helper" id="country-helper">Choose a language first.</div>
+      </div>
+
+      <div class="selector disabled" id="box-category">
+        <div class="selHead">
+          <div class="icon">🎙️</div><div class="label">CATEGORY</div><div class="state" id="state-category">WAITING</div>
+        </div>
+        <div class="unifiedRadioNav">
+          <button class="unifiedRadioNavBtn" id="prev-category" type="button" aria-label="Previous category" disabled>‹‹&nbsp; Prev</button>
+          <div class="unifiedRadioSelectShell">
+            <select id="category" disabled></select>
+          </div>
+          <button class="unifiedRadioNavBtn" id="next-category" type="button" aria-label="Next category" disabled>Next&nbsp; ››</button>
+        </div>
+        <div class="helper" id="category-helper">Choose a country first.</div>
+      </div>
+
+      <div class="selector disabled" id="box-station">
+        <div class="selHead">
+          <div class="icon">📻</div><div class="label">STATION</div><div class="state" id="state-station">WAITING</div>
+        </div>
+        <div class="unifiedRadioNav">
+          <button class="unifiedRadioNavBtn" id="prev-station" type="button" aria-label="Previous station" disabled>‹‹&nbsp; Prev</button>
+          <div class="unifiedRadioSelectShell">
+            <select id="station" disabled></select>
+          </div>
+          <button class="unifiedRadioNavBtn" id="next-station" type="button" aria-label="Next station" disabled>Next&nbsp; ››</button>
+        </div>
+        <div class="helper" id="station-helper">Choose a category first.</div>
+      </div>
+
+      <div class="cascadeStatus" id="cascadeStatus" aria-live="polite">
+        <span class="stepDot done" id="step1">1</span><span>Language</span>
+        <span class="stepLine" id="line1"></span>
+        <span class="stepDot" id="step2">2</span><span>Country</span>
+        <span class="stepLine" id="line2"></span>
+        <span class="stepDot" id="step3">3</span><span>Category</span>
+        <span class="stepLine" id="line3"></span>
+        <span class="stepDot" id="step4">4</span><span>Station</span>
+      </div>
+      <div class="cascadeMessage" id="cascadeMessage">Choose a language to begin.</div>
+        </div>
+      </details>
+    </section>
+
+    <section class="radio">
+      <div class="radioUnit" id="radioUnit">
+        <div class="bezel">
+        <div class="displayTop">
+          <div class="metric"><div class="metricLabel">COUNTRY</div><div class="metricValue" id="dCountry">—</div></div>
+          <div class="metric"><div class="metricLabel">LANGUAGE</div><div class="metricValue cyan" id="dLanguage">—</div></div>
+          <div class="metric"><div class="metricLabel">CATEGORY</div><div class="metricValue" id="dCategory">—</div></div>
+          <div class="metric"><div class="metricLabel">STATION</div><div class="metricValue accent" id="dStation">—</div></div>
+          <div class="metric"><div class="metricLabel">FREQUENCY</div><div class="metricValue" id="dFrequency">—</div></div>
+        </div>
+
+        <div class="dial">
+          <div class="tuningGlass"></div>
+          <div class="tuningScale" id="tuningScale"></div>
+          <div class="scale"></div>
+          <div class="scaleLabels" aria-hidden="true"></div>
+          <div class="pointer smooth" id="pointer"></div>
+
+          <div class="stationCenter">
+            <div class="onair"><span class="dot"></span> LIVE RADIO CONSOLE</div>
+            <div class="stationName" id="bigStation">SELECT A STATION</div>
+
+            <div class="spectrum" id="spectrum"></div>
+            
+          </div>
+        </div>
+
+        <div class="playerBar" id="playerBar">
+          <button class="playBtn" id="playBtn" type="button" disabled aria-label="Start streaming" data-state="ready">
+            <span class="powerLabel" id="powerLabel">PLAY/PAUSE</span>
+          </button>
+          <div class="playerStatus" id="playerStatus">Select a station to prepare the live stream.</div>
+          <label class="volumeWrap" aria-label="Volume"><span style="font-size:9px;color:#8daab4">VOL</span> <input class="volume" id="volume" type="range" min="0" max="1" step="0.01" value="0.85"><span class="volumeValue" id="volumeValue">85%</span></label>
+        </div>
+
+        <details class="preconfig" id="preConfiguredChannels">
+          <summary class="preconfigSummary">
+            <span class="preconfigCaret" aria-hidden="true">▼</span>
+            <span class="preconfigTitle">PRE-CONFIGURED LANGUAGE</span>
+            <span class="preconfigDot" aria-hidden="true">•</span>
+            <span class="preconfigAction">Expand</span>
+          </summary>
+          <div class="preconfigBody">
+            <div class="preconfigLanguages" role="radiogroup" aria-label="Pre-configured languages">
+              <label class="preconfigLang">
+                <span class="preconfigLangName">Bengali</span>
+                <input type="radio" name="preconfigLanguage" value="Bengali">
+                <span class="preconfigRadio" aria-hidden="true"></span>
+              </label>
+              <label class="preconfigLang">
+                <span class="preconfigLangName">Hindi</span>
+                <input type="radio" name="preconfigLanguage" value="Hindi">
+                <span class="preconfigRadio" aria-hidden="true"></span>
+              </label>
+              <label class="preconfigLang">
+                <span class="preconfigLangName">English</span>
+                <input type="radio" name="preconfigLanguage" value="English">
+                <span class="preconfigRadio" aria-hidden="true"></span>
+              </label>
+              <label class="preconfigLang">
+                <span class="preconfigLangName">Asamese</span>
+                <input type="radio" name="preconfigLanguage" value="Assamese">
+                <span class="preconfigRadio" aria-hidden="true"></span>
+              </label>
+              <label class="preconfigLang">
+                <span class="preconfigLangName">Tamil</span>
+                <input type="radio" name="preconfigLanguage" value="Tamil">
+                <span class="preconfigRadio" aria-hidden="true"></span>
+              </label>
+            </div>
+
+            <div class="preconfigSelectors">
+              <div class="preconfigField">
+                <div class="preconfigFieldLabel"><span>COUNTRY</span><span id="preconfigCountryState">WAITING</span></div>
+                <div class="preconfigNav">
+                  <button class="navbtn" id="preconfigPrevCountry" type="button" aria-label="Previous pre-configured country" disabled>‹</button>
+                  <select id="preconfigCountry" disabled aria-label="Pre-configured country"><option value="">Select country</option></select>
+                  <button class="navbtn" id="preconfigNextCountry" type="button" aria-label="Next pre-configured country" disabled>›</button>
+                </div>
+              </div>
+
+              <div class="preconfigField">
+                <div class="preconfigFieldLabel"><span>CATEGORY</span><span id="preconfigCategoryState">WAITING</span></div>
+                <div class="preconfigNav">
+                  <button class="navbtn" id="preconfigPrevCategory" type="button" aria-label="Previous pre-configured category" disabled>‹</button>
+                  <select id="preconfigCategory" disabled aria-label="Pre-configured category"><option value="">Select category</option></select>
+                  <button class="navbtn" id="preconfigNextCategory" type="button" aria-label="Next pre-configured category" disabled>›</button>
+                </div>
+              </div>
+
+              <div class="preconfigField stationField">
+                <div class="preconfigFieldLabel"><span>STATION</span><span id="preconfigStationState">WAITING</span></div>
+                <div class="preconfigNav">
+                  <button class="navbtn" id="preconfigPrevStation" type="button" aria-label="Previous pre-configured station" disabled>‹</button>
+                  <select id="preconfigStation" disabled aria-label="Pre-configured station"><option value="">Select station</option></select>
+                  <button class="navbtn" id="preconfigNextStation" type="button" aria-label="Next pre-configured station" disabled>›</button>
+                </div>
+              </div>
+            </div>
+            <div class="preconfigHint" id="preconfigHint">Choose a pre-configured language, then select any available country, category and station.</div>
+          </div>
+        </details>
+
+        <audio class="audioEl" id="audio" preload="none" playsinline></audio>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+</div>
+
+<script>
+/* =========================
+   PHASE 3 — LIVE WORLD RADIO DATA
+   Radio Browser API integration
+   ========================= */
+const API_BASES = [
+  'https://all.api.radio-browser.info',
+  'https://de1.api.radio-browser.info',
+  'https://nl1.api.radio-browser.info'
+];
+const API_LIMIT = 30000;
+/* Expanded station retrieval:
+   - COUNTRY_DISCOVERY_LIMIT keeps the first cascade request lighter.
+   - STATION_POOL_LIMIT lets the selected country expose a much larger
+     live station pool instead of the old 5,000-record ceiling. */
+const COUNTRY_DISCOVERY_LIMIT = 30000;
+const STATION_POOL_LIMIT = 100000;
+const LEVELS = ['language','country','category','station'];
+const $ = id => document.getElementById(id);
+const language=$('language'), country=$('country'), category=$('category'), station=$('station');
+const preconfigCountry=$('preconfigCountry'), preconfigCategory=$('preconfigCategory'), preconfigStation=$('preconfigStation');
+const preconfigLanguageInputs=[...document.querySelectorAll('input[name="preconfigLanguage"]')];
+const state={language:'',country:'',category:'',station:''};
+const cache=new Map();
+let activeBase=null;
+let currentStations=[];
+let requestSerial=0;
+
+const categoryRules=[
+  ['News',['news','newstalk','breaking news','current affairs']],
+  ['Comedy',['comedy','humour','humor']],
+  ['Sports',['sports','sport']],
+  ['Talk',['talk','talk radio','talkshow','talk show']],
+  ['Music',['music','hits','top 40','top40']],
+  ['Pop',['pop']],
+  ['Rock',['rock']],
+  ['Jazz',['jazz']],
+  ['Classical',['classical','classics']],
+  ['Electronic',['electronic','edm','dance']],
+  ['Country',['country music']],
+  ['Oldies',['oldies','old school']],
+  ['Hip Hop',['hip hop','hiphop','rap']],
+  ['R&B',['r&b','rnb','rhythm and blues']],
+  ['Reggae',['reggae']],
+  ['Religious',['religious','religion','gospel','christian','islamic','spiritual']],
+  ['Culture',['culture','cultural']],
+  ['Education',['education','educational']],
+  ['Kids',['kids','children']],
+  ['Business',['business','finance','financial']],
+  ['Community',['community']],
+  ['Ambient / Relax',['ambient','relax','chillout','lounge','meditation']]
+];
+const categoryIcons={'All Stations':'📻',News:'📰',Comedy:'😂',Sports:'⚽',Talk:'🎙️',Music:'🎵',Pop:'🎤',Rock:'🎸',Jazz:'🎷',Classical:'🎻',Electronic:'🎛️',Country:'🤠',Oldies:'📻','Hip Hop':'🎧','R&B':'🎶',Reggae:'🌴',Religious:'🕊️',Culture:'🎭',Education:'📚',Kids:'🧒',Business:'💼',Community:'👥','Ambient / Relax':'🧘'};
+
+function apiUrl(base,path,params={}){
+  const u=new URL(base+path);
+  Object.entries(params).forEach(([k,v])=>{if(v!==undefined&&v!==null&&v!=='')u.searchParams.set(k,v)});
+  return u.toString();
+}
+async function fetchJson(path,params={}){
+  const key=path+'?'+new URLSearchParams(params).toString();
+  if(cache.has(key)) return cache.get(key);
+  const bases=activeBase?[activeBase,...API_BASES.filter(x=>x!==activeBase)]:API_BASES;
+  let lastError=null;
+  for(const base of bases){
+    try{
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),12000);
+      const res=await fetch(apiUrl(base,path,params),{signal:controller.signal,headers:{'Accept':'application/json'}});
+      clearTimeout(timer);
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data=await res.json();
+      if(!Array.isArray(data) && typeof data!=='object') throw new Error('Invalid API response');
+      activeBase=base; cache.set(key,data); return data;
+    }catch(e){lastError=e}
+  }
+  throw lastError||new Error('Radio directory unavailable');
+}
+function setMessage(msg,type='info'){
+  const el=$('cascadeMessage'); el.textContent=msg; el.dataset.type=type;
+}
+function setBusy(level,busy){
+  const box=$('box-'+level); if(!box)return;
+  box.classList.toggle('loading',busy);
+  $('state-'+level).textContent=busy?'LOADING…':(state[level]?'READY':'WAITING');
+}
+function fillSelect(select,items,placeholder){
+  select.innerHTML='';
+  const p=document.createElement('option');p.value='';p.textContent=placeholder;select.appendChild(p);
+  items.forEach(item=>{const o=document.createElement('option');o.value=item.value??item;o.textContent=item.label??item;select.appendChild(o)});
+}
+
+function copySelectToPreConfig(source,target,placeholder){
+  if(!source||!target)return;
+  target.innerHTML='';
+  const p=document.createElement('option');p.value='';p.textContent=placeholder;target.appendChild(p);
+  [...source.options].slice(1).forEach(o=>{
+    const n=document.createElement('option');n.value=o.value;n.textContent=o.textContent;target.appendChild(n);
+  });
+  target.value=source.value||'';
+}
+function syncPreConfigPanel(){
+  const current=canonicalLanguageName(state.language);
+  preconfigLanguageInputs.forEach(input=>{
+    input.checked=!!current && canonicalLanguageName(input.value)===current;
+  });
+  if(preconfigCountry){
+    copySelectToPreConfig(country,preconfigCountry,'Select country');
+    preconfigCountry.disabled=country.disabled;
+    $('preconfigPrevCountry').disabled=country.disabled;
+    $('preconfigNextCountry').disabled=country.disabled;
+    $('preconfigCountryState').textContent=country.disabled?'WAITING':'READY';
+  }
+  if(preconfigCategory){
+    copySelectToPreConfig(category,preconfigCategory,'Select category');
+    preconfigCategory.disabled=category.disabled;
+    $('preconfigPrevCategory').disabled=category.disabled;
+    $('preconfigNextCategory').disabled=category.disabled;
+    $('preconfigCategoryState').textContent=category.disabled?'WAITING':'READY';
+  }
+  if(preconfigStation){
+    copySelectToPreConfig(station,preconfigStation,'Select station');
+    preconfigStation.disabled=station.disabled;
+    $('preconfigPrevStation').disabled=station.disabled;
+    $('preconfigNextStation').disabled=station.disabled;
+    $('preconfigStationState').textContent=station.disabled?'WAITING':'READY';
+  }
+  if($('preconfigHint')){
+    $('preconfigHint').textContent=state.language
+      ? `Language: ${state.language}. Country, category and station remain open for your selection.`
+      : 'Choose a pre-configured language, then select any available country, category and station.';
+  }
+}
+function setLevelEnabled(level,enabled){
+  const sel=$(level),box=$('box-'+level);sel.disabled=!enabled;
+  box.classList.toggle('disabled',!enabled);box.classList.toggle('active',enabled);
+  $('prev-'+level).disabled=!enabled;$('next-'+level).disabled=!enabled;
+  $('state-'+level).textContent=enabled?'READY':'WAITING';
+}
+function clearLevel(level){state[level]='';$(level).innerHTML='';$(level).value='';setLevelEnabled(level,false);$('state-'+level).textContent='WAITING';}
+function clearBelow(level){const i=LEVELS.indexOf(level);for(let j=i+1;j<LEVELS.length;j++)clearLevel(LEVELS[j]);}
+function normalizeName(s){return String(s||'').trim().toLowerCase()}
+function countryFlag(code){
+  code=String(code||'').toUpperCase();
+  if(!/^[A-Z]{2}$/.test(code))return '🌍';
+  return String.fromCodePoint(...[...code].map(c=>127397+c.charCodeAt(0)));
+}
+function stationTags(s){return String(s.tags||'').split(',').map(x=>normalizeName(x)).filter(Boolean)}
+function matchesCategory(s,cat){
+  const tags=stationTags(s), raw=tags.join(' ');
+  const rule=categoryRules.find(r=>r[0]===cat); return !!rule && rule[1].some(k=>tags.includes(k)||raw.includes(k));
+}
+function categoriesFromStations(stations){
+  const found=new Set();
+
+  // Always expose all returned stations so that a station is never hidden
+  // merely because Radio Browser uses a tag we do not recognize.
+  if(Array.isArray(stations) && stations.some(s=>s && s.stationuuid)){
+    found.add('All Stations');
+  }
+
+  stations.forEach(s=>categoryRules.forEach(([cat,keys])=>{
+    const tags=stationTags(s), raw=tags.join(' ');
+    if(keys.some(k=>tags.includes(k)||raw.includes(k)))found.add(cat);
+  }));
+
+  return [...found].sort((a,b)=>{
+    if(a==='All Stations')return -1;
+    if(b==='All Stations')return 1;
+    return a.localeCompare(b);
+  });
+}
+function uniqueCountries(stations){
+  const map=new Map();
+  stations.forEach(s=>{
+    const name=(s.country||'').trim();const code=(s.countrycode||'').trim();
+    if(name&&!map.has(name))map.set(name,{value:name,label:`${countryFlag(code)} ${name}`});
+  });
+  return [...map.values()].sort((a,b)=>a.value.localeCompare(b.value));
+}
+/*
+ * PHASE 2 — OFFICIAL-LANGUAGE FILTER
+ *
+ * The Radio Browser /json/languages endpoint contains many language labels
+ * because it describes languages attached to stations.  That is useful for
+ * discovery, but it is not an official-language register.
+ *
+ * We therefore cross-check the returned language names against the Unicode
+ * CLDR territory language data.  CLDR marks languages with officialStatus:
+ *   official            = nationally official
+ *   official_regional   = officially recognized in a region/territory
+ *   de_facto_official   = de-facto official / working official status
+ *
+ * Languages that are merely spoken, widely used, minority, or foreign are
+ * not admitted to the dropdown.  The final list is de-duplicated and sorted
+ * strictly A → Z.
+ */
+const CLDR_LANGUAGE_URL =
+  'https://raw.githubusercontent.com/unicode-org/cldr/main/common/supplemental/supplementalData.xml';
+
+const LANGUAGE_NAME_ALIASES = new Map([
+  ['castilian','spanish'],
+  ['spanish castilian','spanish'],
+  ['mandarin','chinese'],
+  ['mandarin chinese','chinese'],
+  ['standard chinese','chinese'],
+  ['chinese traditional','chinese'],
+  ['chinese simplified','chinese'],
+  ['persian dari','dari'],
+  ['persian (dari)','dari'],
+  ['farsi','persian'],
+  ['burmese','myanmar'],
+  ['swazi','swati'],
+  ['serbo croatian','serbian'],
+  ['rundi','kirundi'],
+  ['malayalam','malayalam'],
+  ['macedonian','macedonian'],
+  ['portuguese brazilian','portuguese'],
+  ['english uk','english'],
+  ['english us','english'],
+  ['bangla','bengali'],
+  ['bengali','bengali']
+]);
+
+function normalizeLanguageName(s){
+  return String(s||'')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .replace(/\([^)]*\)/g,'')
+    .replace(/[’'`]/g,'')
+    .replace(/[^a-zA-Z0-9]+/g,' ')
+    .trim()
+    .toLowerCase();
+}
+
+function canonicalLanguageName(s){
+  const n=normalizeLanguageName(s);
+  return LANGUAGE_NAME_ALIASES.get(n)||n;
+}
+
+async function fetchOfficialLanguageNames(){
+  const r=await fetch(CLDR_LANGUAGE_URL,{cache:'no-store',headers:{Accept:'application/xml,text/xml'}});
+  if(!r.ok)throw new Error('CLDR HTTP '+r.status);
+  const xml=await r.text();
+  const official=new Set();
+  const re=/<languagePopulation\b([^>]*\bofficialStatus="(?:official|official_regional|de_facto_official)"[^>]*)\/>(?:\s*<!--\s*([^>]*?)\s*-->)?/g;
+  let m;
+  while((m=re.exec(xml))){
+    const attrs=m[1]||'', comment=(m[2]||'').trim();
+    const tm=attrs.match(/\btype="([^"]+)"/);
+    let name=comment;
+    if(!name&&tm){
+      const base=tm[1].split('_')[0];
+      try{name=new Intl.DisplayNames(['en'],{type:'language'}).of(base)||'';}catch(_){name='';}
+    }
+    if(name)official.add(canonicalLanguageName(name));
+  }
+  if(!official.size)throw new Error('CLDR returned no official languages');
+  return official;
+}
+
+function uniqueLanguages(data,officialNames){
+  const arr=(Array.isArray(data)?data:[])
+    .filter(x=>x&&x.name&&Number(x.stationcount||0)>0)
+    .map(x=>String(x.name).trim())
+    .filter(name=>officialNames.has(canonicalLanguageName(name)));
+
+  // STRICT LANGUAGE ORDER: A → Z.
+  return [...new Set(arr)].sort((a,b)=>
+    a.localeCompare(b, undefined, {sensitivity:'base', numeric:false})
+  );
+}
+function isBengaliLanguage(language){
+  return canonicalLanguageName(language)==='bengali';
+}
+
+function mergeStationLists(...lists){
+  const map=new Map();
+  lists.flat().forEach(s=>{
+    if(s&&s.stationuuid) map.set(s.stationuuid,s);
+  });
+  return [...map.values()];
+}
+
+/* Broader language retrieval:
+   Radio Browser documents both /stations/search?language=... and
+   /stations/bylanguage/{searchterm}.  Using both prevents a language from
+   disappearing simply because stations are represented differently in the
+   directory. */
+async function fetchLanguageStations(languageName, extra={}){
+  const name=String(languageName||'').trim();
+  if(!name)return [];
+
+  const searchPromise=fetchJson('/json/stations/search',{
+    language:name,
+    ...extra,
+    hidebroken:'true',
+    limit:String(STATION_POOL_LIMIT)
+  });
+
+  const byLanguagePromise=fetchJson(
+    '/json/stations/bylanguage/'+encodeURIComponent(name),
+    {
+      hidebroken:'true',
+      order:extra.order||'country',
+      reverse:extra.reverse||'false',
+      limit:String(STATION_POOL_LIMIT)
+    }
+  );
+
+  const [a,b]=await Promise.allSettled([searchPromise,byLanguagePromise]);
+  const searchRows=a.status==='fulfilled' && Array.isArray(a.value)?a.value:[];
+  let byRows=b.status==='fulfilled' && Array.isArray(b.value)?b.value:[];
+
+  /* Apply country restriction locally to the by-language result because
+     the path endpoint does not accept country as a query filter. */
+  if(extra.country){
+    const wanted=String(extra.country).trim().toLowerCase();
+    byRows=byRows.filter(s=>String(s.country||'').trim().toLowerCase()===wanted);
+  }
+
+  return mergeStationLists(searchRows,byRows);
+}
+
+async function fetchBengaliStations(extra={}){
+  const searches=[
+    {language:'bengali'},
+    {language:'bangla'},
+    {tag:'bengali'},
+    {tag:'bangla'}
+  ];
+  const results=await Promise.allSettled(searches.map(q=>fetchJson('/json/stations/search',{
+    ...q, ...extra, hidebroken:'true', limit:String(STATION_POOL_LIMIT)
+  })));
+  return mergeStationLists(...results.filter(r=>r.status==='fulfilled').map(r=>r.value));
+}
+
+function stationLabel(s){
+  const city=s.state?` • ${s.state}`:'';
+  const quality=s.codec?(s.bitrate?` • ${s.codec} ${s.bitrate}k`: ` • ${s.codec}`):'';
+  return `${s.name||'Unnamed station'}${city}${quality}`;
+}
+function updateStatus(){
+  LEVELS.forEach((l,i)=>{$('step'+(i+1)).classList.toggle('done',!!state[l]);$('step'+(i+1)).classList.toggle('current',!state[l]&&(i===0||!!state[LEVELS[i-1]]))});
+}
+
+const audio=$('audio'), playBtn=$('playBtn'), volume=$('volume'), playerStatus=$('playerStatus'), playerBar=$('playerBar'), powerLabel=$('powerLabel'), volumeValue=$('volumeValue');
+
+/* =========================================================
+   PHASE 3 — AUTHORITATIVE AUDIO STATE + ROBUST VISUALIZER
+   The HTMLAudioElement remains the source of truth.
+   The visualizer is synchronized from native audio events AND a
+   lightweight watchdog, so it cannot get stuck in the OFF state
+   while a stream is actually playing.
+   ========================================================= */
+let playerToken=0;
+let playerState='NO_AUDIO';
+
+const spectrumEl=$('spectrum');
+let analyser=null;
+let analyserData=null;
+let audioContext=null;
+let visualizerFrame=0;
+let visualizerMode='css';
+
+function syncCompactButtonState(state){
+  if(!playBtn)return;
+  playBtn.dataset.state=state;
+}
+function setPlayerStatus(text,type=''){
+  playerStatus.textContent=text;
+  playerStatus.className='playerStatus'+(type?' '+type:'');
+}
+
+function setSpectrumMode(mode){
+  if(!spectrumEl)return;
+  spectrumEl.classList.remove('audio-active','audio-buffering','audio-reactive');
+  if(mode==='playing'){
+    spectrumEl.classList.add(visualizerMode==='analyser'?'audio-reactive':'audio-active');
+  }else if(mode==='buffering'){
+    spectrumEl.classList.add('audio-buffering');
+  }
+}
+
+function audioIsActuallyPlaying(){
+  return !!(
+    audio &&
+    audio.src &&
+    !audio.paused &&
+    !audio.ended &&
+    audio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+  );
+}
+
+function syncSpectrumToAudio(){
+  if(!audio || !spectrumEl)return;
+  if(audioIsActuallyPlaying()){
+    setSpectrumMode('playing');
+  }else if(audio.src && !audio.paused && !audio.ended && playerState==='BUFFERING'){
+    setSpectrumMode('buffering');
+  }else{
+    setSpectrumMode('off');
+  }
+}
+
+function tryEnableAudioAnalysis(){
+  if(analyser || !audio || !audio.src)return;
+  try{
+    if(!audioContext){
+      const AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return;
+      audioContext=new AC();
+    }
+    if(audioContext.state==='suspended')audioContext.resume().catch(()=>{});
+    audio.crossOrigin='anonymous';
+    const source=audioContext.createMediaElementSource(audio);
+    analyser=audioContext.createAnalyser();
+    analyser.fftSize=64;
+    analyser.smoothingTimeConstant=.78;
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+    analyserData=new Uint8Array(analyser.frequencyBinCount);
+    visualizerMode='analyser';
+  }catch(e){
+    analyser=null;
+    analyserData=null;
+    visualizerMode='css';
+  }
+}
+
+function animateSpectrum(){
+  if(!spectrumEl)return;
+
+  if(analyser && analyserData && audioIsActuallyPlaying()){
+    analyser.getByteFrequencyData(analyserData);
+    const bars=spectrumEl.querySelectorAll('.bar');
+    const n=bars.length;
+
+    for(let i=0;i<n;i++){
+      const index=Math.floor(i/n*analyserData.length);
+      const value=analyserData[index]||0;
+      const normalized=value/255;
+      const base=parseFloat(bars[i].dataset.baseHeight||'50');
+      const h=Math.max(8,base*(.25+normalized*1.15));
+
+      bars[i].style.height=h.toFixed(1)+'px';
+      bars[i].style.transform=`scaleY(${(.55+normalized*.8).toFixed(3)})`;
+      bars[i].style.opacity=(.42+normalized*.58).toFixed(2);
+    }
+  }else{
+    const bars=spectrumEl.querySelectorAll('.bar');
+    bars.forEach(b=>{
+      b.style.height='';
+      b.style.transform='';
+      b.style.opacity='';
+    });
+  }
+
+  visualizerFrame=requestAnimationFrame(animateSpectrum);
+}
+
+function startSpectrumEngine(){
+  if(!visualizerFrame)visualizerFrame=requestAnimationFrame(animateSpectrum);
+}
+
+function stopSpectrumEngine(){
+  if(visualizerFrame){
+    cancelAnimationFrame(visualizerFrame);
+    visualizerFrame=0;
+  }
+  if(spectrumEl){
+    spectrumEl.classList.remove('audio-active','audio-buffering','audio-reactive');
+    spectrumEl.querySelectorAll('.bar').forEach(b=>{
+      b.style.height='';
+      b.style.transform='';
+      b.style.opacity='';
+    });
+  }
+}
+
+function setPlayerState(next,text,type=''){
+  playerState=next;
+
+  playBtn.classList.remove('live','connecting');
+
+  if(next==='PLAYING'){
+    setSpectrumMode('playing');
+    startSpectrumEngine();
+    playerBar.classList.add('playing');
+    playBtn.classList.add('live');
+    playBtn.disabled=false;
+    playBtn.setAttribute('aria-label','Pause streaming');
+    playBtn.dataset.state='playing';
+    if(powerLabel)powerLabel.textContent='PLAY/PAUSE';
+  }else if(next==='BUFFERING' || next==='CONNECTING'){
+    setSpectrumMode(next==='BUFFERING'?'buffering':'off');
+    startSpectrumEngine();
+    playerBar.classList.remove('playing');
+    playBtn.classList.add('connecting');
+    playBtn.disabled=true;
+    playBtn.setAttribute('aria-label','Connecting to stream');
+    playBtn.dataset.state='connecting';
+    if(powerLabel)powerLabel.textContent='PLAY/PAUSE';
+  }else if(next==='PAUSED'){
+    playerBar.classList.remove('playing');
+    setSpectrumMode('off');
+    stopSpectrumEngine();
+    playBtn.disabled=!stationObject();
+    playBtn.setAttribute('aria-label','Resume streaming');
+    playBtn.dataset.state='ready';
+    if(powerLabel)powerLabel.textContent='PLAY/PAUSE';
+  }else if(next==='STOPPED' || next==='ERROR' || next==='NO_AUDIO'){
+    playerBar.classList.remove('playing');
+    stopSpectrumEngine();
+    playBtn.disabled=!stationObject();
+    playBtn.setAttribute('aria-label','Start streaming');
+    playBtn.dataset.state='ready';
+    if(powerLabel)powerLabel.textContent='PLAY/PAUSE';
+  }else{
+    playerBar.classList.remove('playing');
+    if(next!=='CONNECTING')stopSpectrumEngine();
+    playBtn.disabled=!stationObject();
+    playBtn.setAttribute('aria-label','Start streaming');
+    playBtn.dataset.state='ready';
+    if(powerLabel)powerLabel.textContent='PLAY/PAUSE';
+  }
+
+  if(text!==undefined)setPlayerStatus(text,type);
+}
+
+function resetPlayer(){
+  playerToken++;
+  audio.pause();
+  audio.removeAttribute('src');
+  audio.load();
+  stopSpectrumEngine();
+  setPlayerState('NO_AUDIO','Select a station to prepare the live stream.');
+}
+
+async function playSelectedStation(){
+  const s=stationObject();
+  if(!s){
+    setPlayerState('NO_AUDIO','Select a station first.','error');
+    return false;
+  }
+
+  const token=++playerToken;
+  setPlayerState('CONNECTING','Connecting to '+(s.name||'station')+'…');
+
+  try{
+    let streamUrl=s.url_resolved||s.url||'';
+
+    if(!streamUrl){
+      const bases=activeBase?[activeBase,...API_BASES.filter(x=>x!==activeBase)]:API_BASES;
+      for(const base of bases){
+        try{
+          const r=await fetch(
+            apiUrl(base,'/json/url/'+encodeURIComponent(s.stationuuid)),
+            {headers:{'Accept':'application/json'}}
+          );
+          if(r.ok){
+            const d=await r.json();
+            if(d&&d.url)streamUrl=d.url;
+            activeBase=base;
+            if(streamUrl)break;
+          }
+        }catch(_e){}
+      }
+    }
+
+    if(token!==playerToken)return false;
+    if(!streamUrl)throw new Error('No stream URL was supplied by the station directory.');
+
+    audio.crossOrigin='anonymous';
+    audio.src=streamUrl;
+    audio.volume=parseFloat(volume.value);
+
+    setPlayerState('CONNECTING','Connecting to live stream…');
+    tryEnableAudioAnalysis();
+
+    await audio.play();
+    if(token!==playerToken)return false;
+
+    setPlayerState('BUFFERING','Waiting for live audio…');
+    syncSpectrumToAudio();
+    return true;
+  }catch(e){
+    if(token!==playerToken)return false;
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+    stopSpectrumEngine();
+    setPlayerState('ERROR','Stream unavailable — try another station.','error');
+    setMessage((e&&e.message)||'The stream could not be started.','error');
+    return false;
+  }
+}
+
+async function togglePlay(){
+  const s=stationObject();
+  if(!s){
+    setPlayerState('NO_AUDIO','Select a station first.','error');
+    return;
+  }
+
+  if(!audio.src){
+    await playSelectedStation();
+    return;
+  }
+
+  if(audio.paused){
+    const token=++playerToken;
+    setPlayerState('BUFFERING','Resuming live audio…');
+
+    try{
+      if(audioContext && audioContext.state==='suspended'){
+        await audioContext.resume().catch(()=>{});
+      }
+      await audio.play();
+      if(token!==playerToken)return;
+      setPlayerState('BUFFERING','Waiting for live audio…');
+      syncSpectrumToAudio();
+    }catch(e){
+      if(token!==playerToken)return;
+      setPlayerState('ERROR','Unable to start the stream.','error');
+    }
+    return;
+  }
+
+  audio.pause();
+}
+
+playBtn.addEventListener('click',togglePlay);
+if(volumeValue)volumeValue.textContent=Math.round(parseFloat(volume.value)*100)+'%';
+volume.addEventListener('input',()=>{
+  audio.volume=parseFloat(volume.value);
+  if(volumeValue)volumeValue.textContent=Math.round(parseFloat(volume.value)*100)+'%';
+});
+
+audio.addEventListener('loadstart',()=>{
+  if(audio.src && !audio.paused && playerState!=='PLAYING'){
+    setPlayerState('CONNECTING','Connecting to live stream…');
+  }
+  syncSpectrumToAudio();
+});
+
+audio.addEventListener('loadedmetadata',()=>{
+  tryEnableAudioAnalysis();
+  syncSpectrumToAudio();
+});
+
+audio.addEventListener('canplay',()=>{
+  if(audio.src && !audio.paused && playerState!=='PLAYING' && playerState!=='STOPPED'){
+    setPlayerState('BUFFERING','Live stream ready — starting audio…');
+  }
+  syncSpectrumToAudio();
+});
+
+audio.addEventListener('canplaythrough',syncSpectrumToAudio);
+
+audio.addEventListener('playing',()=>{
+  const s=stationObject();
+  if(!s || !audio.src)return;
+
+  if(audioContext && audioContext.state==='suspended'){
+    audioContext.resume().catch(()=>{});
+  }
+
+  /* Native PLAYING event = actual live playback. */
+  setPlayerState(
+    'PLAYING',
+    `● LIVE${s.codec?' • '+s.codec:''}${s.bitrate?' • '+s.bitrate+' kbps':''}`,
+    'live'
+  );
+  syncSpectrumToAudio();
+});
+
+audio.addEventListener('timeupdate',()=>{
+  if(audioIsActuallyPlaying() && playerState!=='PLAYING'){
+    const s=stationObject();
+    if(s){
+      setPlayerState(
+        'PLAYING',
+        `● LIVE${s.codec?' • '+s.codec:''}${s.bitrate?' • '+s.bitrate+' kbps':''}`,
+        'live'
+      );
+    }
+  }
+  syncSpectrumToAudio();
+});
+
+audio.addEventListener('waiting',()=>{
+  if(audio.src && !audio.paused && playerState!=='STOPPED'){
+    setPlayerState('BUFFERING','Buffering live audio…');
+  }
+});
+
+audio.addEventListener('stalled',()=>{
+  if(audio.src && !audio.paused && playerState!=='STOPPED'){
+    setPlayerState('BUFFERING','Stream temporarily stalled…');
+  }
+});
+
+audio.addEventListener('pause',()=>{
+  if(playerState==='STOPPED' || playerState==='NO_AUDIO' || playerState==='ERROR'){
+    stopSpectrumEngine();
+    return;
+  }
+
+  if(audio.src){
+    setPlayerState('PAUSED','Paused');
+  }else{
+    setPlayerState(
+      'STOPPED',
+      stationObject()?'Ready to play the selected station.':'Select a station to prepare the live stream.'
+    );
+  }
+});
+
+audio.addEventListener('ended',()=>{
+  stopSpectrumEngine();
+  if(playerState!=='STOPPED')setPlayerState('STOPPED','Stream ended.');
+});
+
+audio.addEventListener('error',()=>{
+  stopSpectrumEngine();
+  if(playerState==='STOPPED' || playerState==='NO_AUDIO')return;
+  setPlayerState('ERROR','Stream error — try another station.','error');
+});
+
+/* Some live streams emit media events differently between browsers.
+   The watchdog keeps the visual state synchronized with the native
+   media state without declaring a stream LIVE merely because play()
+   returned successfully. */
+setInterval(()=>{
+  if(!audio || !audio.src)return;
+
+  if(audioIsActuallyPlaying()){
+    if(playerState!=='PLAYING'){
+      const s=stationObject();
+      if(s){
+        setPlayerState(
+          'PLAYING',
+          `● LIVE${s.codec?' • '+s.codec:''}${s.bitrate?' • '+s.bitrate+' kbps':''}`,
+          'live'
+        );
+      }
+    }
+    syncSpectrumToAudio();
+  }else if(!audio.paused && !audio.ended && playerState!=='STOPPED' && playerState!=='ERROR'){
+    setSpectrumMode('buffering');
+  }else{
+    syncSpectrumToAudio();
+  }
+},250);
+
+function stationObject(){return currentStations.find(s=>s.stationuuid===state.station)||null}
+function updateDisplay(){
+  const s=stationObject();
+  $('dLanguage').textContent=state.language||'—';
+  $('dCountry').textContent=state.country?(countryFlag(s?.countrycode)+' '+state.country):'—';
+  $('dCategory').textContent=state.category?`${categoryIcons[state.category]||'📻'} ${state.category}`:'—';
+  $('dStation').textContent=s?.name||'—';
+  $('dFrequency').textContent='ONLINE';
+  $('bigStation').textContent=s?.name||'SELECT A STATION';
+  // The former city/status text block was intentionally removed from the display.
+  $('pointer').style.left=s?(30+((Math.abs(hashCode(s.stationuuid))%650)/650)*40)+'%':'28%';
+}
+function hashCode(str){let h=0;for(let i=0;i<str.length;i++)h=((h<<5)-h)+str.charCodeAt(i)|0;return Math.abs(h)}
+
+async function initLanguages(){
+  setBusy('language',true);
+  fillSelect(language,[],'Loading languages…');
+  setLevelEnabled('language',false);
+  setMessage('Connecting to the worldwide radio directory…');
+
+  try{
+    /* Radio Browser officially exposes /json/languages as the live language
+       directory. We use it as the primary source. */
+    let data=[];
+    let directoryError=null;
+
+    try{
+      data=await fetchJson('/json/languages',{
+        order:'stationcount',
+        reverse:'true',
+        hidebroken:'true',
+        limit:'100000'
+      });
+    }catch(e){
+      directoryError=e;
+    }
+
+    /*
+      CLDR is useful for identifying official languages, but it must never
+      make the radio application unusable if the external XML source is
+      temporarily unavailable or its format changes.
+    */
+    let officialNames=null;
+    try{
+      officialNames=await fetchOfficialLanguageNames();
+    }catch(_e){
+      officialNames=null;
+    }
+
+    let langs=[];
+
+    if(Array.isArray(data) && data.length){
+      if(officialNames && officialNames.size){
+        langs=uniqueLanguages(data,officialNames);
+      }
+
+      /*
+        Safety fallback:
+        If the official-language cross-check produces no result, use the
+        actual Radio Browser language directory. This guarantees that
+        languages such as English, Hindi and Bengali are not lost merely
+        because the external CLDR service is unavailable or changed.
+      */
+      if(!langs.length){
+        langs=[...new Set(
+          data
+            .filter(x=>x&&x.name&&Number(x.stationcount||0)>0)
+            .map(x=>String(x.name).trim())
+            .filter(Boolean)
+        )].sort((a,b)=>
+          a.localeCompare(b,undefined,{sensitivity:'base',numeric:false})
+        );
+      }
+    }
+
+    /*
+      Final emergency fallback: obtain a larger live station sample and
+      construct the language list directly from station.language fields.
+      This is still dynamic data; no fixed station/language list is stored
+      in the application.
+    */
+    if(!langs.length){
+      const stations=await fetchJson('/json/stations/search',{
+        hidebroken:'true',
+        order:'language',
+        limit:String(COUNTRY_DISCOVERY_LIMIT)
+      });
+
+      const languageSet=new Set();
+
+      (Array.isArray(stations)?stations:[]).forEach(s=>{
+        String(s.language||'')
+          .split(',')
+          .map(x=>x.trim())
+          .filter(Boolean)
+          .forEach(x=>languageSet.add(x));
+      });
+
+      langs=[...languageSet].sort((a,b)=>
+        a.localeCompare(b,undefined,{sensitivity:'base',numeric:false})
+      );
+    }
+
+    if(!langs.length){
+      throw directoryError||new Error('No languages returned by the live radio directory.');
+    }
+
+    /*
+      Display normalization only: Radio Browser may currently publish the
+      Bengali language as "Bangla". The UI presents one canonical name,
+      "Bengali", while the search engine below handles both forms.
+    */
+    const hasBengaliEntry=langs.some(x=>{
+      const n=normalizeLanguageName(x);
+      return n==='bangla'||n==='bengali';
+    });
+    if(hasBengaliEntry){
+      langs=langs.filter(x=>{
+        const n=normalizeLanguageName(x);
+        return n!=='bangla'&&n!=='bengali';
+      });
+      langs.push('Bengali');
+    }
+
+    /* STRICT LANGUAGE ORDER: A → Z. */
+    langs.sort((a,b)=>
+      a.localeCompare(b,undefined,{sensitivity:'base',numeric:false})
+    );
+
+    fillSelect(language,langs,'Select language');
+    setLevelEnabled('language',true);
+    $('state-language').textContent='READY';
+    $('country-helper').textContent='Choose a language first.';
+
+    const sourceNote=officialNames&&officialNames.size
+      ? 'official-language cross-check available'
+      : 'live directory mode';
+
+    setMessage(
+      `Worldwide directory connected. ${langs.length} languages available • ${sourceNote}.`,
+      'success'
+    );
+
+  }catch(e){
+    fillSelect(language,[],'Unable to load languages');
+    setLevelEnabled('language',false);
+    setMessage(
+      'The worldwide radio language directory could not be reached. Please use Reload / try again.',
+      'error'
+    );
+    $('country-helper').textContent='Waiting for the worldwide radio directory.';
+  }finally{
+    setBusy('language',false);
+    updateStatus();
+    updateDisplay();
+  }
+}
+async function loadCountries(){
+  const serial=++requestSerial; clearBelow('language'); state.country='';state.category='';state.station='';currentStations=[];
+  if(!state.language){updateStatus();updateDisplay();setMessage('Choose a language to begin.');return;}
+  setLevelEnabled('country',false);setBusy('country',true);setMessage(`Finding countries with ${state.language} radio stations…`);
+  try{
+    const stations=isBengaliLanguage(state.language)
+      ? await fetchBengaliStations({order:'country',limit:String(COUNTRY_DISCOVERY_LIMIT)})
+      : await fetchLanguageStations(state.language,{order:'country',limit:String(COUNTRY_DISCOVERY_LIMIT)});
+    if(serial!==requestSerial)return;
+    const countries=uniqueCountries(stations);
+    if(!countries.length)throw new Error('No countries found');
+    fillSelect(country,countries,'Select country');setLevelEnabled('country',true);
+    syncPreConfigPanel();
+    $('country-helper').textContent=`${countries.length} countries found in the live directory.`;$('state-country').textContent='READY';
+    setMessage(`Language: ${state.language}. Select a country or use ◀ / ▶.`,'success');
+  }catch(e){clearLevel('country');setMessage(`No country data could be loaded for ${state.language}.`,'error')}
+  finally{setBusy('country',false);updateStatus();updateDisplay()}
+}
+async function loadCategories(){
+  const serial=++requestSerial;clearBelow('country');state.category='';state.station='';currentStations=[];
+  if(!state.country){updateStatus();updateDisplay();return}
+  setLevelEnabled('category',false);setBusy('category',true);setMessage(`Finding radio categories in ${state.country} for ${state.language}…`);
+  try{
+    currentStations=isBengaliLanguage(state.language)
+      ? await fetchBengaliStations({countryExact:'true',country:state.country,order:'votes',reverse:'true'})
+      : await fetchLanguageStations(state.language,{
+        countryExact:'true',
+        country:state.country,
+        order:'votes',
+        reverse:'true',
+        limit:String(STATION_POOL_LIMIT)
+      });
+
+    /* Final country guard: keep only stations physically assigned to the
+       selected country, regardless of how the API represented the language. */
+    currentStations=currentStations.filter(s=>
+      String(s.country||'').trim().toLowerCase()===String(state.country||'').trim().toLowerCase()
+    );
+    if(serial!==requestSerial)return;
+    const cats=categoriesFromStations(currentStations);
+    if(!cats.length)throw new Error('No recognizable categories');
+    fillSelect(category,cats.map(x=>({value:x,label:`${categoryIcons[x]||'📻'} ${x}`})),'Select category');setLevelEnabled('category',true);
+    syncPreConfigPanel();
+    $('category-helper').textContent=`${cats.length} categories found from an expanded live station pool.`;$('state-category').textContent='READY';
+    setMessage(`Country: ${state.country}. Choose a category or use ◀ / ▶.`,'success');
+  }catch(e){clearLevel('category');setMessage(`No category data could be derived for ${state.country}.`,'error')}
+  finally{setBusy('category',false);updateStatus();updateDisplay()}
+}
+function loadStations(){
+  clearBelow('category');state.station='';
+  if(!state.category){updateStatus();updateDisplay();return}
+  const filtered=(state.category==='All Stations'
+    ? currentStations.filter(s=>s&&s.stationuuid)
+    : currentStations.filter(s=>matchesCategory(s,state.category)&&s.stationuuid));
+  filtered.sort((a,b)=>
+    (Number(b.lastcheckok||0)-Number(a.lastcheckok||0)) ||
+    (Number(b.votes||0)-Number(a.votes||0)) ||
+    String(a.name||'').localeCompare(String(b.name||'')
+  ));
+  const options=filtered.map(s=>({value:s.stationuuid,label:stationLabel(s)}));
+  fillSelect(station,options,'Select station');setLevelEnabled('station',options.length>0);
+  $('station-helper').textContent=options.length?`${options.length} matching stations found from the expanded live directory.`:'No stations match this category.';$('state-station').textContent=options.length?'READY':'NO DATA';
+  setMessage(options.length?`Category: ${state.category}. Choose a station or use ◀ / ▶.`:`No station data is available for ${state.category}.`,'info');
+  updateStatus();updateDisplay();
+}
+function selectValue(level,value){
+  const sel=$(level);if(sel.disabled&&level!=='language')return;
+  const opt=[...sel.options].find(o=>o.value===value);if(!opt)return;
+  state[level]=value;sel.value=value;
+  syncPreConfigPanel();
+  if(level==='language')loadCountries();
+  else if(level==='country')loadCategories();
+  else if(level==='category')loadStations();
+  else {resetPlayer(); updateStatus();updateDisplay(); setMessage('Station selected. Attempting automatic playback of the public stream.','success'); playSelectedStation();}
+}
+function navigate(level,dir){
+  const sel=$(level);if(sel.disabled||sel.options.length<=1)return;
+  const idx=Math.max(0,sel.selectedIndex-1);const count=sel.options.length-1;const next=(idx+dir+count)%count;selectValue(level,sel.options[next+1].value);
+}
+language.addEventListener('change',()=>selectValue('language',language.value));
+country.addEventListener('change',()=>selectValue('country',country.value));
+category.addEventListener('change',()=>selectValue('category',category.value));
+station.addEventListener('change',()=>selectValue('station',station.value));
+LEVELS.forEach(l=>{$('prev-'+l).addEventListener('click',()=>navigate(l,-1));$('next-'+l).addEventListener('click',()=>navigate(l,1));});
+
+preconfigLanguageInputs.forEach(input=>{
+  input.addEventListener('change',()=>{
+    if(!input.checked)return;
+    const target=[...language.options].find(o=>canonicalLanguageName(o.value)===canonicalLanguageName(input.value));
+    if(target){
+      selectValue('language',target.value);
+    }else{
+      /* The preset keeps its user-facing spelling while using the canonical
+         Radio Browser spelling for a language such as Asamese/Assamese. */
+      state.language=input.value;
+      loadCountries();
+      syncPreConfigPanel();
+    }
+  });
+});
+preconfigCountry.addEventListener('change',()=>selectValue('country',preconfigCountry.value));
+preconfigCategory.addEventListener('change',()=>selectValue('category',preconfigCategory.value));
+preconfigStation.addEventListener('change',()=>selectValue('station',preconfigStation.value));
+$('preconfigPrevCountry').addEventListener('click',()=>navigate('country',-1));
+$('preconfigNextCountry').addEventListener('click',()=>navigate('country',1));
+$('preconfigPrevCategory').addEventListener('click',()=>navigate('category',-1));
+$('preconfigNextCategory').addEventListener('click',()=>navigate('category',1));
+$('preconfigPrevStation').addEventListener('click',()=>navigate('station',-1));
+$('preconfigNextStation').addEventListener('click',()=>navigate('station',1));
+
+/* Phase 3: spectrum animation is enabled only while the audio element is actually playing. */
+const spectrum=$('spectrum');
+[32,64,42,82,55,98,48,72,36,90,61,105,47,78,57,94,41,67,89,50,76,45,101,58,84,39,71,93,52,66,44,87].forEach((h,i)=>{
+  const b=document.createElement('div');
+  b.className='bar';
+  b.dataset.baseHeight=h;
+  b.style.setProperty('--h',h+'px');
+  b.style.setProperty('--d',(0.45+(i%7)*0.09)+'s');
+  spectrum.appendChild(b);
+});
+fillSelect(language,[],'Connecting…');setLevelEnabled('language',false);syncPreConfigPanel();updateStatus();updateDisplay();initLanguages();
+
+
+/* ===== PHASE 5 JavaScript ===== */
+(function(){
+  const scale = document.getElementById("tuningScale");
+  if(!scale) return;
+
+  // Build the classic FM-style tuning scale.
+  for(let f=88; f<=106; f+=1){
+    const major=document.createElement("div");
+    major.className="major";
+    major.style.left=((f-88)/(106-88)*100)+"%";
+    major.dataset.freq=f;
+    scale.appendChild(major);
+    if(f<106){
+      for(let m=1;m<5;m++){
+        const minor=document.createElement("div");
+        minor.className="minor";
+        minor.style.left=(((f-88)+(m/5))/(106-88)*100)+"%";
+        scale.appendChild(minor);
+      }
+    }
+  }
+})();
+
+
+/* =========================================================
+   PHYSICAL RADIO — COLOUR FINISH
+   The physical side controls were intentionally removed to maximize
+   vertical display space.  Colour finish remains user-selectable.
+   ========================================================= */
+(function(){
+  const unit=document.getElementById('radioUnit');
+  const finish=document.getElementById('radioFinish');
+  const FINISH_KEY='worldRadio_radioFinish_v1';
+  const finishClasses=['finish-walnut','finish-black','finish-silver','finish-ivory','finish-teal'];
+
+  function setFinish(name,save=true){
+    if(!unit)return;
+    finishClasses.forEach(c=>unit.classList.remove(c));
+    unit.classList.add('finish-'+name);
+    if(finish)finish.value=name;
+    if(save){try{localStorage.setItem(FINISH_KEY,name)}catch(e){}}
+  }
+
+  let saved='walnut';
+  try{saved=localStorage.getItem(FINISH_KEY)||'walnut'}catch(e){}
+  if(!finishClasses.includes('finish-'+saved))saved='walnut';
+  setFinish(saved,false);
+  finish?.addEventListener('change',()=>setFinish(finish.value,true));
+})();
+
+</script>
+
+<!-- ===== PHASE 8 FOOTER ===== -->
+<footer class="wrFooter">
+  <div><strong>WORLD RADIO</strong> — a worldwide radio discovery experience.</div>
+  <div class="wrFooterLinks">
+    <button id="wrAboutFooter">About</button>
+    <button id="wrPrivacyBtn">Privacy</button>
+    <button id="wrResetBtn">Reset Local Preferences</button>
+  </div>
+</footer>
+
+<div class="wrToast" id="wrToast"></div>
+
+<div class="wrModalBackdrop" id="wrModalBackdrop">
+  <div class="wrModal">
+    <button class="wrTopBtn wrModalClose" id="wrModalClose">✕</button>
+    <div id="wrModalContent"></div>
+  </div>
+</div>
+
+
+<script>
+/* =========================================================
+   PHASE 8 — POLISH, ACCESSIBILITY, LOCAL PREFERENCES
+   ========================================================= */
+(function(){
+  "use strict";
+
+  const THEME_KEY="worldRadio_phase8_theme_v1";
+  const toast=document.getElementById("wrToast");
+  const modal=document.getElementById("wrModalBackdrop");
+  const modalContent=document.getElementById("wrModalContent");
+
+  function showToast(msg){
+    if(!toast)return;
+    toast.textContent=msg;
+    toast.classList.add("show");
+    clearTimeout(window.__wrToastTimer);
+    window.__wrToastTimer=setTimeout(()=>toast.classList.remove("show"),2600);
+  }
+
+  function setTheme(mode){
+    document.body.classList.toggle("wrLight",mode==="light");
+    try{localStorage.setItem(THEME_KEY,mode)}catch(e){}
+    const b=document.getElementById("wrThemeBtn");
+    if(b)b.textContent=mode==="light"?"☀":"☾";
+  }
+
+  let theme="dark";
+  try{theme=localStorage.getItem(THEME_KEY)||"dark"}catch(e){}
+  setTheme(theme);
+
+  document.getElementById("wrThemeBtn")?.addEventListener("click",()=>{
+    setTheme(document.body.classList.contains("wrLight")?"dark":"light");
+  });
+
+  function openModal(title,body){
+    if(!modal||!modalContent)return;
+    modalContent.innerHTML="<h3>"+title+"</h3>"+body;
+    modal.classList.add("open");
+  }
+  function closeModal(){modal?.classList.remove("open")}
+  document.getElementById("wrModalClose")?.addEventListener("click",closeModal);
+  modal?.addEventListener("click",e=>{if(e.target===modal)closeModal()});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+
+  const aboutBody=`
+    <p><strong>World Radio</strong> is a browser-based worldwide radio discovery interface.</p>
+    <p>The application combines a classic analog-radio visual language with modern station discovery, live playback where a station provides a compatible stream,.</p>
+    <p>Station availability depends on the external radio directory and on the individual broadcaster's stream. A station may therefore be temporarily unavailable or may not work in every browser/network.</p>
+  `;
+  const privacyBody=`
+    <p>This application stores appearance preference locally in your browser using local storage.</p>
+    <p>No account is required for this preference. Clearing the browser's site data can remove it.</p>
+  `;
+
+  document.getElementById("wrAboutBtn")?.addEventListener("click",()=>openModal("About World Radio",aboutBody));
+  document.getElementById("wrAboutFooter")?.addEventListener("click",()=>openModal("About World Radio",aboutBody));
+  document.getElementById("wrPrivacyBtn")?.addEventListener("click",()=>openModal("Privacy",privacyBody));
+
+  document.getElementById("wrResetBtn")?.addEventListener("click",()=>{
+    if(!confirm("Reset World Radio appearance preference?"))return;
+    [THEME_KEY].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+    setTheme("dark");
+    showToast("Local preferences have been reset.");
+    setTimeout(()=>location.reload(),700);
+  });
+
+  /* Status indicator follows the first audio element without replacing existing playback code. */
+  function bindAudio(){
+    const audio=document.querySelector("audio");
+    if(!audio || audio.dataset.phase8Bound)return;
+    audio.dataset.phase8Bound="1";
+    const dot=document.getElementById("wrStatusDot");
+    const txt=document.getElementById("wrStatusText");
+    const set=(label,kind)=>{
+      if(txt)txt.textContent=label;
+      if(dot)dot.className="wrStatusDot"+(kind?" "+kind:"");
+    };
+    audio.addEventListener("playing",()=>set("LIVE","live"));
+    audio.addEventListener("waiting",()=>set("BUFFERING","warn"));
+    audio.addEventListener("pause",()=>set("PAUSED",""));
+    audio.addEventListener("ended",()=>set("READY",""));
+    audio.addEventListener("error",()=>set("STREAM ERROR","warn"));
+    if(!audio.paused && !audio.ended)set("LIVE","live");
+  }
+
+  bindAudio();
+  const observer=new MutationObserver(bindAudio);
+  observer.observe(document.body,{childList:true,subtree:true});
+
+  /* Keyboard accessibility: Enter/Space activates focused buttons naturally.
+     Add visible live state to the document title while playing. */
+  document.addEventListener("play",e=>{
+    if(e.target instanceof HTMLAudioElement) document.title="▶ World Radio";
+  },true);
+  document.addEventListener("pause",e=>{
+    if(e.target instanceof HTMLAudioElement) document.title="World Radio";
+  },true);
+
+  /* Update breadcrumb with current selector choices where possible. */
+  function updateBreadcrumb(){
+    const box=document.getElementById("wrBreadcrumb");
+    if(!box)return;
+    const selects=[...document.querySelectorAll("select")];
+    const vals=selects.map(x=>{
+      const t=x.selectedOptions?.[0]?.textContent?.trim()||"";
+      return {id:(x.id+" "+x.name).toLowerCase(),text:t,value:x.value};
+    }).filter(x=>x.value&&x.text && !/^select|choose/i.test(x.text));
+    const names=[];
+    ["language","country","category","station"].forEach(key=>{
+      const hit=vals.find(x=>x.id.includes(key));
+      if(hit)names.push(hit.text);
+    });
+    if(names.length){
+      box.innerHTML=names.map(x=>"<span>"+x.replace(/[<>&"]/g,"")+"</span>").join("");
+    }
+  }
+  document.addEventListener("change",updateBreadcrumb);
+  setTimeout(updateBreadcrumb,300);
+
+})();
+</script>
+
+
+<script id="physical-radio-hooks">
+(function(){
+  function applyPhysical(){
+    const s=typeof stationObject==='function'?stationObject():null;
+    window.__wrPhysicalRadio?.updateReception(s);
+    window.__wrPhysicalRadio?.animateTuning(s);
+  }
+  const originalUpdate=window.updateDisplay;
+  if(typeof originalUpdate==='function'){
+    window.updateDisplay=function(){
+      originalUpdate();
+      applyPhysical();
+    };
+  }
+  document.addEventListener('change',e=>{
+    if(['station','preconfigStation'].includes(e.target?.id))setTimeout(applyPhysical,0);
+  });
+  setInterval(applyPhysical,700);
+})();
+</script>
+
+
+<style id="physical-radio-clean-face">
+/* Physical radio v2: the former left/right hardware areas are removed.
+   The central display now occupies the full radio cabinet width. */
+.radioUnit{
+  width:100%;
+  max-width:100%;
+}
+.radioUnit .bezel{
+  width:100%;
+  box-sizing:border-box;
+  min-height:760px;
+  border-radius:24px;
+}
+@media(max-width:950px){
+  .radioUnit .bezel{min-height:700px}
+}
+@media(max-width:700px){
+  .radioUnit .bezel{min-height:620px;border-radius:18px}
+}
+@media(max-width:430px){
+  .radioUnit .bezel{min-height:590px}
+}
+</style>
+
+</body>
+</html>
+
+<style id="clean-display-adjustment">
+/* Clean display panel: no city/badge/program/standby text block. */
+.stationCenter{
+  margin-top:75px;
+}
+.stationCenter .stationName{
+  margin-bottom:0;
+}
+</style>
