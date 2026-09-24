@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Complete India States & UTs Intelligence Dashboard</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --accent: #2563eb;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin: 0.25rem 0 0.75rem 0;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            width: 100%;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.15rem;
+            text-align: center;
+        }
+
+        select {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: #fff;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+            display: none;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .app-icon {
+            width: 54px;
+            height: 54px;
+            background: #f0f9ff;
+            border-radius: 12px;
+            border: 2px solid #bae6fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .app-icon svg {
+            width: 44px;
+            height: 44px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .category-section {
+            margin-bottom: 0.75rem;
+        }
+
+        .category-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 2px;
+            margin-bottom: 0.35rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-title:hover {
+            color: var(--primary);
+        }
+
+        .collapsible-content {
+            display: none;
+            margin-top: 0.35rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.35rem;
+        }
+
+        .data-item {
+            background-color: var(--background);
+            padding: 0.35rem 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .data-label {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 0.1rem;
+            font-weight: 600;
+        }
+
+        .data-value {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px dashed var(--border);
+            font-size: 0.85rem;
+        }
+
+        .sources-section {
+            background: #fff;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .sources-section h3 {
+            margin: 0 0 0.35rem 0;
+            font-size: 0.75rem;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .sources-section ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .commute-content { margin-top: .4rem; }
+        .sub-commute-section { margin-top: .75rem; border-top: 1px solid var(--border); padding-top: .55rem; }
+        .sub-commute-title { display:flex; justify-content:space-between; align-items:center; gap:.75rem; color:var(--accent); font-weight:700; font-size:.82rem; cursor:pointer; padding:.35rem 0; }
+        .commute-table-wrap { overflow-x:auto; }
+        .commute-table { width:100%; border-collapse:collapse; font-size:.75rem; min-width:620px; }
+        .commute-table th, .commute-table td { border:1px solid var(--border); padding:.48rem .55rem; text-align:left; vertical-align:middle; }
+        .commute-table th { font-weight:700; background:rgba(30,58,138,.06); color:var(--accent); }
+        .commute-price { font-weight:700; white-space:nowrap; }
+        .commute-route { white-space:nowrap; }
+        .commute-table a { color: var(--accent); }
+        .commute-empty { padding:.7rem; border:1px dashed var(--border); border-radius:7px; color:var(--text-muted); font-size:.74rem; }
+        .location-btn {
+            margin-top: .5rem; padding: 8px 12px; border: 0; border-radius: 6px;
+            background: var(--accent); color: #fff; font-size: .75rem; font-weight: 700; cursor: pointer;
+        }
+        .location-btn:disabled { opacity: .65; cursor: wait;
+        }
+        .route-btn { color: var(--accent); font-weight: 700; text-decoration: none; }
+        .route-btn:hover { text-decoration: underline; }
+
+
+        /* ATTRACTIVE 3D DATA LOADING TIMER */
+        #dataLoadingOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.48);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        #dataLoadingOverlay.visible { display: flex; }
+        .loader-3d-card {
+            width: min(270px, 82vw);
+            padding: 22px 20px 18px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(239,246,255,.96));
+            border: 1px solid rgba(147,197,253,.9);
+            box-shadow: 0 24px 70px rgba(15,23,42,.35), inset 0 1px 0 rgba(255,255,255,.9);
+            text-align: center;
+            transform: translateZ(0);
+        }
+        .loader-stage {
+            position: relative;
+            width: 128px;
+            height: 128px;
+            margin: 0 auto 10px;
+            perspective: 500px;
+        }
+        .loader-orb {
+            position: absolute;
+            left: 50%; top: 50%;
+            width: 48px; height: 48px;
+            transform: translate(-50%,-50%);
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 25%, #dbeafe 0 8%, #60a5fa 24%, #2563eb 58%, #1e3a8a 100%);
+            box-shadow: 0 0 18px rgba(37,99,235,.75), 0 0 42px rgba(59,130,246,.45);
+            animation: loaderPulse 1.25s ease-in-out infinite;
+        }
+        .loader-ring {
+            position: absolute;
+            left: 50%; top: 50%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #2563eb;
+            border-right-color: #60a5fa;
+            transform-style: preserve-3d;
+        }
+        .loader-ring.r1 { width: 88px; height: 88px; margin:-44px; animation: spin3d 1.15s linear infinite; }
+        .loader-ring.r2 { width: 112px; height: 112px; margin:-56px; border-top-color:#f59e0b; border-right-color:#fbbf24; animation: spin3dReverse 1.7s linear infinite; }
+        .loader-ring.r3 { width: 70px; height: 70px; margin:-35px; border-top-color:#10b981; border-right-color:#34d399; animation: spin3d 2.1s linear infinite; }
+        .loader-cube {
+            position:absolute; left:50%; top:50%; width:22px; height:22px;
+            margin:-11px; transform-style:preserve-3d;
+            animation:cubeSpin 2.2s linear infinite;
+        }
+        .loader-cube span { position:absolute; width:22px; height:22px; border:2px solid rgba(255,255,255,.9); background:rgba(37,99,235,.45); box-shadow:0 0 10px rgba(37,99,235,.35); }
+        .loader-cube .f { transform:translateZ(11px); }
+        .loader-cube .b { transform:rotateY(180deg) translateZ(11px); }
+        .loader-cube .r { transform:rotateY(90deg) translateZ(11px); }
+        .loader-cube .l { transform:rotateY(-90deg) translateZ(11px); }
+        .loader-cube .t { transform:rotateX(90deg) translateZ(11px); }
+        .loader-cube .d { transform:rotateX(-90deg) translateZ(11px); }
+        .loader-title { color:#1e3a8a; font-weight:800; font-size:.9rem; letter-spacing:.35px; }
+        .loader-status { margin-top:4px; color:#64748b; font-size:.72rem; min-height:18px; }
+        .loader-seconds { margin-top:8px; font-size:1.55rem; line-height:1; font-weight:900; color:#2563eb; font-variant-numeric:tabular-nums; }
+        @keyframes spin3d { from{transform:rotateX(62deg) rotateZ(0deg)} to{transform:rotateX(62deg) rotateZ(360deg)} }
+        @keyframes spin3dReverse { from{transform:rotateY(65deg) rotateZ(360deg)} to{transform:rotateY(65deg) rotateZ(0deg)} }
+        @keyframes cubeSpin { from{transform:rotateX(0) rotateY(0) rotateZ(0)} to{transform:rotateX(360deg) rotateY(360deg) rotateZ(360deg)} }
+        @keyframes loaderPulse { 0%,100%{transform:translate(-50%,-50%) scale(.88)} 50%{transform:translate(-50%,-50%) scale(1.08)} }
+
+        @media (max-width: 768px) {
+            .controls-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dataLoadingOverlay" aria-live="polite" aria-busy="true">
+        <div class="loader-3d-card">
+            <div class="loader-stage" aria-hidden="true">
+                <div class="loader-ring r2"></div>
+                <div class="loader-ring r1"></div>
+                <div class="loader-ring r3"></div>
+                <div class="loader-orb"></div>
+                <div class="loader-cube">
+                    <span class="f"></span><span class="b"></span><span class="r"></span>
+                    <span class="l"></span><span class="t"></span><span class="d"></span>
+                </div>
+            </div>
+            <div class="loader-title">FETCHING LIVE DATA</div>
+            <div id="loaderStatus" class="loader-status">Please wait…</div>
+            <div id="loaderSeconds" class="loader-seconds">1.0s</div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <h1>India States, UTs & Districts Intelligence Dashboard</h1>
+        
+        <div class="controls-row">
+            <div class="control-group">
+                <label>Select Target State / Union Territory</label>
+                <select id="stateSelect" onchange="handleStateChange()">
+                    <option value="" disabled selected>-- Choose Indian State / UT (A-Z) --</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Select District</label>
+                <select id="districtSelect" onchange="handleDistrictChange()" disabled>
+                    <option value="" selected>-- Select State / UT First --</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+            Select any State or Union Territory from A to Z above. The associated districts will be populated automatically.
+        </div>
+
+
+        <div id="districtCard" class="card" style="display:none;">
+            <div class="card-header">
+                <div class="app-icon">
+                    <svg width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="50" cy="50" r="38" fill="#0284c7"/>
+                      <circle cx="50" cy="50" r="13" fill="#f59e0b"/>
+                      <path d="M50 8V92M8 50H92" stroke="#bae6fd" stroke-width="3" opacity=".45"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 id="districtName">District</h2>
+                    <div id="districtSubtitle" style="font-size:.72rem;color:var(--text-muted);">District Information</div>
+                </div>
+            </div>
+
+            <div class="category-section">
+                <div class="category-title">District Geography & Administration</div>
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. District</div><div class="data-value" id="dDistrict">--</div></div>
+                    <div class="data-item"><div class="data-label">2. State / UT</div><div class="data-value" id="dState">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Country</div><div class="data-value" id="dCountry">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Latitude</div><div class="data-value" id="dLat">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Longitude</div><div class="data-value" id="dLon">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Elevation</div><div class="data-value" id="dElevation">--</div></div>
+                    <div class="data-item"><div class="data-label">7. Population (API)</div><div class="data-value" id="dPopulation">--</div></div>
+                    <div class="data-item"><div class="data-label">8. Time Zone</div><div class="data-value" id="dTimezone">--</div></div>
+                    <div class="data-item"><div class="data-label">9. UTC Offset</div><div class="data-value" id="dUtcOffset">--</div></div>
+                    <div class="data-item"><div class="data-label">10. Geographical Name</div><div class="data-value" id="dGeoName">--</div></div>
+                </div>
+            </div>
+
+            <div class="category-section">
+                <div class="category-title">Current Weather</div>
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Temperature</div><div class="data-value" id="dTemp">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Humidity</div><div class="data-value" id="dHumidity">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Precipitation</div><div class="data-value" id="dRain">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Snowfall</div><div class="data-value" id="dSnow">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Visibility</div><div class="data-value" id="dVisibility">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Wind Speed</div><div class="data-value" id="dWind">--</div></div>
+                </div>
+            </div>
+
+            <div class="category-section">
+                <div class="category-title">7-Day Weather Outlook</div>
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Minimum Temperature</div><div class="data-value" id="dMinTemp">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Maximum Temperature</div><div class="data-value" id="dMaxTemp">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Total Rainfall</div><div class="data-value" id="dTotalRain">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Maximum Wind</div><div class="data-value" id="dMaxWind">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Forecast Days</div><div class="data-value" id="dForecastDays">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Weather Data Time</div><div class="data-value" id="dWeatherTime">--</div></div>
+                </div>
+            </div>
+
+            <div class="category-section">
+                <div class="category-title" id="districtMapTitle">District Map & 3D Street View</div>
+                <div id="districtMapWrap" style="margin-top:.5rem;">
+                    <iframe id="districtMapIframe" title="District Map" style="width:100%;height:360px;border:0;border-radius:8px;" loading="lazy"></iframe>
+                    <a id="districtStreetViewBtn" href="#" target="_blank" rel="noopener"
+                       style="display:inline-block;margin-top:.5rem;padding:8px 12px;background:#1e3a8a;color:#fff;border-radius:6px;text-decoration:none;font-size:.78rem;">
+                       Open District in Google Maps / Street View
+                    </a>
+                </div>
+            </div>
+
+            <div class="category-section commute-section">
+                <div class="category-title" id="airportPathTitle" onclick="toggleCommuteSection('airportPathContent','airportPathIcon')">
+                    <span>✈️ Nearest Airport Path from Current Location</span>
+                    <span id="airportPathIcon">▼ Click to Expand</span>
+                </div>
+                <div id="airportPathContent" class="collapsible-content commute-content">
+                    <div class="grid">
+                        <div class="data-item"><div class="data-label">Current Location</div><div class="data-value" id="userLocationAirport">Click below to detect location</div></div>
+                        <div class="data-item"><div class="data-label">Nearest Airport</div><div class="data-value" id="nearestAirport">--</div></div>
+                        <div class="data-item"><div class="data-label">Distance</div><div class="data-value" id="airportDistance">--</div></div>
+                        <div class="data-item"><div class="data-label">Route</div><div class="data-value"><a id="airportRouteBtn" href="#" target="_blank" rel="noopener" class="route-btn">Open Route in Google Maps</a></div></div>
+                    </div>
+                    <button type="button" class="location-btn" onclick="findNearestFacility('airport')">📍 Find Nearest Airport</button>
+
+                    <div class="sub-commute-section">
+                        <div class="sub-commute-title" onclick="toggleCommuteSection('airportCommuteContent','airportCommuteIcon')">
+                            <span>🚗 Available Commuting Options to Nearest Airport</span>
+                            <span id="airportCommuteIcon">▼ Click to Expand</span>
+                        </div>
+                        <div id="airportCommuteContent" class="collapsible-content commute-content">
+                            <div id="airportCommuteTable" class="commute-table-wrap">
+                                <div class="commute-empty">First find the nearest airport to display commuting options.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-section commute-section">
+                <div class="category-title" id="railPathTitle" onclick="toggleCommuteSection('railPathContent','railPathIcon')">
+                    <span>🚆 Nearest Railway Station Path from Current Location</span>
+                    <span id="railPathIcon">▼ Click to Expand</span>
+                </div>
+                <div id="railPathContent" class="collapsible-content commute-content">
+                    <div class="grid">
+                        <div class="data-item"><div class="data-label">Current Location</div><div class="data-value" id="userLocationRail">Click below to detect location</div></div>
+                        <div class="data-item"><div class="data-label">Nearest Railway Station</div><div class="data-value" id="nearestRail">--</div></div>
+                        <div class="data-item"><div class="data-label">Distance</div><div class="data-value" id="railDistance">--</div></div>
+                        <div class="data-item"><div class="data-label">Route</div><div class="data-value"><a id="railRouteBtn" href="#" target="_blank" rel="noopener" class="route-btn">Open Route in Google Maps</a></div></div>
+                    </div>
+                    <button type="button" class="location-btn" onclick="findNearestFacility('railway')">📍 Find Nearest Railway Station</button>
+
+                    <div class="sub-commute-section">
+                        <div class="sub-commute-title" onclick="toggleCommuteSection('railCommuteContent','railCommuteIcon')">
+                            <span>🚗 Available Commuting Options to Nearest Railway Station</span>
+                            <span id="railCommuteIcon">▼ Click to Expand</span>
+                        </div>
+                        <div id="railCommuteContent" class="collapsible-content commute-content">
+                            <div id="railCommuteTable" class="commute-table-wrap">
+                                <div class="commute-empty">First find the nearest railway station to display commuting options.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sources-section">
+                <h3>District Data Sources</h3>
+                <ul>
+                    <li>Open-Meteo Geocoding API — district coordinates, elevation, population where available, timezone and administrative hierarchy.</li>
+                    <li>Open-Meteo Forecast API — current weather and 7-day weather outlook for the selected district location.</li>
+                    <li>Google Maps — district location and map / Street View.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="infoCard" class="card">
+            <div class="card-header">
+                <!-- Integrated 3D Globe & Pin Icon[cite: 1] -->
+                <div class="app-icon">
+                    <svg width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <radialGradient id="globeGrad" cx="35%" cy="35%" r="70%" fx="30%" fy="30%">
+                          <stop offset="0%" stop-color="#38bdf8" />
+                          <stop offset="50%" stop-color="#0284c7" />
+                          <stop offset="100%" stop-color="#0369a1" />
+                        </radialGradient>
+                        <radialGradient id="glossGrad" cx="30%" cy="20%" r="40%">
+                          <stop offset="0%" stop-color="white" stop-opacity="0.6" />
+                          <stop offset="100%" stop-color="white" stop-opacity="0" />
+                        </radialGradient>
+                        <filter id="shadow3d" x="-20%" y="-20%" width="140%" height="140%">
+                          <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.35"/>
+                          <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.2"/>
+                        </filter>
+                        <filter id="pinShadow" x="-30%" y="-30%" width="160%" height="160%">
+                          <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.4"/>
+                        </filter>
+                        <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#f59e0b" />
+                          <stop offset="100%" stop-color="#d97706" />
+                        </linearGradient>
+                      </defs>
+                      <g filter="url(#shadow3d)">
+                        <circle cx="50" cy="52" r="38" fill="url(#globeGrad)" />
+                        <path d="M22 42C30 35 45 38 58 45C71 52 78 42 78 42C78 42 72 68 55 70C38 72 25 58 22 42Z" fill="#10b981" fill-opacity="0.75" />
+                        <path d="M30 65C38 62 48 70 52 75C45 78 35 75 30 65Z" fill="#059669" fill-opacity="0.85" />
+                        <ellipse cx="50" cy="52" rx="38" ry="16" stroke="#bae6fd" stroke-opacity="0.3" stroke-width="2" fill="none" transform="rotate(-15 50 52)" />
+                        <ellipse cx="50" cy="52" rx="16" ry="38" stroke="#bae6fd" stroke-opacity="0.3" stroke-width="2" fill="none" transform="rotate(-15 50 52)" />
+                        <circle cx="50" cy="52" r="38" fill="url(#glossGrad)" />
+                      </g>
+                      <g transform="translate(12, -4)" filter="url(#pinShadow)">
+                        <circle cx="62" cy="30" r="14" fill="url(#badgeGrad)" />
+                        <circle cx="62" cy="30" r="10" fill="#b45309" fill-opacity="0.3" />
+                        <text x="62" y="35" font-family="Arial, sans-serif" font-weight="bold" font-size="15" fill="#ffffff" text-anchor="middle">IN</text>
+                        <path d="M58 40L62 48L66 40Z" fill="#d97706" />
+                      </g>
+                    </svg>
+                </div>
+                <div>
+                    <h2 id="stateName">State Name</h2>
+                </div>
+            </div>
+            
+            <!-- GEOGRAPHY -->
+            <div class="category-section">
+                <div class="category-title">Geography</div>
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Area</div><div class="data-value" id="geoArea">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Land Area</div><div class="data-value" id="geoLand">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Cultivable Land</div><div class="data-value" id="geoCultivable">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Capital City</div><div class="data-value" id="geoCapital">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Major Cities</div><div class="data-value" id="geoMajorCities">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Major Airports</div><div class="data-value" id="geoAirports">--</div></div>
+                </div>
+            </div>
+
+            <!-- GENERAL WEATHER TREND -->
+            <div class="category-section">
+                <div class="category-title">General Weather Trend</div>
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Max/Min Temperature</div><div class="data-value" id="trendTemp">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Max/Min Humidity</div><div class="data-value" id="trendHumidity">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Max/Min Rainfall</div><div class="data-value" id="trendRain">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Max/Min Snowfall</div><div class="data-value" id="trendSnow">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Max/Min Windspeed</div><div class="data-value" id="trendWind">--</div></div>
+                </div>
+            </div>
+
+            <!-- WEATHER PREDICTION FOR CAPITAL AS OF TODAY -->
+            <div class="category-section">
+                <div class="category-title" id="weatherPredictionTitle">Weather Prediction as of Today</div>
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Temperature</div><div class="data-value" id="predTemp">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Humidity</div><div class="data-value" id="predHumidity">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Rainfall</div><div class="data-value" id="predRain">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Snowfall</div><div class="data-value" id="predSnow">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Visibility</div><div class="data-value" id="predVisibility">--</div></div>
+                </div>
+            </div>
+
+            <!-- CAPITAL CITY MAP & STREET VIEW (COLLAPSIBLE / OFF BY DEFAULT) -->
+            <div class="category-section">
+                <div class="category-title" id="mapSectionTitle" onclick="toggleMapSection()">
+                    <span>Capital City Map & 3D Street View</span>
+                    <span id="mapToggleIcon">▼ Click to Expand</span>
+                </div>
+                <div id="mapCollapsibleContent" class="collapsible-content">
+                    <div style="position: relative; width: 100%; height: 280px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 0.5rem;">
+                        <iframe id="mapIframe" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
+                    </div>
+                    <a id="streetViewBtn" href="#" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 8px; background-color: var(--accent); color: #fff; text-decoration: none; font-size: 0.75rem; font-weight: 600; border-radius: 6px; text-transform: uppercase; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                        🌐 Open 3D Street View of Capital
+                    </a>
+                </div>
+            </div>
+
+            <!-- ECONOMY -->
+            <div class="category-section">
+                <div class="category-title">Economy</div>
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. State GDP (GSDP)</div><div class="data-value" id="econGdp">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Per Capita Income</div><div class="data-value" id="econPerCapita">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Cost of Living</div><div class="data-value" id="econCostOfLiving">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Major Industries / Exports</div><div class="data-value" id="econExport">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Total State Debt</div><div class="data-value" id="econDebt">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Major State Banks</div><div class="data-value" id="econBanks">--</div></div>
+                </div>
+            </div>
+
+            <!-- SOCIETY -->
+            <div class="category-section">
+                <div class="category-title">Society</div>
+                <div class="grid">
+                    <div class="data-item"><div class="data-label">1. Total Population</div><div class="data-value" id="socPopulation">--</div></div>
+                    <div class="data-item"><div class="data-label">2. Staple Food</div><div class="data-value" id="socFood">--</div></div>
+                    <div class="data-item"><div class="data-label">3. Population Growth</div><div class="data-value" id="socTrend">--</div></div>
+                    <div class="data-item"><div class="data-label">4. Official Languages</div><div class="data-value" id="socLanguages">--</div></div>
+                    <div class="data-item"><div class="data-label">5. Literacy Rate</div><div class="data-value" id="socLiteracy">--</div></div>
+                    <div class="data-item"><div class="data-label">6. Sex Ratio</div><div class="data-value" id="socRatio">--</div></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sources-section">
+            <h3>Sources</h3>
+            <ul>
+                <li>Reserve Bank of India (RBI) Handbook of Statistics on Indian States (GSDP, Debt, Per Capita)[cite: 2]</li>
+                <li>Ministry of Statistics and Programme Implementation (MoSPI) & Census Data[cite: 2]</li>
+                <li>Open-Meteo Climatology & Real-Time Weather Forecast API[cite: 2]</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const stateData = {
+            "Andhra Pradesh": {
+                lat: 15.9129, lon: 79.7400,
+                geo: { area: "162,968 sq km", land: "160,200 sq km", cultivable: "98,000 sq km", capital: "Amaravati", majorCities: "Visakhapatnam, Vijayawada, Tirupati", airports: "Visakhapatnam International Airport, Vijayawada Airport, Tirupati Airport" },
+                trend: { temp: "20°C to 45°C", humidity: "40% to 90%", rain: "900mm to 1100mm", snow: "0cm", wind: "0 to 90 km/h" },
+                econ: { gdp: "₹14.5 Lakh Crore", perCapita: "₹2.19 Lakh / yr", costOfLiving: "₹25,000 / month", export: "Agriculture, Pharma, Seafood, IT", debt: "₹4.4 Lakh Crore", banks: "Union Bank of India, State Bank of India" },
+                soc: { pop: "53.9 Million", food: "Rice, Chili, Pulihora", trend: "+1.1% (Decennial)", languages: "Telugu, Urdu", literacy: "67.4%", ratio: "993 F / 1000 M" }
+            },
+            "Arunachal Pradesh": {
+                lat: 28.2180, lon: 94.7278,
+                geo: { area: "83,743 sq km", land: "83,743 sq km", cultivable: "25,000 sq km", capital: "Itanagar", majorCities: "Tawang, Naharlagun, Pasighat", airports: "Donyi Polo Airport, Tezu Airport" },
+                trend: { temp: "5°C to 30°C", humidity: "60% to 95%", rain: "2000mm to 4000mm", snow: "0cm to 100cm (Hills)", wind: "0 to 50 km/h" },
+                econ: { gdp: "₹38,000 Crore", perCapita: "₹2.10 Lakh / yr", costOfLiving: "₹22,000 / month", export: "Hydropower, Timber, Handlooms", debt: "₹12,000 Crore", banks: "State Bank of India, Arunachal Pradesh Rural Bank" },
+                soc: { pop: "1.5 Million", food: "Rice, Bamboo Shoot, Thukpa", trend: "+2.6% (Decennial)", languages: "Nishi, Adi, English", literacy: "65.4%", ratio: "920 F / 1000 M" }
+            },
+            "Assam": {
+                lat: 26.2006, lon: 92.9376,
+                geo: { area: "78,438 sq km", land: "74,380 sq km", cultivable: "30,000 sq km", capital: "Dispur", majorCities: "Guwahati, Dibrugarh, Silchar", airports: "Lokpriya Gopinath Bordoloi International Airport, Dibrugarh Airport, Silchar Airport" },
+                trend: { temp: "10°C to 36°C", humidity: "60% to 95%", rain: "1500mm to 3000mm", snow: "0cm", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹5.65 Lakh Crore", perCapita: "₹1.25 Lakh / yr", costOfLiving: "₹20,000 / month", export: "Tea, Petroleum, Silk, Handicrafts", debt: "₹1.1 Lakh Crore", banks: "Assam Gramin Vikash Bank, State Bank of India" },
+                soc: { pop: "35.6 Million", food: "Rice, Fish Khar, Pitha", trend: "+1.7% (Decennial)", languages: "Assamese, Bengali, Bodo", literacy: "85.9%", ratio: "958 F / 1000 M" }
+            },
+            "Bihar": {
+                lat: 25.5941, lon: 85.1376,
+                geo: { area: "94,163 sq km", land: "92,257 sq km", cultivable: "56,000 sq km", capital: "Patna", majorCities: "Gaya, Bhagalpur, Muzaffarpur", airports: "Jay Prakash Narayan International Airport, Gaya Airport" },
+                trend: { temp: "8°C to 44°C", humidity: "30% to 90%", rain: "1000mm to 1500mm", snow: "0cm", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹8.55 Lakh Crore", perCapita: "₹54,000 / yr", costOfLiving: "₹18,000 / month", export: "Rice, Maize, Litchi, Ethanol", debt: "₹2.8 Lakh Crore", banks: "Dakshin Bihar Gramin Bank, Punjab National Bank" },
+                soc: { pop: "126 Million", food: "Litti Chokha, Sattu, Rice", trend: "+2.5% (Decennial)", languages: "Hindi, Maithili, Bhojpuri", literacy: "61.8%", ratio: "918 F / 1000 M" }
+            },
+            "Chhattisgarh": {
+                lat: 21.2787, lon: 81.8661,
+                geo: { area: "135,192 sq km", land: "135,000 sq km", cultivable: "57,000 sq km", capital: "Raipur", majorCities: "Bhilai, Bilaspur, Korba", airports: "Swami Vivekananda Airport" },
+                trend: { temp: "12°C to 45°C", humidity: "30% to 90%", rain: "1200mm to 1500mm", snow: "0cm", wind: "0 to 70 km/h" },
+                econ: { gdp: "₹5.06 Lakh Crore", perCapita: "₹1.40 Lakh / yr", costOfLiving: "₹20,000 / month", export: "Steel, Power, Minerals, Rice", debt: "₹95,000 Crore", banks: "Chhattisgarh Rajya Gramin Bank, State Bank of India" },
+                soc: { pop: "30.2 Million", food: "Rice, Chila, Dubki Kadi", trend: "+2.3% (Decennial)", languages: "Chhattisgarhi, Hindi", literacy: "70.3%", ratio: "991 F / 1000 M" }
+            },
+            "Goa": {
+                lat: 15.2993, lon: 74.1240,
+                geo: { area: "3,702 sq km", land: "3,702 sq km", cultivable: "1,300 sq km", capital: "Panaji", majorCities: "Vasco da Gama, Margao, Mapusa", airports: "Dabolim Airport, Manohar International Airport (Mopa)" },
+                trend: { temp: "20°C to 35°C", humidity: "60% to 90%", rain: "2500mm to 3000mm", snow: "0cm", wind: "5 to 90 km/h" },
+                econ: { gdp: "₹1.05 Lakh Crore", perCapita: "₹4.72 Lakh / yr", costOfLiving: "₹35,000 / month", export: "Tourism, Pharmaceuticals, Iron Ore", debt: "₹22,000 Crore", banks: "Goa State Cooperative Bank, State Bank of India" },
+                soc: { pop: "1.56 Million", food: "Fish Curry, Rice, Bebinca", trend: "+0.8% (Decennial)", languages: "Konkani, English, Marathi", literacy: "88.7%", ratio: "973 F / 1000 M" }
+            },
+            "Gujarat": {
+                lat: 23.0225, lon: 72.5714,
+                geo: { area: "196,024 sq km", land: "195,000 sq km", cultivable: "105,000 sq km", capital: "Gandhinagar", majorCities: "Ahmedabad, Surat, Vadodara", airports: "Sardar Vallabhbhai Patel International Airport, Surat International Airport" },
+                trend: { temp: "10°C to 46°C", humidity: "20% to 85%", rain: "300mm to 1000mm", snow: "0cm", wind: "0 to 85 km/h" },
+                econ: { gdp: "₹25.62 Lakh Crore", perCapita: "₹3.12 Lakh / yr", costOfLiving: "₹28,000 / month", export: "Chemicals, Petroleum, Diamonds, Cotton", debt: "₹3.9 Lakh Crore", banks: "Bank of Baroda, Gujarat State Cooperative Bank" },
+                soc: { pop: "70.4 Million", food: "Dhokla, Thepla, Bajra", trend: "+1.9% (Decennial)", languages: "Gujarati, Hindi", literacy: "78.0%", ratio: "919 F / 1000 M" }
+            },
+            "Haryana": {
+                lat: 30.7333, lon: 76.7794,
+                geo: { area: "44,212 sq km", land: "44,212 sq km", cultivable: "38,000 sq km", capital: "Chandigarh", majorCities: "Gurugram, Faridabad, Panipat", airports: "Chandigarh International Airport" },
+                trend: { temp: "4°C to 45°C", humidity: "25% to 90%", rain: "300mm to 600mm", snow: "0cm", wind: "0 to 70 km/h" },
+                econ: { gdp: "₹11.42 Lakh Crore", perCapita: "₹3.25 Lakh / yr", costOfLiving: "₹32,000 / month", export: "Automobiles, IT (Gurugram), Basmati Rice", debt: "₹2.8 Lakh Crore", banks: "Sarva Haryana Gramin Bank, Punjab National Bank" },
+                soc: { pop: "28.5 Million", food: "Roti, Ghee, Rabri, Bajra", trend: "+1.9% (Decennial)", languages: "Haryanvi, Hindi, Punjabi", literacy: "75.6%", ratio: "879 F / 1000 M" }
+            },
+            "Himachal Pradesh": {
+                lat: 31.1048, lon: 77.1734,
+                geo: { area: "55,673 sq km", land: "55,673 sq km", cultivable: "10,000 sq km", capital: "Shimla", majorCities: "Dharamshala, Solan, Mandi", airports: "Shimla Airport, Kullu Manali Airport" },
+                trend: { temp: "-5°C to 30°C", humidity: "30% to 90%", rain: "1000mm to 1500mm", snow: "0cm to 200cm (Winter)", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹2.06 Lakh Crore", perCapita: "₹2.22 Lakh / yr", costOfLiving: "₹25,000 / month", export: "Apples, Hydropower, Pharmaceuticals", debt: "₹75,000 Crore", banks: "Himachal Pradesh State Cooperative Bank, UCO Bank" },
+                soc: { pop: "7.5 Million", food: "Madra, Dhaam, Siddu", trend: "+1.3% (Decennial)", languages: "Hindi, Pahari", literacy: "82.8%", ratio: "972 F / 1000 M" }
+            },
+            "Jharkhand": {
+                lat: 23.3441, lon: 85.3096,
+                geo: { area: "79,716 sq km", land: "79,716 sq km", cultivable: "38,000 sq km", capital: "Ranchi", majorCities: "Jamshedpur, Dhanbad, Bokaro", airports: "Birsa Munda Airport" },
+                trend: { temp: "10°C to 42°C", humidity: "30% to 90%", rain: "1100mm to 1400mm", snow: "0cm", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹4.31 Lakh Crore", perCapita: "₹90,000 / yr", costOfLiving: "₹20,000 / month", export: "Minerals, Steel, Coal, Handlooms", debt: "₹1.1 Lakh Crore", banks: "Jharkhand Rajya Gramin Bank, State Bank of India" },
+                soc: { pop: "39.5 Million", food: "Litti, Dhuska, Rice", trend: "+1.9% (Decennial)", languages: "Hindi, Santhali, Khortha", literacy: "66.4%", ratio: "948 F / 1000 M" }
+            },
+            "Karnataka": {
+                lat: 12.9716, lon: 77.5946,
+                geo: { area: "191,791 sq km", land: "189,000 sq km", cultivable: "123,000 sq km", capital: "Bengaluru", majorCities: "Mysuru, Mangaluru, Hubballi", airports: "Kempegowda International Airport, Mysore Airport, Mangaluru International Airport" },
+                trend: { temp: "15°C to 38°C", humidity: "40% to 90%", rain: "500mm to 3500mm", snow: "0cm", wind: "0 to 70 km/h" },
+                econ: { gdp: "₹25.0 Lakh Crore", perCapita: "₹3.01 Lakh / yr", costOfLiving: "₹30,000 / month", export: "Software, Aerospace, Coffee, Silk", debt: "₹5.3 Lakh Crore", banks: "Canara Bank, State Bank of India" },
+                soc: { pop: "67.5 Million", food: "Ragi, Rice, Bisi Bele Bath", trend: "+1.5% (Decennial)", languages: "Kannada, English", literacy: "75.4%", ratio: "973 F / 1000 M" }
+            },
+            "Kerala": {
+                lat: 8.5241, lon: 76.9366,
+                geo: { area: "38,863 sq km", land: "38,863 sq km", cultivable: "23,000 sq km", capital: "Thiruvananthapuram", majorCities: "Kochi, Kozhikode, Thrissur", airports: "Trivandrum International Airport, Cochin International Airport, Calicut International Airport" },
+                trend: { temp: "22°C to 35°C", humidity: "70% to 95%", rain: "2500mm to 3000mm", snow: "0cm", wind: "5 to 80 km/h" },
+                econ: { gdp: "₹11.0 Lakh Crore", perCapita: "₹2.60 Lakh / yr", costOfLiving: "₹30,000 / month", export: "Spices, Coir, Seafood, IT Services", debt: "₹3.8 Lakh Crore", banks: "Federal Bank, South Indian Bank, State Bank of India" },
+                soc: { pop: "35.7 Million", food: "Rice, Fish Curry, Appam", trend: "+0.5% (Decennial)", languages: "Malayalam, English", literacy: "94.0%", ratio: "1084 F / 1000 M" }
+            },
+            "Madhya Pradesh": {
+                lat: 23.2599, lon: 77.4126,
+                geo: { area: "308,252 sq km", land: "308,245 sq km", cultivable: "152,000 sq km", capital: "Bhopal", majorCities: "Indore, Gwalior, Jabalpur, Ujjain", airports: "Raja Bhoj Airport, Devi Ahilya Bai Holkar Airport, Gwalior Airport" },
+                trend: { temp: "10°C to 45°C", humidity: "25% to 90%", rain: "800mm to 1400mm", snow: "0cm", wind: "0 to 65 km/h" },
+                econ: { gdp: "₹13.63 Lakh Crore", perCapita: "₹1.40 Lakh / yr", costOfLiving: "₹22,000 / month", export: "Soybean, Textiles, Auto Parts, Wheat", debt: "₹3.5 Lakh Crore", banks: "Madhya Pradesh Gramin Bank, Punjab National Bank" },
+                soc: { pop: "85.4 Million", food: "Poha Jalebi, Dal Bafla", trend: "+2.0% (Decennial)", languages: "Hindi", literacy: "70.6%", ratio: "931 F / 1000 M" }
+            },
+            "Maharashtra": {
+                lat: 19.0760, lon: 72.8777,
+                geo: { area: "307,713 sq km", land: "305,470 sq km", cultivable: "175,000 sq km", capital: "Mumbai", majorCities: "Pune, Nagpur, Nashik", airports: "Chhatrapati Shivaji Maharaj International Airport, Pune Airport, Dr. Babasaheb Ambedkar International Airport" },
+                trend: { temp: "12°C to 43°C", humidity: "30% to 95%", rain: "400mm to 4000mm", snow: "0cm", wind: "0 to 80 km/h" },
+                econ: { gdp: "₹38.79 Lakh Crore", perCapita: "₹2.52 Lakh / yr", costOfLiving: "₹35,000 / month", export: "IT, Textiles, Automobiles, Pharma", debt: "₹7.1 Lakh Crore", banks: "State Bank of India, Bank of Maharashtra, HDFC Bank" },
+                soc: { pop: "126 Million", food: "Jowar, Bajra, Rice, Puran Poli", trend: "+1.6% (Decennial)", languages: "Marathi, English", literacy: "82.3%", ratio: "929 F / 1000 M" }
+            },
+            "Manipur": {
+                lat: 24.8170, lon: 93.9368,
+                geo: { area: "22,327 sq km", land: "22,327 sq km", cultivable: "5,500 sq km", capital: "Imphal", majorCities: "Thoubal, Bishnupur, Churachandpur", airports: "Imphal International Airport" },
+                trend: { temp: "10°C to 32°C", humidity: "50% to 90%", rain: "1200mm to 2000mm", snow: "0cm", wind: "0 to 50 km/h" },
+                econ: { gdp: "₹45,000 Crore", perCapita: "₹90,000 / yr", costOfLiving: "₹20,000 / month", export: "Handlooms, Bamboo Craft, Handiwork", debt: "₹15,000 Crore", banks: "Manipur Rural Bank, State Bank of India" },
+                soc: { pop: "3.2 Million", food: "Rice, Eromba, Ngathoibi", trend: "+2.4% (Decennial)", languages: "Meiteilon (Manipuri), English", literacy: "79.8%", ratio: "985 F / 1000 M" }
+            },
+            "Meghalaya": {
+                lat: 25.5788, lon: 91.8933,
+                geo: { area: "22,429 sq km", land: "22,429 sq km", cultivable: "3,000 sq km", capital: "Shillong", majorCities: "Tura, Jowai, Nongstoin", airports: "Shillong Airport" },
+                trend: { temp: "5°C to 28°C", humidity: "70% to 98%", rain: "2500mm to 11000mm", snow: "0cm", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹42,000 Crore", perCapita: "₹1.05 Lakh / yr", costOfLiving: "₹22,000 / month", export: "Coal, Limestone, Horticulture", debt: "₹14,000 Crore", banks: "Meghalaya Rural Bank, State Bank of India" },
+                soc: { pop: "3.4 Million", food: "Rice, Jadoh, Pukhlein", trend: "+2.7% (Decennial)", languages: "Khasi, Garo, English", literacy: "75.5%", ratio: "989 F / 1000 M" }
+            },
+            "Mizoram": {
+                lat: 23.1645, lon: 92.9376,
+                geo: { area: "21,081 sq km", land: "21,081 sq km", cultivable: "2,000 sq km", capital: "Aizawl", majorCities: "Lunglei, Champhai, Serchhip", airports: "Lengpui Airport" },
+                trend: { temp: "10°C to 30°C", humidity: "60% to 90%", rain: "2000mm to 3000mm", snow: "0cm", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹38,000 Crore", perCapita: "₹2.20 Lakh / yr", costOfLiving: "₹22,000 / month", export: "Bamboo, Timber, Handlooms", debt: "₹13,000 Crore", banks: "Mizoram Rural Bank, State Bank of India" },
+                soc: { pop: "1.2 Million", food: "Rice, Bamboo Shoot, Bai", trend: "+2.3% (Decennial)", languages: "Mizo, English", literacy: "91.3%", ratio: "976 F / 1000 M" }
+            },
+            "Nagaland": {
+                lat: 25.6751, lon: 94.1086,
+                geo: { area: "16,579 sq km", land: "16,579 sq km", cultivable: "4,000 sq km", capital: "Kohima", majorCities: "Dimapur, Mokokchung, Tuensang", airports: "Dimapur Airport" },
+                trend: { temp: "8°C to 30°C", humidity: "60% to 90%", rain: "1800mm to 2500mm", snow: "0cm", wind: "0 to 50 km/h" },
+                econ: { gdp: "₹37,000 Crore", perCapita: "₹1.40 Lakh / yr", costOfLiving: "₹22,000 / month", export: "Agriculture, Timber, Handcrafts", debt: "₹14,000 Crore", banks: "Nagaland Rural Bank, State Bank of India" },
+                soc: { pop: "2.2 Million", food: "Rice, Smoked Pork, Bamboo Shoot", trend: "-0.5% (Decennial)", languages: "Nagamese, English", literacy: "79.6%", ratio: "931 F / 1000 M" }
+            },
+            "Odisha": {
+                lat: 20.2961, lon: 85.8245,
+                geo: { area: "155,707 sq km", land: "155,000 sq km", cultivable: "60,000 sq km", capital: "Bhubaneswar", majorCities: "Cuttack, Rourkela, Berhampur", airports: "Biju Patnaik International Airport, Veer Surendra Sai Airport (Jharsuguda)" },
+                trend: { temp: "15°C to 42°C", humidity: "40% to 90%", rain: "1400mm to 1800mm", snow: "0cm", wind: "0 to 90 km/h (Cyclones)" },
+                econ: { gdp: "₹7.53 Lakh Crore", perCapita: "₹1.50 Lakh / yr", costOfLiving: "₹20,000 / month", export: "Steel, Minerals, Aluminum, Seafood", debt: "₹1.0 Lakh Crore", banks: "Odisha Gramya Bank, State Bank of India" },
+                soc: { pop: "46.2 Million", food: "Pakhala, Rice, Dalma", trend: "+1.4% (Decennial)", languages: "Odia, English", literacy: "72.9%", ratio: "979 F / 1000 M" }
+            },
+            "Punjab": {
+                lat: 30.7333, lon: 76.7794,
+                geo: { area: "50,362 sq km", land: "50,362 sq km", cultivable: "42,000 sq km", capital: "Chandigarh", majorCities: "Ludhiana, Amritsar, Jalandhar, Patiala", airports: "Sri Guru Ram Dass Jee International Airport, Chandigarh International Airport" },
+                trend: { temp: "3°C to 44°C", humidity: "25% to 90%", rain: "400mm to 800mm", snow: "0cm", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹7.00 Lakh Crore", perCapita: "₹1.80 Lakh / yr", costOfLiving: "₹25,000 / month", export: "Wheat, Rice, Textiles, Sports Goods", debt: "₹3.2 Lakh Crore", banks: "Punjab & Sind Bank, Punjab National Bank" },
+                soc: { pop: "30.1 Million", food: "Makki di Roti, Sarson da Saag", trend: "+1.4% (Decennial)", languages: "Punjabi, Hindi", literacy: "75.8%", ratio: "895 F / 1000 M" }
+            },
+            "Rajasthan": {
+                lat: 26.9124, lon: 75.7873,
+                geo: { area: "342,239 sq km", land: "342,239 sq km", cultivable: "180,000 sq km", capital: "Jaipur", majorCities: "Jodhpur, Kota, Udaipur, Ajmer", airports: "Jaipur International Airport, Jodhpur Airport, Maharana Pratap Airport (Udaipur)" },
+                trend: { temp: "4°C to 48°C", humidity: "10% to 75%", rain: "100mm to 600mm", snow: "0cm", wind: "0 to 80 km/h" },
+                econ: { gdp: "₹14.13 Lakh Crore", perCapita: "₹1.56 Lakh / yr", costOfLiving: "₹22,000 / month", export: "Textiles, Handicrafts, Minerals, Tourism", debt: "₹5.4 Lakh Crore", banks: "Baroda Rajasthan Kshetriya Gramin Bank, State Bank of India" },
+                soc: { pop: "81.0 Million", food: "Dal Baati Churma, Gatte", trend: "+2.1% (Decennial)", languages: "Rajasthani, Hindi", literacy: "66.1%", ratio: "928 F / 1000 M" }
+            },
+            "Sikkim": {
+                lat: 27.3389, lon: 88.6065,
+                geo: { area: "7,096 sq km", land: "7,096 sq km", cultivable: "1,100 sq km", capital: "Gangtok", majorCities: "Namchi, Gyalshing, Mangan", airports: "Pakyong Airport" },
+                trend: { temp: "-5°C to 25°C", humidity: "60% to 95%", rain: "2000mm to 3500mm", snow: "0cm to 150cm (High Alt)", wind: "0 to 50 km/h" },
+                econ: { gdp: "₹45,000 Crore", perCapita: "₹5.12 Lakh / yr", costOfLiving: "₹25,000 / month", export: "Organic Produce, Cardamom, Tourism", debt: "₹11,000 Crore", banks: "Sikkim State Cooperative Bank, State Bank of India" },
+                soc: { pop: "0.69 Million", food: "Momos, Thukpa, Gundruk", trend: "+1.3% (Decennial)", languages: "Nepali, Sikkimese, English", literacy: "81.4%", ratio: "890 F / 1000 M" }
+            },
+            "Tamil Nadu": {
+                lat: 13.0827, lon: 80.2707,
+                geo: { area: "130,060 sq km", land: "129,000 sq km", cultivable: "55,000 sq km", capital: "Chennai", majorCities: "Coimbatore, Madurai, Salem", airports: "Chennai International Airport, Coimbatore International Airport, Madurai Airport" },
+                trend: { temp: "20°C to 40°C", humidity: "50% to 90%", rain: "900mm to 1400mm", snow: "0cm", wind: "0 to 90 km/h" },
+                econ: { gdp: "₹28.30 Lakh Crore", perCapita: "₹3.14 Lakh / yr", costOfLiving: "₹28,000 / month", export: "Automobiles, Electronics, Textiles", debt: "₹3.5 Lakh Crore", banks: "Indian Bank, Indian Overseas Bank" },
+                soc: { pop: "76.4 Million", food: "Rice, Idli, Dosa, Sambar", trend: "+0.9% (Decennial)", languages: "Tamil, English", literacy: "80.1%", ratio: "996 F / 1000 M" }
+            },
+            "Telangana": {
+                lat: 17.3850, lon: 78.4867,
+                geo: { area: "112,077 sq km", land: "112,077 sq km", cultivable: "60,000 sq km", capital: "Hyderabad", majorCities: "Warangal, Nizamabad, Karimnagar", airports: "Rajiv Gandhi International Airport" },
+                trend: { temp: "15°C to 44°C", humidity: "30% to 85%", rain: "900mm to 1200mm", snow: "0cm", wind: "0 to 70 km/h" },
+                econ: { gdp: "₹14.50 Lakh Crore", perCapita: "₹3.47 Lakh / yr", costOfLiving: "₹32,000 / month", export: "IT Services, Pharmaceuticals, Bulk Drugs", debt: "₹3.9 Lakh Crore", banks: "Telangana Grameena Bank, State Bank of India" },
+                soc: { pop: "38.0 Million", food: "Biryani, Jonna Roti, Sarva Pindi", trend: "+1.3% (Decennial)", languages: "Telugu, Urdu", literacy: "72.8%", ratio: "988 F / 1000 M" }
+            },
+            "Tripura": {
+                lat: 23.8315, lon: 91.2868,
+                geo: { area: "10,491 sq km", land: "10,491 sq km", cultivable: "2,700 sq km", capital: "Agartala", majorCities: "Udaipur, Dharmanagar, Kailashahar", airports: "Maharaja Bir Bikram Airport" },
+                trend: { temp: "12°C to 35°C", humidity: "60% to 95%", rain: "2100mm to 2500mm", snow: "0cm", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹75,000 Crore", perCapita: "₹1.50 Lakh / yr", costOfLiving: "₹20,000 / month", export: "Rubber, Bamboo Craft, Natural Gas", debt: "₹22,000 Crore", banks: "Tripura Gramin Bank, State Bank of India" },
+                soc: { pop: "4.1 Million", food: "Rice, Mui Borok, Fish", trend: "+1.5% (Decennial)", languages: "Bengali, Kokborok, English", literacy: "87.2%", ratio: "960 F / 1000 M" }
+            },
+            "Uttar Pradesh": {
+                lat: 26.8467, lon: 80.9462,
+                geo: { area: "240,928 sq km", land: "236,000 sq km", cultivable: "165,000 sq km", capital: "Lucknow", majorCities: "Kanpur, Varanasi, Agra, Noida", airports: "Chaudhary Charan Singh International Airport, Lal Bahadur Shastri International Airport, Agra Airport" },
+                trend: { temp: "5°C to 45°C", humidity: "20% to 95%", rain: "600mm to 1200mm", snow: "0cm", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹24.39 Lakh Crore", perCapita: "₹85,000 / yr", costOfLiving: "₹20,000 / month", export: "Handicrafts, Leather, Sugar, IT (Noida)", debt: "₹7.5 Lakh Crore", banks: "Bank of Baroda, Punjab National Bank" },
+                soc: { pop: "235 Million", food: "Bread, Rice, Litti Chokha", trend: "+2.0% (Decennial)", languages: "Hindi, Urdu", literacy: "67.7%", ratio: "912 F / 1000 M" }
+            },
+            "Uttarakhand": {
+                lat: 30.0668, lon: 79.0193,
+                geo: { area: "53,483 sq km", land: "53,483 sq km", cultivable: "14,000 sq km", capital: "Dehradun", majorCities: "Haridwar, Haldwani, Roorkee, Nainital", airports: "Jolly Grant Airport" },
+                trend: { temp: "-2°C to 38°C", humidity: "30% to 90%", rain: "1200mm to 1800mm", snow: "0cm to 150cm (Mountains)", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹3.46 Lakh Crore", perCapita: "₹2.60 Lakh / yr", costOfLiving: "₹25,000 / month", export: "Tourism, Automotives, Pharma, Herbs", debt: "₹80,000 Crore", banks: "Uttarakhand Gramin Bank, Punjab National Bank" },
+                soc: { pop: "11.7 Million", food: "Kafuli, Mandua Roti, Chainsoo", trend: "+1.6% (Decennial)", languages: "Hindi, Garhwali, Kumaoni", literacy: "78.8%", ratio: "963 F / 1000 M" }
+            },
+            "West Bengal": {
+                lat: 22.5726, lon: 88.3639,
+                geo: { area: "88,752 sq km", land: "88,752 sq km", cultivable: "53,000 sq km", capital: "Kolkata", majorCities: "Howrah, Durgapur, Siliguri, Asansol", airports: "Netaji Subhash Chandra Bose International Airport, Bagdogra Airport" },
+                trend: { temp: "12°C to 40°C", humidity: "50% to 95%", rain: "1400mm to 2500mm", snow: "0cm", wind: "0 to 90 km/h (Cyclones)" },
+                econ: { gdp: "₹17.12 Lakh Crore", perCapita: "₹1.41 Lakh / yr", costOfLiving: "₹24,000 / month", export: "Jute, Tea, Leather, Engineering Goods", debt: "₹6.0 Lakh Crore", banks: "UCO Bank, Indian Bank" },
+                soc: { pop: "102 Million", food: "Rice, Machher Jhol, Rosogolla", trend: "+1.1% (Decennial)", languages: "Bengali, English, Hindi", literacy: "76.3%", ratio: "953 F / 1000 M" },
+            },
+            "Delhi (UT)": {
+                lat: 28.6139, lon: 77.2090,
+                geo: { area: "1,484 sq km", land: "1,484 sq km", cultivable: "200 sq km", capital: "New Delhi", majorCities: "New Delhi, Dwarka, Rohini", airports: "Indira Gandhi International Airport" },
+                trend: { temp: "4°C to 47°C", humidity: "25% to 95%", rain: "400mm to 800mm", snow: "0cm", wind: "0 to 70 km/h" },
+                econ: { gdp: "₹11.08 Lakh Crore", perCapita: "₹4.44 Lakh / yr", costOfLiving: "₹40,000 / month", export: "IT, Services, Tourism, Handicrafts", debt: "₹40,000 Crore", banks: "Punjab National Bank, Central Bank of India" },
+                soc: { pop: "20.5 Million", food: "Chole Bhature, Street Food", trend: "+2.1% (Decennial)", languages: "Hindi, English, Punjabi", literacy: "86.2%", ratio: "868 F / 1000 M" },
+            },
+            "Jammu and Kashmir (UT)": {
+                lat: 34.0837, lon: 74.7973,
+                geo: { area: "42,241 sq km", land: "42,241 sq km", cultivable: "10,000 sq km", capital: "Srinagar (Summer) / Jammu (Winter)", majorCities: "Srinagar, Jammu, Anantnag", airports: "Sheikh ul-Alam International Airport, Jammu Airport" },
+                trend: { temp: "-8°C to 35°C", humidity: "40% to 90%", rain: "700mm to 1200mm", snow: "0cm to 300cm (Winter)", wind: "0 to 60 km/h" },
+                econ: { gdp: "₹2.27 Lakh Crore", perCapita: "₹1.45 Lakh / yr", costOfLiving: "₹22,000 / month", export: "Apples, Saffron, Carpets, Handicrafts", debt: "₹1.2 Lakh Crore", banks: "Jammu and Kashmir Bank, State Bank of India" },
+                soc: { pop: "13.6 Million", food: "Rogan Josh, Wazwan, Kahwa", trend: "+2.4% (Decennial)", languages: "Kashmiri, Dogri, Urdu, Hindi", literacy: "77.3%", ratio: "889 F / 1000 M" },
+            },
+            "Ladakh (UT)": {
+                lat: 34.1526, lon: 77.5771,
+                geo: { area: "59,146 sq km", land: "59,146 sq km", cultivable: "1,000 sq km", capital: "Leh", majorCities: "Leh, Kargil", airports: "Kushok Bakula Rimpochee Airport" },
+                trend: { temp: "-30°C to 28°C", humidity: "10% to 50%", rain: "50mm to 150mm", snow: "20cm to 150cm", wind: "0 to 70 km/h" },
+                econ: { gdp: "₹25,000 Crore", perCapita: "₹2.00 Lakh / yr", costOfLiving: "₹25,000 / month", export: "Tourism, Pashmina, Apricots", debt: "₹5,000 Crore", banks: "Jammu and Kashmir Bank, State Bank of India" },
+                soc: { pop: "0.30 Million", food: "Thukpa, Skyu, Butter Tea", trend: "+1.5% (Decennial)", languages: "Ladakhi, Purgi, Tibetan, Hindi", literacy: "74.2%", ratio: "810 F / 1000 M" }
+            }
+        };
+
+        // District data: sourced from the India district dataset maintained by iaseth/data-for-india.
+        // The dashboard also keeps the list in a compact state -> district form for fast dropdown population.
+        const districtData = {
+            "Andaman and Nicobar Islands": ["Nicobars","North and Middle Andaman","South Andaman"],
+            "Andhra Pradesh": ["Alluri Sitharama Raju","Anakapalli","Ananthapuramu","Annamayya","Bapatla","Chittoor","Dr. B.R. Ambedkar Konaseema","East Godavari","Eluru","Guntur","Kakinada","Krishna","Kurnool","Nandyal","NTR","Palnadu","Parvathipuram Manyam","Prakasam","Sri Potti Sriramulu Nellore","Sri Sathya Sai","Srikakulam","Tirupati","Visakhapatnam","Vizianagaram","West Godavari","YSR"],
+            "Arunachal Pradesh": ["Anjaw","Changlang","East Kameng","East Siang","Itanagar Capital Complex","Kamle","Kra Daadi","Kurung Kumey","Lepa Rada","Lohit","Longding","Lower Dibang Valley","Lower Siang","Lower Subansiri","Namsai","Pakke-Kessang","Papum Pare","Shi Yomi","Siang","Tawang","Tirap","Upper Dibang Valley","Upper Siang","Upper Subansiri","West Kameng","West Siang"],
+            "Assam": ["Baksa","Barpeta","Bongaigaon","Cachar","Charaideo","Chirang","Darrang","Dhemaji","Dhubri","Dibrugarh","Dima Hasao","Goalpara","Golaghat","Hailakandi","Jorhat","Kamrup","Kamrup Metropolitan","Karbi Anglong","Karimganj","Kokrajhar","Lakhimpur","Majuli","Morigaon","Nagaon","Nalbari","Sivasagar","Sonitpur","South Salmara-Mankachar","Tinsukia","Udalguri","West Karbi Anglong"],
+            "Bihar": ["Araria","Arwal","Aurangabad","Banka","Begusarai","Bhagalpur","Bhojpur","Buxar","Darbhanga","East Champaran","Gaya","Gopalganj","Jamui","Jehanabad","Kaimur","Katihar","Khagaria","Kishanganj","Lakhisarai","Madhepura","Madhubani","Munger","Muzaffarpur","Nalanda","Nawada","Patna","Purnia","Rohtas","Saharsa","Samastipur","Saran","Sheikhpura","Sheohar","Sitamarhi","Siwan","Supaul","Vaishali","West Champaran"],
+            "Chandigarh": ["Chandigarh"],
+            "Chhattisgarh": ["Balod","Baloda Bazar","Balrampur-Ramanujganj","Bastar","Bemetara","Bijapur","Bilaspur","Dantewada","Dhamtari","Durg","Gariaband","Gaurela-Pendra-Marwahi","Janjgir-Champa","Jashpur","Kabirdham","Kanker","Khairagarh-Chhuikhadan-Gandai","Kondagaon","Korba","Korea","Mahasamund","Manendragarh-Chirmiri-Bharatpur","Mohla-Manpur-Ambagarh Chowki","Mungeli","Narayanpur","Raigarh","Raipur","Rajnandgaon","Sarangarh-Bilaigarh","Sakti","Sukma","Surajpur","Surguja"],
+            "Dadra and Nagar Haveli and Daman and Diu": ["Dadra and Nagar Haveli","Daman","Diu"],
+            "Delhi (UT)": ["Central","East","New Delhi","North","North East","North West","Shahdara","South","South East","South West","West"],
+            "Goa": ["North Goa","South Goa"],
+            "Gujarat": ["Ahmedabad","Amreli","Anand","Aravalli","Banaskantha","Bharuch","Bhavnagar","Botad","Chhota Udaipur","Dahod","Dang","Devbhumi Dwarka","Gandhinagar","Gir Somnath","Jamnagar","Junagadh","Kheda","Kutch","Mahisagar","Mahesana","Morbi","Narmada","Navsari","Panchmahal","Patan","Porbandar","Rajkot","Sabarkantha","Surat","Surendranagar","Tapi","Vadodara","Valsad"],
+            "Haryana": ["Ambala","Bhiwani","Charkhi Dadri","Faridabad","Fatehabad","Gurugram","Hisar","Jhajjar","Jind","Kaithal","Karnal","Kurukshetra","Mahendragarh","Nuh","Palwal","Panchkula","Panipat","Rewari","Rohtak","Sirsa","Sonipat","Yamunanagar"],
+            "Himachal Pradesh": ["Bilaspur","Chamba","Hamirpur","Kangra","Kinnaur","Kullu","Lahaul and Spiti","Mandi","Shimla","Sirmaur","Solan","Una"],
+            "Jammu and Kashmir (UT)": ["Anantnag","Bandipora","Baramulla","Budgam","Doda","Ganderbal","Jammu","Kathua","Kishtwar","Kulgam","Kupwara","Poonch","Pulwama","Rajouri","Ramban","Reasi","Samba","Shopian","Srinagar","Udhampur"],
+            "Jharkhand": ["Bokaro","Chatra","Deoghar","Dhanbad","Dumka","East Singhbhum","Garhwa","Giridih","Godda","Gumla","Hazaribagh","Jamtara","Khunti","Koderma","Latehar","Lohardaga","Pakur","Palamu","Ramgarh","Ranchi","Sahibganj","Seraikela-Kharsawan","Simdega","West Singhbhum"],
+            "Karnataka": ["Bagalkote","Ballari","Belagavi","Bengaluru Rural","Bengaluru Urban","Bidar","Chamarajanagar","Chikkaballapura","Chikkamagaluru","Chitradurga","Dakshina Kannada","Davanagere","Dharwad","Gadag","Hassan","Haveri","Kalaburagi","Kodagu","Kolar","Koppal","Mandya","Mysuru","Raichur","Ramanagara","Shivamogga","Tumakuru","Udupi","Uttara Kannada","Vijayanagara","Vijayapura","Yadgir"],
+            "Kerala": ["Alappuzha","Ernakulam","Idukki","Kannur","Kasaragod","Kollam","Kottayam","Kozhikode","Malappuram","Palakkad","Pathanamthitta","Thiruvananthapuram","Thrissur","Wayanad"],
+            "Ladakh (UT)": ["Kargil","Leh"],
+            "Lakshadweep": ["Lakshadweep"],
+            "Madhya Pradesh": ["Agar Malwa","Alirajpur","Anuppur","Ashoknagar","Balaghat","Barwani","Betul","Bhind","Bhopal","Burhanpur","Chhatarpur","Chhindwara","Damoh","Datia","Dewas","Dhar","Dindori","Guna","Gwalior","Harda","Indore","Jabalpur","Jhabua","Katni","Khandwa","Khargone","Mandla","Mandsaur","Morena","Narmadapuram","Narsinghpur","Neemuch","Niwari","Panna","Raisen","Rajgarh","Ratlam","Rewa","Sagar","Satna","Sehore","Seoni","Shahdol","Shajapur","Sheopur","Shivpuri","Sidhi","Singrauli","Tikamgarh","Ujjain","Umaria","Vidisha"],
+            "Maharashtra": ["Ahilyanagar","Akola","Amravati","Beed","Bhandara","Buldhana","Chandrapur","Chhatrapati Sambhajinagar","Dharashiv","Dhule","Gadchiroli","Gondia","Hingoli","Jalgaon","Jalna","Kolhapur","Latur","Mumbai City","Mumbai Suburban","Nagpur","Nanded","Nandurbar","Nashik","Palghar","Parbhani","Pune","Raigad","Ratnagiri","Sangli","Satara","Sindhudurg","Solapur","Thane","Wardha","Washim","Yavatmal"],
+            "Manipur": ["Bishnupur","Chandel","Churachandpur","Imphal East","Imphal West","Jiribam","Kakching","Kamjong","Kangpokpi","Noney","Pherzawl","Senapati","Tamenglong","Tengnoupal","Thoubal","Ukhrul"],
+            "Meghalaya": ["East Garo Hills","East Jaintia Hills","East Khasi Hills","Eastern West Khasi Hills","North Garo Hills","Ri Bhoi","South Garo Hills","South West Garo Hills","South West Khasi Hills","West Garo Hills","West Jaintia Hills","West Khasi Hills"],
+            "Mizoram": ["Aizawl","Champhai","Hnahthial","Khawzawl","Kolasib","Lawngtlai","Lunglei","Mamit","Saitual","Serchhip","Siaha"],
+            "Nagaland": ["Chumoukedima","Dimapur","Kiphire","Kohima","Longleng","Meluri","Mokokchung","Mon","Niuland","Noklak","Peren","Phek","Shamator","Tseminyu","Tuensang","Wokha","Zunheboto"],
+            "Odisha": ["Angul","Balangir","Balasore","Bargarh","Bhadrak","Boudh","Cuttack","Deogarh","Dhenkanal","Gajapati","Ganjam","Jagatsinghpur","Jajpur","Jharsuguda","Kalahandi","Kandhamal","Kendrapara","Keonjhar","Khordha","Koraput","Malkangiri","Mayurbhanj","Nabarangpur","Nayagarh","Nuapada","Puri","Rayagada","Sambalpur","Subarnapur","Sundargarh"],
+            "Puducherry": ["Karaikal","Mahe","Puducherry","Yanam"],
+            "Punjab": ["Amritsar","Barnala","Bathinda","Faridkot","Fatehgarh Sahib","Fazilka","Ferozepur","Gurdaspur","Hoshiarpur","Jalandhar","Kapurthala","Ludhiana","Malerkotla","Mansa","Moga","Pathankot","Patiala","Rupnagar","Sahibzada Ajit Singh Nagar","Sangrur","Shahid Bhagat Singh Nagar","Sri Muktsar Sahib","Tarn Taran"],
+            "Rajasthan": ["Ajmer","Alwar","Balotra","Banswara","Baran","Barmer","Beawar","Bharatpur","Bhilwara","Bikaner","Bundi","Chittorgarh","Churu","Dausa","Deeg","Dholpur","Didwana-Kuchaman","Dungarpur","Ganganagar","Hanumangarh","Jaipur","Jaisalmer","Jalore","Jhalawar","Jhunjhunu","Jodhpur","Karauli","Kekri","Khairthal-Tijara","Kota","Kotputli-Behror","Nagaur","Pali","Pratapgarh","Rajsamand","Salumbar","Sawai Madhopur","Sikar","Sirohi","Tonk","Udaipur"],
+            "Sikkim": ["Gangtok","Gyalshing","Mangan","Namchi","Pakyong","Soreng"],
+            "Tamil Nadu": ["Ariyalur","Chengalpattu","Chennai","Coimbatore","Cuddalore","Dharmapuri","Dindigul","Erode","Kallakurichi","Kancheepuram","Karur","Krishnagiri","Madurai","Mayiladuthurai","Nagapattinam","Namakkal","Perambalur","Pudukkottai","Ramanathapuram","Ranipet","Salem","Sivaganga","Tenkasi","Thanjavur","The Nilgiris","Theni","Thoothukudi","Tiruchirappalli","Tirunelveli","Tirupathur","Tiruppur","Tiruvallur","Tiruvannamalai","Tiruvarur","Vellore","Viluppuram","Virudhunagar","Kanniyakumari"],
+            "Telangana": ["Adilabad","Bhadradri Kothagudem","Hanumakonda","Hyderabad","Jagtial","Jangaon","Jayashankar Bhupalpally","Jogulamba Gadwal","Kamareddy","Karimnagar","Khammam","Komaram Bheem Asifabad","Mahabubabad","Mahabubnagar","Mancherial","Medak","Medchal-Malkajgiri","Mulugu","Nagarkurnool","Nalgonda","Narayanpet","Nirmal","Nizamabad","Peddapalli","Rajanna Sircilla","Rangareddy","Sangareddy","Siddipet","Suryapet","Vikarabad","Wanaparthy","Warangal","Yadadri Bhuvanagiri"],
+            "Tripura": ["Dhalai","Gomati","Khowai","North Tripura","Sepahijala","South Tripura","Unakoti","West Tripura"],
+            "Uttar Pradesh": ["Agra","Aligarh","Ambedkar Nagar","Amethi","Amroha","Auraiya","Ayodhya","Azamgarh","Baghpat","Bahraich","Ballia","Balrampur","Banda","Barabanki","Bareilly","Basti","Bhadohi","Bijnor","Budaun","Bulandshahr","Chandauli","Chitrakoot","Deoria","Etah","Etawah","Farrukhabad","Fatehpur","Firozabad","Gautam Buddha Nagar","Ghaziabad","Ghazipur","Gonda","Gorakhpur","Hamirpur","Hapur","Hardoi","Hathras","Jalaun","Jaunpur","Jhansi","Kannauj","Kanpur Dehat","Kanpur Nagar","Kasganj","Kaushambi","Kheri","Kushinagar","Lalitpur","Lucknow","Maharajganj","Mahoba","Mainpuri","Mathura","Mau","Meerut","Mirzapur","Moradabad","Muzaffarnagar","Pilibhit","Pratapgarh","Prayagraj","Raebareli","Rampur","Saharanpur","Sambhal","Sant Kabir Nagar","Shahjahanpur","Shamli","Shravasti","Siddharthnagar","Sitapur","Sonbhadra","Sultanpur","Unnao","Varanasi"],
+            "Uttarakhand": ["Almora","Bageshwar","Chamoli","Champawat","Dehradun","Haridwar","Nainital","Pauri Garhwal","Pithoragarh","Rudraprayag","Tehri Garhwal","Udham Singh Nagar","Uttarkashi"],
+            "West Bengal": ["Alipurduar","Bankura","Birbhum","Cooch Behar","Dakshin Dinajpur","Darjeeling","Hooghly","Howrah","Jalpaiguri","Jhargram","Kalimpong","Kolkata","Malda","Murshidabad","Nadia","North 24 Parganas","Paschim Bardhaman","Paschim Medinipur","Purba Bardhaman","Purba Medinipur","Purulia","South 24 Parganas","Uttar Dinajpur"]
+        };
+
+        // Ensure every state/UT represented in the dropdown has a district array.
+        // The five missing UT entries are added to stateData below with neutral dashboard values.
+        const additionalStateData = {
+            "Andaman and Nicobar Islands": {lat:11.7401,lon:92.6586,geo:{area:"8,249 sq km",land:"8,249 sq km",cultivable:"--",capital:"Port Blair",majorCities:"Port Blair, Diglipur, Mayabunder",airports:"Veer Savarkar International Airport"},trend:{temp:"23°C to 32°C",humidity:"65% to 90%",rain:"2500mm to 3500mm",snow:"0cm",wind:"0 to 80 km/h"},econ:{gdp:"--",perCapita:"--",costOfLiving:"--",export:"Tourism, Fisheries, Coconut",debt:"--",banks:"State Bank of India"},soc:{pop:"0.38 Million",food:"Seafood, Coconut, Rice",trend:"--",languages:"Hindi, Bengali, Tamil, Telugu, Nicobarese",literacy:"86.6%",ratio:"876 F / 1000 M"}},
+            "Chandigarh": {lat:30.7333,lon:76.7794,geo:{area:"114 sq km",land:"114 sq km",cultivable:"--",capital:"Chandigarh",majorCities:"Chandigarh",airports:"Chandigarh International Airport"},trend:{temp:"5°C to 40°C",humidity:"30% to 85%",rain:"600mm to 1200mm",snow:"0cm",wind:"0 to 60 km/h"},econ:{gdp:"--",perCapita:"--",costOfLiving:"--",export:"Services, IT, Tourism",debt:"--",banks:"State Bank of India, Punjab National Bank"},soc:{pop:"1.05 Million",food:"Punjabi cuisine",trend:"--",languages:"Hindi, Punjabi, English",literacy:"86.0%",ratio:"818 F / 1000 M"}},
+            "Dadra and Nagar Haveli and Daman and Diu": {lat:20.3974,lon:72.8328,geo:{area:"603 sq km",land:"603 sq km",cultivable:"--",capital:"Daman",majorCities:"Daman, Silvassa, Diu",airports:"Daman Airport"},trend:{temp:"18°C to 36°C",humidity:"45% to 90%",rain:"1500mm to 2500mm",snow:"0cm",wind:"0 to 60 km/h"},econ:{gdp:"--",perCapita:"--",costOfLiving:"--",export:"Manufacturing, Tourism",debt:"--",banks:"State Bank of India"},soc:{pop:"0.59 Million",food:"Gujarati, Portuguese-influenced coastal cuisine",trend:"--",languages:"Gujarati, Hindi, Marathi, English",literacy:"76.2%",ratio:"774 F / 1000 M"}},
+            "Lakshadweep": {lat:10.5667,lon:72.6417,geo:{area:"32 sq km",land:"32 sq km",cultivable:"--",capital:"Kavaratti",majorCities:"Kavaratti, Agatti, Amini",airports:"Agatti Airport"},trend:{temp:"24°C to 32°C",humidity:"70% to 90%",rain:"1500mm to 3000mm",snow:"0cm",wind:"0 to 70 km/h"},econ:{gdp:"--",perCapita:"--",costOfLiving:"--",export:"Fisheries, Coconut, Tourism",debt:"--",banks:"State Bank of India"},soc:{pop:"0.07 Million",food:"Seafood, Coconut, Rice",trend:"--",languages:"Malayalam, Jeseri, English",literacy:"91.8%",ratio:"946 F / 1000 M"}},
+            "Puducherry": {lat:11.9416,lon:79.8083,geo:{area:"490 sq km",land:"490 sq km",cultivable:"--",capital:"Puducherry",majorCities:"Puducherry, Karaikal, Mahe, Yanam",airports:"Puducherry Airport"},trend:{temp:"20°C to 38°C",humidity:"55% to 90%",rain:"1000mm to 1500mm",snow:"0cm",wind:"0 to 60 km/h"},econ:{gdp:"--",perCapita:"--",costOfLiving:"--",export:"Tourism, Manufacturing, Services",debt:"--",banks:"State Bank of India"},soc:{pop:"1.25 Million",food:"South Indian, French-influenced cuisine",trend:"--",languages:"Tamil, Telugu, Malayalam, French, English",literacy:"85.4%",ratio:"1037 F / 1000 M"}}
+        };
+        Object.assign(stateData, additionalStateData);
+
+        function populateDistricts(stateName) {
+            const districtSelect = document.getElementById("districtSelect");
+            districtSelect.innerHTML = "";
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = "-- Select District --";
+            placeholder.selected = true;
+            districtSelect.appendChild(placeholder);
+            const districts = (districtData[stateName] || []).slice().sort((a,b) => a.localeCompare(b));
+            districts.forEach(district => {
+                const option = document.createElement("option");
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+            districtSelect.disabled = districts.length === 0;
+        }
+
+        function handleStateChange() {
+            const state = document.getElementById("stateSelect").value;
+            document.getElementById("districtCard").style.display = "none";
+            populateDistricts(state);
+            updateDashboard();
+        }
+
+        // District metadata is loaded from a public district dataset.  The metadata
+        // contains the district headquarters, which is a much more reliable geocoding
+        // target than trying to geocode every district name as a place.
+        let districtMetaCache = null;
+        let districtMetaPromise = null;
+
+        const districtNameAliases = {
+            "Ahilyanagar": "Ahmednagar",
+            "Chhatrapati Sambhajinagar": "Aurangabad",
+            "Dharashiv": "Osmanabad",
+            "Kutch": "Kachchh",
+            "Ananthapuramu": "Anantapur",
+            "Bengaluru Urban": "Bangalore Urban",
+            "Ballari": "Bellary",
+            "Belagavi": "Belgaum",
+            "Kalaburagi": "Gulbarga",
+            "Vijayanagara": "Vijayanagaram",
+            "Mysuru": "Mysore",
+            "Shivamogga": "Shimoga",
+            "Tumakuru": "Tumkur",
+            "Chikkamagaluru": "Chikmagalur",
+            "Chikkaballapura": "Chikballapur",
+            "Bagalkote": "Bagalkot",
+            "Vijayapura": "Bijapur",
+            "Gadag": "Gadag-Betageri",
+            "Dharwad": "Dharwad",
+            "Thiruvananthapuram": "Trivandrum",
+            "Kozhikode": "Calicut",
+            "Kasaragod": "Kasargod",
+            "Puducherry": "Pondicherry",
+            "Sri Potti Sriramulu Nellore": "Nellore",
+            "NTR": "Vijayawada",
+            "YSR": "Kadapa",
+            "The Nilgiris": "Nilgiris",
+            "South Salmara-Mankachar": "South Salmara Mankachar",
+            "Sahibzada Ajit Singh Nagar": "Mohali",
+            "Shahid Bhagat Singh Nagar": "Nawanshahr",
+            "Sri Muktsar Sahib": "Muktsar",
+            "Lahaul and Spiti": "Lahaul and Spiti",
+            "Dadra and Nagar Haveli": "Silvassa",
+            "North and Middle Andaman": "Mayabunder",
+            "South Andaman": "Port Blair",
+            "Nicobars": "Car Nicobar",
+            "Mumbai Suburban": "Bandra"
+        };
+
+        const stateNameAliases = {
+            "Delhi (UT)": "Delhi",
+            "Jammu and Kashmir (UT)": "Jammu and Kashmir",
+            "Ladakh (UT)": "Ladakh",
+            "Dadra and Nagar Haveli and Daman and Diu": "Dadra and Nagar Haveli and Daman and Diu"
+        };
+
+        /* GLOBAL LIVE-DATA TIMER: appears only when a fetch lasts > 1 second */
+        (() => {
+            const nativeFetch = window.fetch.bind(window);
+            let activeFetches = 0;
+            let showTimer = null;
+            let elapsedTimer = null;
+            let shownAt = 0;
+
+            const overlay = () => document.getElementById("dataLoadingOverlay");
+            const status = () => document.getElementById("loaderStatus");
+            const seconds = () => document.getElementById("loaderSeconds");
+
+            function showLoader() {
+                const el = overlay();
+                if (!el) return;
+                shownAt = performance.now();
+                el.classList.add("visible");
+                if (status()) status().textContent = "Retrieving live information…";
+                if (seconds()) seconds().textContent = "1.0s";
+                clearInterval(elapsedTimer);
+                elapsedTimer = setInterval(() => {
+                    const sec = Math.max(1, (performance.now() - shownAt) / 1000);
+                    if (seconds()) seconds().textContent = `${sec.toFixed(1)}s`;
+                }, 100);
+            }
+
+            function hideLoader() {
+                clearTimeout(showTimer);
+                showTimer = null;
+                if (activeFetches > 0) return;
+                const el = overlay();
+                if (el) el.classList.remove("visible");
+                clearInterval(elapsedTimer);
+                elapsedTimer = null;
+            }
+
+            window.fetch = function(...args) {
+                activeFetches++;
+                if (activeFetches === 1) {
+                    clearTimeout(showTimer);
+                    showTimer = setTimeout(showLoader, 1000);
+                }
+                return nativeFetch(...args).finally(() => {
+                    activeFetches = Math.max(0, activeFetches - 1);
+                    if (activeFetches === 0) hideLoader();
+                });
+            };
+        })();
+
+        async function loadDistrictMetadata() {
+            if (districtMetaCache) return districtMetaCache;
+            if (districtMetaPromise) return districtMetaPromise;
+
+            districtMetaPromise = fetch(
+                "https://raw.githubusercontent.com/iaseth/data-for-india/master/data/readable/districts.json",
+                { cache: "force-cache" }
+            )
+            .then(r => {
+                if (!r.ok) throw new Error("District metadata request failed");
+                return r.json();
+            })
+            .then(json => {
+                districtMetaCache = Array.isArray(json.districts) ? json.districts : [];
+                return districtMetaCache;
+            })
+            .catch(err => {
+                console.warn("District metadata unavailable; geocoding fallbacks will be used.", err);
+                districtMetaCache = [];
+                return districtMetaCache;
+            });
+
+            return districtMetaPromise;
+        }
+
+        function normalizeText(value) {
+            return String(value || "")
+                .toLowerCase()
+                .replace(/[.(),'’]/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        // Explicit authoritative fallback for Mumbai Suburban. The Government of
+        // Maharashtra district portal identifies Bandra (East) as the district
+        // headquarters and reports population 9,356,962 and area 446 sq km.
+        const specialDistrictMetadata = {
+            "Maharashtra|Mumbai Suburban": {
+                district: "Mumbai Suburban", state: "Maharashtra", headquarters: "Bandra",
+                population: 9356962, area: 446, density: null,
+                latitude: 19.0596, longitude: 72.8466, elevation: 10
+            }
+        };
+
+        function findDistrictMetadata(state, district) {
+            const special = specialDistrictMetadata[`${state}|${district}`];
+            if (special) return special;
+            const meta = districtMetaCache || [];
+            const stateCandidates = [state, stateNameAliases[state]].filter(Boolean).map(normalizeText);
+            const districtCandidates = [district, districtNameAliases[district]].filter(Boolean).map(normalizeText);
+
+            return meta.find(item =>
+                stateCandidates.includes(normalizeText(item.state)) &&
+                districtCandidates.includes(normalizeText(item.district))
+            ) || meta.find(item =>
+                stateCandidates.includes(normalizeText(item.state)) &&
+                districtCandidates.some(d => normalizeText(item.district).includes(d) || d.includes(normalizeText(item.district)))
+            ) || null;
+        }
+
+        async function geocodePlace(place, state) {
+            const queries = [];
+            const stateQuery = stateNameAliases[state] || state;
+            const alias = districtNameAliases[place];
+
+            // Open-Meteo's geocoder works more reliably when the name itself is the
+            // primary query.  The old code sent "district, state, India" as the name,
+            // which caused many valid districts to return no result.
+            [place, alias].filter(Boolean).forEach(name => {
+                queries.push(name);
+                queries.push(`${name}, ${stateQuery}`);
+            });
+
+            const uniqueQueries = [...new Set(queries)];
+
+            for (const q of uniqueQueries) {
+                try {
+                    const response = await fetch(
+                        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=100&language=en&format=json`
+                    );
+                    if (!response.ok) continue;
+                    const json = await response.json();
+                    const results = (json.results || []).filter(r =>
+                        normalizeText(r.country) === "india"
+                    );
+                    if (!results.length) continue;
+
+                    const stateNorm = normalizeText(stateQuery);
+                    const stateMatch = results.find(r => {
+                        const a = normalizeText(r.admin1);
+                        return a === stateNorm || a.includes(stateNorm) || stateNorm.includes(a);
+                    });
+                    if (stateMatch) return stateMatch;
+
+                    // Only accept an India result if it is a strong name match.
+                    const nameNorm = normalizeText(alias || place);
+                    const nameMatch = results.find(r => normalizeText(r.name) === nameNorm);
+                    if (nameMatch) return nameMatch;
+                } catch (e) {
+                    console.warn("Geocoding attempt failed for", q, e);
+                }
+            }
+
+            return null;
+        }
+
+        async function handleDistrictChange() {
+            const state = document.getElementById("stateSelect").value;
+            const district = document.getElementById("districtSelect").value;
+            const infoCard = document.getElementById("infoCard");
+            const districtCard = document.getElementById("districtCard");
+            const emptyState = document.getElementById("emptyState");
+
+            if (!state || !district) {
+                districtCard.style.display = "none";
+                if (state) updateDashboard();
+                else {
+                    infoCard.style.display = "none";
+                    emptyState.style.display = "block";
+                }
+                return;
+            }
+
+            infoCard.style.display = "none";
+            emptyState.style.display = "none";
+            districtCard.style.display = "block";
+
+            const displayState = state.replace(" (UT)", "");
+            document.getElementById("districtName").textContent = district;
+            document.getElementById("districtSubtitle").textContent = `${district} District, ${displayState}`;
+            document.getElementById("dDistrict").textContent = district;
+            document.getElementById("dState").textContent = displayState;
+            document.getElementById("dCountry").textContent = "India";
+
+            const ids = ["dLat","dLon","dElevation","dPopulation","dTimezone","dUtcOffset","dGeoName",
+                         "dTemp","dHumidity","dRain","dSnow","dVisibility","dWind",
+                         "dMinTemp","dMaxTemp","dTotalRain","dMaxWind","dForecastDays","dWeatherTime"];
+            ids.forEach(id => document.getElementById(id).textContent = "Loading...");
+
+            try {
+                // Load static district metadata first.  This also supplies the district
+                // headquarters, population, area and density where available.
+                await loadDistrictMetadata();
+                const meta = findDistrictMetadata(displayState, district);
+
+                // Mumbai Suburban is a special case: Open-Meteo may resolve
+                // “Mumbai Suburban” as Mumbai rather than the district.  Use the
+                // authoritative district fallback coordinates when available.
+                let match = null;
+                if (meta && Number.isFinite(Number(meta.latitude)) && Number.isFinite(Number(meta.longitude))) {
+                    match = {
+                        latitude: Number(meta.latitude),
+                        longitude: Number(meta.longitude),
+                        elevation: meta.elevation,
+                        population: meta.population,
+                        timezone: "Asia/Kolkata",
+                        utc_offset_seconds: 19800,
+                        country: "India"
+                    };
+                } else {
+                    const geoTarget = meta && meta.headquarters ? meta.headquarters : district;
+                    match = await geocodePlace(geoTarget, displayState) || await geocodePlace(district, displayState);
+                }
+
+                if (!match) {
+                    throw new Error(`Could not locate ${district}, ${displayState}`);
+                }
+
+                const lat = Number(match.latitude);
+                const lon = Number(match.longitude);
+                if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                    throw new Error("Invalid district coordinates");
+                }
+
+                document.getElementById("dDistrict").textContent = district;
+                document.getElementById("dState").textContent = displayState;
+                document.getElementById("dCountry").textContent = match.country || "India";
+                document.getElementById("dLat").textContent = lat.toFixed(5) + "°";
+                document.getElementById("dLon").textContent = lon.toFixed(5) + "°";
+                document.getElementById("dElevation").textContent =
+                    match.elevation != null ? `${match.elevation} m` : "Not available";
+                document.getElementById("dPopulation").textContent =
+                    meta && Number(meta.population) > 0
+                        ? Number(meta.population).toLocaleString("en-IN")
+                        : (match.population != null ? Number(match.population).toLocaleString("en-IN") : "Not available");
+                document.getElementById("dTimezone").textContent = match.timezone || "Asia/Kolkata";
+                document.getElementById("dUtcOffset").textContent =
+                    match.utc_offset_seconds != null ? formatUtcOffset(match.utc_offset_seconds) : "UTC +05:30";
+                document.getElementById("dGeoName").textContent =
+                    meta && meta.headquarters ? `${district} (HQ: ${meta.headquarters})` : district;
+
+                document.getElementById("districtMapTitle").textContent = `${district} - Map & 3D Street View`;
+                document.getElementById("districtMapIframe").src =
+                    `https://www.google.com/maps?q=${lat},${lon}&output=embed&z=11`;
+                document.getElementById("districtStreetViewBtn").href =
+                    `https://www.google.com/maps/@${lat},${lon},13z/data=!3m1!1e3?entry=ttu`;
+
+                // Weather is independent of geocoding metadata.  If weather fails,
+                // geography remains visible instead of turning the whole card into an error.
+                await fetchDistrictWeather(lat, lon, match.timezone || "auto");
+            } catch (error) {
+                console.error(error);
+                ["dLat","dLon","dElevation","dPopulation","dTimezone","dUtcOffset","dGeoName"]
+                    .forEach(id => {
+                        if (document.getElementById(id).textContent === "Loading...")
+                            document.getElementById(id).textContent = "Not available";
+                    });
+                ["dTemp","dHumidity","dRain","dSnow","dVisibility","dWind",
+                 "dMinTemp","dMaxTemp","dTotalRain","dMaxWind","dForecastDays","dWeatherTime"]
+                    .forEach(id => {
+                        if (document.getElementById(id).textContent === "Loading...")
+                            document.getElementById(id).textContent = "Weather unavailable";
+                    });
+            }
+        }
+
+        function formatUtcOffset(seconds) {
+            const sign = seconds >= 0 ? "+" : "-";
+            const abs = Math.abs(seconds);
+            const hours = Math.floor(abs / 3600);
+            const minutes = Math.floor((abs % 3600) / 60);
+            return `UTC ${sign}${String(hours).padStart(2,"0")}:${String(minutes).padStart(2,"0")}`;
+        }
+
+        function toggleCommuteSection(contentId, iconId) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            if (!content || !icon) return;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+            icon.textContent = isOpen ? "▼ Click to Expand" : "▲ Click to Collapse";
+        }
+
+        function getUserLocation() {
+            return new Promise((resolve, reject) => {
+                if (!window.isSecureContext && location.protocol !== "file:") {
+                    reject(new Error("Location access requires HTTPS or a trusted local page."));
+                    return;
+                }
+                if (!navigator.geolocation) {
+                    reject(new Error("Geolocation is not supported by this browser."));
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        const lat = Number(pos.coords.latitude);
+                        const lon = Number(pos.coords.longitude);
+                        if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                            reject(new Error("The browser returned an invalid location."));
+                            return;
+                        }
+                        resolve({ lat, lon });
+                    },
+                    err => {
+                        let message = "Unable to determine your current location.";
+                        if (err && err.code === 1) message = "Location permission was denied. Please allow location access and try again.";
+                        if (err && err.code === 2) message = "Your current location could not be determined.";
+                        if (err && err.code === 3) message = "Location request timed out. Please try again.";
+                        reject(new Error(message));
+                    },
+                    { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+                );
+            });
+        }
+
+        function haversineKm(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const toRad = d => d * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) ** 2 +
+                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const response = await fetch(url, { ...options, signal: controller.signal });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response;
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        async function overpassJson(query) {
+            const encoded = encodeURIComponent(query);
+            const endpoints = [
+                `https://overpass-api.de/api/interpreter?data=${encoded}`,
+                `https://overpass.kumi.systems/api/interpreter?data=${encoded}`,
+                `https://overpass.private.coffee/api/interpreter?data=${encoded}`
+            ];
+
+            // Try mirrors in parallel. This prevents the panel from remaining stuck
+            // for a long time when one Overpass server is busy or unreachable.
+            const attempts = endpoints.map(async url => {
+                const response = await fetchWithTimeout(url, { method: "GET", cache: "no-store" }, 12000);
+                return response.json();
+            });
+
+            if (Promise.any) {
+                try { return await Promise.any(attempts); }
+                catch (_) { throw new Error("Live map facility service is temporarily unavailable."); }
+            }
+
+            for (const attempt of attempts) {
+                try { return await attempt; } catch (_) {}
+            }
+            throw new Error("Live map facility service is temporarily unavailable.");
+        }
+
+        async function nominatimFacilitySearch(lat, lon, type) {
+            // Reliable fallback when an Overpass mirror is busy/unreachable.
+            // Search a bounded area around the user's actual location and then
+            // calculate the nearest returned feature locally.
+            const span = 1.0; // approximately 100 km around the user
+            const left = lon - span;
+            const right = lon + span;
+            const top = lat + span;
+            const bottom = lat - span;
+            const q = type === "airport" ? "airport" : "railway station";
+            const url =
+                `https://nominatim.openstreetmap.org/search?format=jsonv2&` +
+                `q=${encodeURIComponent(q)}&limit=50&addressdetails=1&` +
+                `viewbox=${encodeURIComponent(`${left},${top},${right},${bottom}`)}&bounded=1`;
+
+            const response = await fetchWithTimeout(url, {
+                method: "GET",
+                cache: "no-store",
+                headers: { "Accept": "application/json" }
+            }, 15000);
+            const results = await response.json();
+
+            const candidates = (Array.isArray(results) ? results : []).map(r => {
+                const rlat = Number(r.lat);
+                const rlon = Number(r.lon);
+                if (!Number.isFinite(rlat) || !Number.isFinite(rlon)) return null;
+                const cls = String(r.class || "").toLowerCase();
+                const typ = String(r.type || "").toLowerCase();
+                const category = String(r.category || "").toLowerCase();
+                const name = r.name || r.display_name || "";
+
+                if (type === "airport") {
+                    // Keep aeroway/airport results and reject obvious non-airport matches.
+                    const airportLike = cls === "aeroway" || typ.includes("airport") ||
+                        typ.includes("aerodrome") || category === "aeroway" ||
+                        /airport|aerodrome|airfield|airstrip/i.test(name);
+                    if (!airportLike) return null;
+                } else {
+                    const railLike = cls === "railway" || typ.includes("station") ||
+                        typ.includes("halt") || /railway station|rail station|station|halt/i.test(name);
+                    if (!railLike) return null;
+                }
+
+                return {
+                    type: "nominatim",
+                    lat: rlat,
+                    lon: rlon,
+                    _lat: rlat,
+                    _lon: rlon,
+                    _distance: haversineKm(lat, lon, rlat, rlon),
+                    tags: {
+                        name: r.name || "",
+                        "name:en": r.name || ""
+                    },
+                    display_name: r.display_name || ""
+                };
+            }).filter(Boolean);
+
+            if (!candidates.length) return null;
+            candidates.sort((a, b) => a._distance - b._distance);
+            return candidates[0];
+        }
+
+        async function queryNearestFacility(lat, lon, type) {
+            const radii = [10000, 30000, 60000];
+            const query = radius => {
+                if (type === "airport") {
+                    // Do not require an access tag: many public airports simply
+                    // have no access tag in OpenStreetMap.
+                    return `[out:json][timeout:20];nwr(around:${radius},${lat},${lon})["aeroway"~"aerodrome|heliport"];out center tags;`;
+                }
+                // Include stations and halts; this also covers many suburban stations.
+                return `[out:json][timeout:20];nwr(around:${radius},${lat},${lon})["railway"~"station|halt"];out center tags;`;
+            };
+
+            // First try Overpass. Multiple mirrors are attempted in parallel.
+            for (const radius of radii) {
+                try {
+                    const data = await overpassJson(query(radius));
+                    const elements = (data.elements || []).map(e => {
+                        const elat = Number.isFinite(Number(e.lat)) ? Number(e.lat) : Number(e.center?.lat);
+                        const elon = Number.isFinite(Number(e.lon)) ? Number(e.lon) : Number(e.center?.lon);
+                        if (!Number.isFinite(elat) || !Number.isFinite(elon)) return null;
+                        const tags = e.tags || {};
+                        if (String(tags.access || "").toLowerCase() === "private") return null;
+                        return { ...e, _lat: elat, _lon: elon, _distance: haversineKm(lat, lon, elat, elon) };
+                    }).filter(Boolean);
+
+                    if (!elements.length) continue;
+                    elements.sort((a, b) => a._distance - b._distance);
+
+                    // Prefer named facilities, but never fail merely because a name is absent.
+                    const named = elements.filter(e => e.tags && (e.tags.name || e.tags["name:en"]));
+                    return (named.length ? named : elements)[0];
+                } catch (e) {
+                    console.warn(`Overpass ${type} search failed at ${radius / 1000} km:`, e);
+                }
+            }
+
+            // Fallback to Nominatim so the panel still provides a facility name and distance
+            // when Overpass is temporarily unavailable.
+            try {
+                return await nominatimFacilitySearch(lat, lon, type);
+            } catch (e) {
+                console.warn(`Nominatim ${type} search failed:`, e);
+                return null;
+            }
+        }
+
+        function facilityDisplayName(element, type) {
+            const tags = element?.tags || {};
+            return tags.name || tags["name:en"] ||
+                (type === "airport" ? "Nearest airport (name not listed)" : "Nearest railway station (name not listed)");
+        }
+
+        function mapsDirectionsUrl(origin, destination, mode) {
+            return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
+        }
+
+        // State/UT-specific official transport authorities and fare-source references.
+        // Exact fares are shown only when an official tariff is known/available; otherwise
+        // the dashboard deliberately displays a fare indication and links to the relevant authority.
+        const fareSourceByState = {
+            "Andhra Pradesh": {authority:"Andhra Pradesh Transport Department / State Transport Authority", url:"https://transport.ap.gov.in/"},
+            "Arunachal Pradesh": {authority:"Arunachal Pradesh Transport Department", url:"https://transport.arunachal.gov.in/"},
+            "Assam": {authority:"Assam Transport Department", url:"https://transport.assam.gov.in/"},
+            "Bihar": {authority:"Bihar Transport Department / State Transport Authority", url:"https://state.bihar.gov.in/transport/"},
+            "Chhattisgarh": {authority:"Chhattisgarh Transport Department", url:"https://cgtransport.gov.in/"},
+            "Goa": {authority:"Goa Department of Transport", url:"https://goatransport.gov.in/"},
+            "Gujarat": {authority:"Gujarat Transport Department / State Transport Authority", url:"https://cot.gujarat.gov.in/"},
+            "Haryana": {authority:"Haryana State Transport / Haryana Roadways", url:"https://hartrans.gov.in/"},
+            "Himachal Pradesh": {authority:"Himachal Pradesh Transport Department", url:"https://himachal.nic.in/transport"},
+            "Jharkhand": {authority:"Jharkhand Transport Department", url:"https://transport.jharkhand.gov.in/"},
+            "Karnataka": {authority:"Karnataka Transport Department", url:"https://transport.karnataka.gov.in/"},
+            "Kerala": {authority:"Kerala Motor Vehicles Department / Transport Department", url:"https://mvd.kerala.gov.in/"},
+            "Madhya Pradesh": {authority:"Madhya Pradesh Transport Department", url:"https://transport.mp.gov.in/"},
+            "Maharashtra": {authority:"Maharashtra Transport Department / Motor Vehicle Department", url:"https://transport.maharashtra.gov.in/"},
+            "Manipur": {authority:"Manipur Transport Department", url:"https://transportmanipur.nic.in/"},
+            "Meghalaya": {authority:"Meghalaya Transport Department", url:"https://megtransport.gov.in/"},
+            "Mizoram": {authority:"Mizoram Transport Department", url:"https://transport.mizoram.gov.in/"},
+            "Nagaland": {authority:"Nagaland Transport Department", url:"https://transport.nagaland.gov.in/"},
+            "Odisha": {authority:"Odisha Commerce & Transport Department / State Transport Authority", url:"https://ct.odisha.gov.in/"},
+            "Punjab": {authority:"Punjab Transport Department / State Transport Authority", url:"https://www.punjabtransport.org/"},
+            "Rajasthan": {authority:"Rajasthan Transport Department", url:"https://transport.rajasthan.gov.in/"},
+            "Sikkim": {authority:"Sikkim Transport Department", url:"https://transport.sikkim.gov.in/"},
+            "Tamil Nadu": {authority:"Tamil Nadu Transport Department", url:"https://www.transport.tn.gov.in/"},
+            "Telangana": {authority:"Telangana Transport Department", url:"https://transport.telangana.gov.in/"},
+            "Tripura": {authority:"Tripura Transport Department", url:"https://transport.tripura.gov.in/"},
+            "Uttar Pradesh": {authority:"Uttar Pradesh Transport Department", url:"https://uptransport.upsdc.gov.in/"},
+            "Uttarakhand": {authority:"Uttarakhand Transport Department / State Transport Authority", url:"https://transport.uk.gov.in/"},
+            "West Bengal": {authority:"West Bengal Transport Department / State Transport Authority", url:"https://transport.wb.gov.in/"},
+            "Andaman and Nicobar Islands": {authority:"Andaman & Nicobar Transport Department", url:"https://transport.and.nic.in/"},
+            "Chandigarh": {authority:"Chandigarh Transport Department", url:"https://chdtransport.gov.in/"},
+            "Dadra and Nagar Haveli and Daman and Diu": {authority:"Transport Department, UT of Dadra & Nagar Haveli and Daman & Diu", url:"https://ddd.gov.in/"},
+            "Delhi (UT)": {authority:"Delhi Transport Department / Government of NCT of Delhi", url:"https://transport.delhi.gov.in/"},
+            "Jammu and Kashmir (UT)": {authority:"Jammu & Kashmir Transport Department", url:"https://jkhudd.gov.in/"},
+            "Ladakh (UT)": {authority:"Transport Department, Administration of Ladakh", url:"https://ladakh.gov.in/"},
+            "Lakshadweep": {authority:"Lakshadweep Transport Department / Administration", url:"https://lakshadweep.gov.in/"},
+            "Puducherry": {authority:"Puducherry Transport Department", url:"https://transport.py.gov.in/"}
+        };
+
+        function getFareSourceForCurrentState() {
+            const state = document.getElementById("stateSelect")?.value || "";
+            return fareSourceByState[state] || {
+                authority: "Concerned State / UT Transport Department or State Transport Authority",
+                url: "https://parivahan.gov.in/"
+            };
+        }
+
+        function officialFareRows(stateSource, kind, origin, destination) {
+            const transitAuthority = stateSource.authority;
+            const route = mapsDirectionsUrl(origin, destination, "transit");
+            return [
+                {icon:"🚶", mode:"Walking", price:"₹0", basis:"No transport fare", source:"No fare", url:mapsDirectionsUrl(origin,destination,"walking"), action:"Open walking route"},
+                {icon:"🚌", mode:"Bus", price:"Official fare varies", basis:"Stage / route / operator specific", source:transitAuthority, url:stateSource.url, action:"Open official state source"},
+                {icon:"🚆", mode:"Rail / Metro", price:"Route-specific fare", basis:"Origin, destination, class/operator", source:"Indian Railways / concerned Metro operator", url:route, action:"Check transit route"},
+                {icon:"🚕", mode:"Taxi / Cab", price:"Tariff / operator fare", basis:"Meter, distance, tariff and operator", source:transitAuthority, url:stateSource.url, action:"Open official state source"},
+                {icon:"🛺", mode:"Auto Rickshaw", price:"Local tariff / meter", basis:"Applicable local tariff and distance", source:transitAuthority, url:stateSource.url, action:"Open official state source"},
+                {icon:"🚗", mode:"Private Vehicle", price:"Fuel + toll", basis:"Vehicle, route and applicable tolls", source:"Actual fuel/toll rates", url:mapsDirectionsUrl(origin,destination,"driving"), action:"Open driving route"}
+            ];
+        }
+
+        function renderCommutingOptions(kind, origin, destination, destinationName) {
+            const isAirport = kind === "airport";
+            const tableId = isAirport ? "airportCommuteTable" : "railCommuteTable";
+            const table = document.getElementById(tableId);
+            if (!table || !origin || !destination) return;
+
+            const safeName = String(destinationName || (isAirport ? "Nearest Airport" : "Nearest Railway Station"));
+            const state = document.getElementById("stateSelect")?.value || "";
+            const sourceInfo = getFareSourceForCurrentState();
+            const rows = officialFareRows(sourceInfo, kind, origin, destination);
+
+            const sourceLinks = `
+                <a href="${sourceInfo.url}" target="_blank" rel="noopener">${escapeHtml(sourceInfo.authority)} — official website / fare notifications</a><br>
+                <a href="https://www.indianrail.gov.in/enquiry/FARE/FareEnquiry.jsp" target="_blank" rel="noopener">Indian Railways — Official Fare Enquiry</a>`;
+
+            const stateNote = state
+                ? `For <strong>${escapeHtml(state)}</strong>, road-transport fare references are directed to the concerned State/UT authority shown below.`
+                : `Road-transport fare references are directed to the concerned State/UT authority.`;
+
+            table.innerHTML = `
+                <div style="font-size:.74rem;margin-bottom:.5rem;color:var(--text-muted);">
+                    Destination: <strong>${escapeHtml(safeName)}</strong>. The figures below are <strong>fare indications</strong>; exact payable fares depend on route, distance, tariff, operator and time.
+                </div>
+                <table class="commute-table">
+                    <thead><tr><th>Mode of Transport</th><th>Fare Idea</th><th>Basis</th><th>Authentic Source / Route</th></tr></thead>
+                    <tbody>
+                        ${rows.map(r => `
+                            <tr>
+                                <td>${r.icon} ${escapeHtml(r.mode)}</td>
+                                <td class="commute-price">${escapeHtml(r.price)}</td>
+                                <td>${escapeHtml(r.basis)}</td>
+                                <td class="commute-route">
+                                    <a class="route-btn" href="${r.url}" target="_blank" rel="noopener">${escapeHtml(r.action)}</a>
+                                </td>
+                            </tr>`).join("")}
+                    </tbody>
+                </table>
+                <div style="margin-top:.55rem;padding:.55rem .65rem;background:#f8fafc;border:1px solid var(--border);border-radius:7px;font-size:.68rem;color:var(--text-muted);line-height:1.45;">
+                    <strong style="color:var(--primary);">State-specific authentic fare references:</strong><br>
+                    ${sourceLinks}
+                    <br><span>${stateNote} The dashboard intentionally does not invent a fixed fare when an official current tariff is not available. Where a state authority publishes tariff notifications, the linked official source is the preferred reference.</span>
+                </div>`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[ch]));
+        }
+
+        async function findNearestFacility(type) {
+            const isAirport = type === "airport";
+            const locationId = isAirport ? "userLocationAirport" : "userLocationRail";
+            const facilityId = isAirport ? "nearestAirport" : "nearestRail";
+            const distanceId = isAirport ? "airportDistance" : "railDistance";
+            const routeId = isAirport ? "airportRouteBtn" : "railRouteBtn";
+            const buttonText = isAirport ? "Finding nearest airport..." : "Finding nearest railway station...";
+
+            const content = document.getElementById(isAirport ? "airportPathContent" : "railPathContent");
+            const icon = document.getElementById(isAirport ? "airportPathIcon" : "railPathIcon");
+            if (content) { content.style.display = "block"; if (icon) icon.textContent = "▲ Click to Collapse"; }
+
+            const button = content ? content.querySelector(".location-btn") : null;
+            if (button) {
+                button.disabled = true;
+                button.textContent = buttonText;
+            }
+
+            try {
+                const pos = await getUserLocation();
+                const origin = `${pos.lat},${pos.lon}`;
+                document.getElementById(locationId).textContent = `${pos.lat.toFixed(5)}°, ${pos.lon.toFixed(5)}°`;
+
+                const facility = await queryNearestFacility(pos.lat, pos.lon, type);
+                if (!facility) throw new Error("No mapped facility was found within 60 km of your current location.");
+
+                const name = facilityDisplayName(facility, type);
+                const destination = `${facility._lat},${facility._lon}`;
+                document.getElementById(facilityId).textContent = name;
+                document.getElementById(distanceId).textContent = `${facility._distance.toFixed(2)} km (straight-line)`;
+
+                const route = document.getElementById(routeId);
+                route.href = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=driving`;
+                route.textContent = `Open Route to ${name} in Google Maps`;
+
+                // Populate commuting options specifically for this destination.
+                renderCommutingOptions(type, origin, destination, name);
+            } catch (error) {
+                console.error(error);
+                // Do not erase a valid GPS position merely because the map/facility
+                // service failed. The user needs to see whether location detection worked.
+                if (!document.getElementById(locationId).textContent ||
+                    document.getElementById(locationId).textContent.includes("detect location")) {
+                    document.getElementById(locationId).textContent = "Location unavailable";
+                }
+                document.getElementById(facilityId).textContent = error.message || "Nearest facility data unavailable";
+                document.getElementById(distanceId).textContent = "--";
+                const route = document.getElementById(routeId);
+                route.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(isAirport ? "airport near me" : "railway station near me")}`;
+                route.textContent = isAirport ? "Search nearby airports in Google Maps" : "Search nearby railway stations in Google Maps";
+                const table = document.getElementById(isAirport ? "airportCommuteTable" : "railCommuteTable");
+                if (table) table.innerHTML = `<div class="commute-empty">${escapeHtml(error.message || "Nearest facility could not be found.")}</div>`;
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = isAirport ? "📍 Find Nearest Airport" : "📍 Find Nearest Railway Station";
+                }
+            }
+        }
+
+        async function fetchDistrictWeather(lat, lon, timezone) {
+            try {
+                const url =
+                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+                    `&current=temperature_2m,relative_humidity_2m,precipitation,snowfall,visibility,wind_speed_10m` +
+                    `&daily=temperature_2m_min,temperature_2m_max,precipitation_sum,wind_speed_10m_max` +
+                    `&forecast_days=7&timezone=${encodeURIComponent(timezone || "auto")}`;
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Weather request failed");
+                const data = await response.json();
+
+                if (data.current) {
+                    document.getElementById("dTemp").textContent =
+                        `${data.current.temperature_2m} °C`;
+                    document.getElementById("dHumidity").textContent =
+                        `${data.current.relative_humidity_2m} %`;
+                    document.getElementById("dRain").textContent =
+                        `${data.current.precipitation} mm`;
+                    document.getElementById("dSnow").textContent =
+                        `${data.current.snowfall || 0} cm`;
+                    document.getElementById("dVisibility").textContent =
+                        data.current.visibility != null
+                            ? `${(data.current.visibility / 1000).toFixed(1)} km`
+                            : "Not available";
+                    document.getElementById("dWind").textContent =
+                        `${data.current.wind_speed_10m} km/h`;
+                    document.getElementById("dWeatherTime").textContent =
+                        data.current.time || "Not available";
+                }
+
+                if (data.daily) {
+                    const minTemps = (data.daily.temperature_2m_min || []).filter(v => v != null);
+                    const maxTemps = (data.daily.temperature_2m_max || []).filter(v => v != null);
+                    const rain = (data.daily.precipitation_sum || []).filter(v => v != null);
+                    const wind = (data.daily.wind_speed_10m_max || []).filter(v => v != null);
+
+                    document.getElementById("dMinTemp").textContent =
+                        minTemps.length ? `${Math.min(...minTemps).toFixed(1)} °C` : "Not available";
+                    document.getElementById("dMaxTemp").textContent =
+                        maxTemps.length ? `${Math.max(...maxTemps).toFixed(1)} °C` : "Not available";
+                    document.getElementById("dTotalRain").textContent =
+                        rain.length ? `${rain.reduce((a,b)=>a+b,0).toFixed(1)} mm` : "Not available";
+                    document.getElementById("dMaxWind").textContent =
+                        wind.length ? `${Math.max(...wind).toFixed(1)} km/h` : "Not available";
+                    document.getElementById("dForecastDays").textContent =
+                        data.daily.time ? `${data.daily.time.length} days` : "Not available";
+                }
+            } catch (error) {
+                ["dTemp","dHumidity","dRain","dSnow","dVisibility","dWind",
+                 "dMinTemp","dMaxTemp","dTotalRain","dMaxWind","dForecastDays","dWeatherTime"]
+                .forEach(id => document.getElementById(id).textContent = "Data unavailable");
+            }
+        }
+
+        window.onload = function() {
+            const stateSelect = document.getElementById("stateSelect");
+            const sortedStates = Object.keys(stateData).sort();
+
+            sortedStates.forEach(stateName => {
+                const option = document.createElement("option");
+                option.value = stateName;
+                option.textContent = stateName;
+                stateSelect.appendChild(option);
+            });
+        };
+
+        function toggleMapSection() {
+            const content = document.getElementById("mapCollapsibleContent");
+            const toggleIcon = document.getElementById("mapToggleIcon");
+            if (content.style.display === "block") {
+                content.style.display = "none";
+                toggleIcon.textContent = "▼ Click to Expand";
+            } else {
+                content.style.display = "block";
+                toggleIcon.textContent = "▲ Click to Collapse";
+            }
+        }
+
+        async function updateDashboard() {
+            const selectedState = document.getElementById("stateSelect").value;
+            const infoCard = document.getElementById("infoCard");
+            const emptyState = document.getElementById("emptyState");
+
+            if (selectedState && stateData[selectedState]) {
+                const data = stateData[selectedState];
+                
+                document.getElementById("stateName").textContent = selectedState;
+                
+                // Update Weather Prediction title dynamically with the capital name
+                document.getElementById("weatherPredictionTitle").textContent = `Weather Prediction for ${data.geo.capital} as of Today`;
+
+                // Update Map title and dynamic iframe/link sources with exact coordinates
+                document.getElementById("mapSectionTitle").querySelector("span").textContent = `${data.geo.capital} - Map & 3D Street View`;
+                const mapIframe = document.getElementById("mapIframe");
+                const streetViewBtn = document.getElementById("streetViewBtn");
+                
+                const loc = { lat: data.lat, lon: data.lon };
+                
+                // Map iframe embed using exact coordinates and zoom layer
+                mapIframe.src = `https://www.google.com/maps?q=${loc.lat},${loc.lon}&output=embed&z=13`;
+                
+                // Direct link pointing to Google Maps Satellite/Street View perspective anchored precisely at coordinates
+                streetViewBtn.href = `https://www.google.com/maps/@${loc.lat},${loc.lon},17z/data=!3m1!1e3?entry=ttu`;
+
+                // Geography
+                document.getElementById("geoArea").textContent = data.geo.area;
+                document.getElementById("geoLand").textContent = data.geo.land;
+                document.getElementById("geoCultivable").textContent = data.geo.cultivable;
+                document.getElementById("geoCapital").textContent = data.geo.capital;
+                document.getElementById("geoMajorCities").textContent = data.geo.majorCities;
+                document.getElementById("geoAirports").textContent = data.geo.airports;
+
+                // Trends
+                document.getElementById("trendTemp").textContent = data.trend.temp;
+                document.getElementById("trendHumidity").textContent = data.trend.humidity;
+                document.getElementById("trendRain").textContent = data.trend.rain;
+                document.getElementById("trendSnow").textContent = data.trend.snow;
+                document.getElementById("trendWind").textContent = data.trend.wind;
+
+                // Economy
+                document.getElementById("econGdp").textContent = data.econ.gdp;
+                document.getElementById("econPerCapita").textContent = data.econ.perCapita;
+                document.getElementById("econCostOfLiving").textContent = data.econ.costOfLiving;
+                document.getElementById("econExport").textContent = data.econ.export;
+                document.getElementById("econDebt").textContent = data.econ.debt;
+                document.getElementById("econBanks").textContent = data.econ.banks;
+
+                // Society
+                document.getElementById("socPopulation").textContent = data.soc.pop;
+                document.getElementById("socFood").textContent = data.soc.food;
+                document.getElementById("socTrend").textContent = data.soc.trend;
+                document.getElementById("socLanguages").textContent = data.soc.languages;
+                document.getElementById("socLiteracy").textContent = data.soc.literacy;
+                document.getElementById("socRatio").textContent = data.soc.ratio;
+
+                // Fetch real-time live weather prediction
+                fetchLiveWeatherPrediction(data.lat, data.lon);
+
+                emptyState.style.display = "none";
+                infoCard.style.display = "block";
+            }
+        }
+
+        async function fetchLiveWeatherPrediction(lat, lon) {
+            try {
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,snowfall,visibility,wind_speed_10m&timezone=auto`);
+                const weather = await response.json();
+
+                if (weather && weather.current) {
+                    document.getElementById("predTemp").textContent = `${weather.current.temperature_2m} °C`;
+                    document.getElementById("predHumidity").textContent = `${weather.current.relative_humidity_2m} %`;
+                    document.getElementById("predRain").textContent = `${weather.current.precipitation} mm`;
+                    document.getElementById("predSnow").textContent = `${weather.current.snowfall || 0} cm`;
+                    document.getElementById("predVisibility").textContent = `${(weather.current.visibility / 1000).toFixed(1)} km`;
+                } else {
+                    setFallbackWeather();
+                }
+            } catch (e) {
+                setFallbackWeather();
+            }
+        }
+
+        function setFallbackWeather() {
+            document.getElementById("predTemp").textContent = "Data unavailable";
+            document.getElementById("predHumidity").textContent = "Data unavailable";
+            document.getElementById("predRain").textContent = "Data unavailable";
+            document.getElementById("predSnow").textContent = "Data unavailable";
+            document.getElementById("predVisibility").textContent = "Data unavailable";
+        }
+    </script>
+</body>
+</html>
