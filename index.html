@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Information Centre</title>
+
+<style>
+    :root{
+        --primary:#1e3a8a;
+        --accent:#2563eb;
+        --cyan:#00d9ff;
+        --gold:#ffbf2f;
+        --background:#eef4ff;
+        --panel:#ffffff;
+        --text:#0f172a;
+        --muted:#64748b;
+        --border:#cbd5e1;
+    }
+
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0}
+
+    body{
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+        background:
+            radial-gradient(circle at 12% 8%,rgba(0,217,255,.16),transparent 28%),
+            radial-gradient(circle at 88% 18%,rgba(37,99,235,.15),transparent 30%),
+            var(--background);
+        color:var(--text);
+        overflow:hidden;
+    }
+
+    .master{
+        width:100%;height:100vh;display:flex;flex-direction:column;padding:10px;
+    }
+
+    .header{
+        flex:0 0 auto;
+        position:relative;overflow:hidden;
+        background:
+            radial-gradient(circle at 50% 110%,rgba(0,217,255,.22),transparent 38%),
+            linear-gradient(135deg,#020617,#0b1d57 55%,#063b8f);
+        color:#fff;border:1px solid rgba(0,217,255,.55);border-radius:14px;
+        padding:10px 16px;
+        box-shadow:0 0 12px rgba(0,217,255,.30),0 8px 24px rgba(15,23,42,.22);
+    }
+
+    .header:before{
+        content:"";position:absolute;top:0;left:-35%;width:24%;height:100%;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.80),transparent);
+        transform:skewX(-20deg);filter:blur(3px);animation:headerSweep 5.5s linear infinite;
+        pointer-events:none;
+    }
+    .header:after{
+        content:"";position:absolute;width:220px;height:220px;right:-80px;top:-125px;
+        border-radius:50%;background:rgba(255,255,255,.08);box-shadow:0 0 55px rgba(0,217,255,.22);
+        pointer-events:none;
+    }
+
+    .title{
+        margin:0;text-align:center;font-size:clamp(1.05rem,2.5vw,1.55rem);
+        font-weight:900;letter-spacing:.45px;text-shadow:0 0 7px rgba(255,255,255,.75),0 0 18px rgba(0,217,255,.45);
+    }
+    .subtitle{
+        margin:2px 0 0;text-align:center;font-size:.68rem;opacity:.86;letter-spacing:.25px;
+    }
+
+    .module-bar{
+        flex:0 0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:9px 0;
+    }
+
+    .module-btn,.finance-btn{
+        position:relative;overflow:hidden;min-height:44px;border:1px solid rgba(0,217,255,.65);
+        border-radius:11px;background:linear-gradient(135deg,#061536,#0b2b68 65%,#061536);
+        color:#fff;font-size:.80rem;font-weight:850;cursor:pointer;
+        box-shadow:0 0 7px rgba(0,217,255,.45),inset 0 0 12px rgba(0,217,255,.08);
+        transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+    }
+    .module-btn:before,.finance-btn:before{
+        content:"";position:absolute;top:-25%;left:-35%;width:22%;height:150%;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.82),transparent);
+        transform:skewX(-20deg);filter:blur(2px);animation:buttonSweep 4.2s linear infinite;
+        pointer-events:none;
+    }
+    .module-btn:hover,.finance-btn:hover{transform:translateY(-1px);box-shadow:0 0 12px rgba(0,217,255,.78),0 0 25px rgba(37,99,235,.30),inset 0 0 14px rgba(0,217,255,.10)}
+    .module-btn.active,.finance-btn.active{
+        border-color:#fff;box-shadow:0 0 10px rgba(0,217,255,.95),0 0 25px rgba(0,217,255,.48),inset 0 0 18px rgba(0,217,255,.18);
+        background:linear-gradient(135deg,#0b3c9b,#076bce 65%,#0b3c9b);
+    }
+    #financeBtn{border-color:rgba(255,191,47,.9);box-shadow:0 0 8px rgba(255,191,47,.48),inset 0 0 13px rgba(255,191,47,.08)}
+    #financeBtn.active{background:linear-gradient(135deg,#8b4a00,#c88700 60%,#7a4300);box-shadow:0 0 12px rgba(255,191,47,1),0 0 28px rgba(255,191,47,.42),inset 0 0 18px rgba(255,191,47,.16)}
+
+    .finance-bar{
+        display:none;flex:0 0 auto;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:0 0 8px;
+    }
+    .finance-bar.visible{display:grid}
+
+    .finance-btn{min-height:38px;font-size:.73rem;border-color:rgba(255,191,47,.72)}
+    .finance-btn.active{border-color:#ffe7a1;background:linear-gradient(135deg,#754000,#b36d00 60%,#6d3b00)}
+
+    .workspace{
+        position:relative;flex:1 1 auto;min-height:0;background:#fff;border:1px solid var(--border);
+        border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(15,23,42,.08);
+    }
+    #moduleFrame{width:100%;height:100%;border:0;display:block;background:#fff}
+
+    .welcome{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;background:linear-gradient(rgba(255,255,255,.96),rgba(248,250,252,.96));z-index:2}
+    .welcome-card{width:min(560px,94%);padding:30px 24px;border:1px solid var(--border);border-radius:18px;background:#fff;box-shadow:0 12px 35px rgba(15,23,42,.10)}
+    .welcome-icon{font-size:3rem;margin-bottom:8px}
+    .welcome h2{margin:0 0 7px;color:var(--primary);font-size:1.25rem}
+    .welcome p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.5}
+
+    .mobile-select-wrap{display:none}
+    .mobile-menu{display:none}
+
+    .status{flex:0 0 auto;text-align:center;color:var(--muted);font-size:.64rem;padding:5px 0 0}
+    .loading{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(248,250,252,.72);backdrop-filter:blur(2px);z-index:3;color:var(--primary);font-size:.82rem;font-weight:800}
+    .loading.visible{display:flex}
+
+    @keyframes headerSweep{0%{left:-35%}100%{left:125%}}
+    @keyframes buttonSweep{0%{left:-35%}100%{left:130%}}
+
+    @media(max-width:600px){
+        body{background:radial-gradient(circle at 50% 0%,rgba(0,217,255,.13),transparent 35%),#06132d}
+        .master{padding:4px}
+        .header{padding:7px 9px;border-radius:10px;box-shadow:0 0 10px rgba(0,217,255,.38),0 5px 16px rgba(0,0,0,.35)}
+        .title{font-size:clamp(.90rem,5vw,1.18rem);letter-spacing:.35px;white-space:nowrap}
+        .subtitle{display:none}
+
+        /* Mobile uses one compact dropdown instead of four permanent buttons. */
+        .module-bar{display:none}
+        .mobile-select-wrap{display:block;position:relative;padding:5px 0 4px;z-index:20}
+        .mobile-select{
+            width:100%;min-height:43px;padding:0 42px 0 13px;border-radius:11px;
+            border:1px solid var(--cyan);color:#fff;background:linear-gradient(135deg,#071a40,#0a3475 65%,#071a40);
+            box-shadow:0 0 8px rgba(0,217,255,.62),inset 0 0 14px rgba(0,217,255,.10);
+            font-size:.82rem;font-weight:850;appearance:none;outline:none;cursor:pointer;
+        }
+        .mobile-select-wrap:after{content:"⌄";position:absolute;right:15px;top:50%;transform:translateY(-55%);color:#fff;font-size:1.25rem;font-weight:900;pointer-events:none;text-shadow:0 0 8px var(--cyan)}
+        .mobile-select option{background:#071a40;color:#fff}
+        .mobile-select.finance-choice{border-color:var(--gold);box-shadow:0 0 9px rgba(255,191,47,.70),inset 0 0 14px rgba(255,191,47,.10)}
+
+        .mobile-finance-wrap{display:none;position:relative;padding:0 0 5px;z-index:19}
+        .mobile-finance-wrap.visible{display:block}
+        .mobile-finance-select{
+            width:100%;min-height:40px;padding:0 40px 0 13px;border-radius:10px;border:1px solid rgba(255,191,47,.92);
+            color:#fff;background:linear-gradient(135deg,#4b2700,#8a5000 65%,#4b2700);box-shadow:0 0 8px rgba(255,191,47,.60),inset 0 0 13px rgba(255,191,47,.10);
+            font-size:.76rem;font-weight:800;appearance:none;outline:none;cursor:pointer;
+        }
+        .mobile-finance-wrap:after{content:"⌄";position:absolute;right:15px;top:50%;transform:translateY(-55%);color:#fff;font-size:1.15rem;font-weight:900;pointer-events:none;text-shadow:0 0 8px var(--gold)}
+        .mobile-finance-select option{background:#4b2700;color:#fff}
+
+        .workspace{border-radius:9px;border-color:rgba(0,217,255,.35);box-shadow:0 0 12px rgba(0,217,255,.14)}
+        .welcome{padding:12px}
+        .welcome-card{width:96%;padding:20px 14px;border-radius:14px;background:rgba(255,255,255,.97)}
+        .welcome-icon{font-size:2.2rem;margin-bottom:4px}
+        .welcome h2{font-size:1rem;margin-bottom:6px}
+        .welcome p{font-size:.72rem;line-height:1.4}
+        .status{font-size:.54rem;padding-top:3px;color:#a9c7ff}
+    }
+</style>
+</head>
+
+<body>
+<div class="master">
+
+    <header class="header">
+        <h1 class="title">GLOBAL INFORMATION CENTRE</h1>
+        <p class="subtitle">Select an information module to continue</p>
+    </header>
+
+    <nav class="module-bar" aria-label="Information modules">
+        <button class="module-btn" id="worldBtn" onclick="openModule('World_Info.html','worldBtn','🌍 World Information')">🌍 WORLD INFORMATION</button>
+        <button class="module-btn" id="indiaBtn" onclick="openModule('India_Info.html','indiaBtn','🇮🇳 India Information')">🇮🇳 INDIA INFORMATION</button>
+        <button class="module-btn" id="radioBtn" onclick="openModule('World_Radio.html','radioBtn','📻 World Radio')">📻 WORLD RADIO</button>
+        <button class="module-btn" id="financeBtn" onclick="openFinanceMenu()">💰 FINANCE</button>
+    </nav>
+
+    <div class="mobile-select-wrap">
+        <select class="mobile-select" id="mobileModuleSelect" aria-label="Select module" onchange="handleMobileModule(this.value)">
+            <option value="">☰  SELECT MODULE</option>
+            <option value="world">🌍  World Information</option>
+            <option value="india">🇮🇳  India Information</option>
+            <option value="radio">📻  World Radio</option>
+            <option value="finance">💰  Finance</option>
+        </select>
+    </div>
+
+    <div class="mobile-finance-wrap" id="mobileFinanceWrap">
+        <select class="mobile-finance-select" id="mobileFinanceSelect" aria-label="Select finance module" onchange="handleMobileFinance(this.value)">
+            <option value="">💰  SELECT FINANCE MODULE</option>
+            <option value="mf">📈  Mutual Fund Tracker</option>
+            <option value="rm">🏠  Reverse Mortgage</option>
+            <option value="swp">👴  Retirement &amp; SWP Planning</option>
+        </select>
+    </div>
+
+    <div class="finance-bar" id="financeBar" aria-label="Finance modules">
+        <button class="finance-btn" id="mfBtn" onclick="openFinanceModule('Mutual Fund Tracker.html','mfBtn','📈 Mutual Fund Tracker')">📈 Mutual Fund Tracker</button>
+        <button class="finance-btn" id="rmBtn" onclick="openFinanceModule('Reverse Mortgage Calculation.html','rmBtn','🏠 Reverse Mortgage')">🏠 Reverse Mortgage</button>
+        <button class="finance-btn" id="swpBtn" onclick="openFinanceModule('Retirement SWP Planning.html','swpBtn','👴 Retirement & SWP Planning')">👴 Retirement &amp; SWP Planning</button>
+    </div>
+
+    <main class="workspace">
+        <div class="welcome" id="welcome">
+            <div class="welcome-card">
+                <div class="welcome-icon">🌐</div>
+                <h2>Welcome to Global Information Centre</h2>
+                <p>
+                    Select a module above. On mobile, use the compact dropdown.
+                    Finance contains the Mutual Fund Tracker, Reverse Mortgage,
+                    and Retirement &amp; SWP Planning tools.
+                </p>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">Loading module…</div>
+
+        <iframe
+            id="moduleFrame"
+            title="Selected Information Module"
+            src="about:blank">
+        </iframe>
+    </main>
+
+    <div class="status" id="status">
+        No module selected
+    </div>
+</div>
+
+<script>
+    const frame = document.getElementById("moduleFrame");
+    const welcome = document.getElementById("welcome");
+    const loading = document.getElementById("loading");
+    const status = document.getElementById("status");
+    const financeBar = document.getElementById("financeBar");
+    const mobileModuleSelect = document.getElementById("mobileModuleSelect");
+    const mobileFinanceWrap = document.getElementById("mobileFinanceWrap");
+    const mobileFinanceSelect = document.getElementById("mobileFinanceSelect");
+
+    function clearDesktopButtons(){
+        document.querySelectorAll(".module-btn,.finance-btn").forEach(btn => btn.classList.remove("active"));
+    }
+
+    function resetMobileFinance(){
+        mobileFinanceWrap.classList.remove("visible");
+        mobileFinanceSelect.value = "";
+        mobileModuleSelect.classList.remove("finance-choice");
+    }
+
+    function openModule(file, buttonId, label){
+        clearDesktopButtons();
+        const btn=document.getElementById(buttonId);
+        if(btn) btn.classList.add("active");
+        financeBar.classList.remove("visible");
+        resetMobileFinance();
+        if(mobileModuleSelect) mobileModuleSelect.value = buttonId.replace("Btn","");
+        loadModule(file,label);
+    }
+
+    function openFinanceMenu(){
+        clearDesktopButtons();
+        document.getElementById("financeBtn").classList.add("active");
+        financeBar.classList.add("visible");
+        welcome.style.display="none";
+        status.textContent="Select a finance tool";
+        if(mobileModuleSelect) mobileModuleSelect.value="finance";
+        if(mobileModuleSelect) mobileModuleSelect.classList.add("finance-choice");
+        if(mobileFinanceWrap) mobileFinanceWrap.classList.add("visible");
+    }
+
+    function openFinanceModule(file, buttonId, label){
+        clearDesktopButtons();
+        document.getElementById("financeBtn").classList.add("active");
+        document.getElementById(buttonId).classList.add("active");
+        financeBar.classList.add("visible");
+        if(mobileModuleSelect) mobileModuleSelect.value="finance";
+        if(mobileModuleSelect) mobileModuleSelect.classList.add("finance-choice");
+        if(mobileFinanceWrap) mobileFinanceWrap.classList.add("visible");
+        const map={"mfBtn":"mf","rmBtn":"rm","swpBtn":"swp"};
+        if(map[buttonId]) mobileFinanceSelect.value=map[buttonId];
+        loadModule(file,label);
+    }
+
+    function handleMobileModule(value){
+        if(value==="world") return openModule('World_Info.html','worldBtn','🌍 World Information');
+        if(value==="india") return openModule('India_Info.html','indiaBtn','🇮🇳 India Information');
+        if(value==="radio") return openModule('World_Radio.html','radioBtn','📻 World Radio');
+        if(value==="finance") return openFinanceMenu();
+        resetMobileFinance();
+    }
+
+    function handleMobileFinance(value){
+        if(value==="mf") return openFinanceModule('Mutual Fund Tracker.html','mfBtn','📈 Mutual Fund Tracker');
+        if(value==="rm") return openFinanceModule('Reverse Mortgage Calculation.html','rmBtn','🏠 Reverse Mortgage');
+        if(value==="swp") return openFinanceModule('Retirement SWP Planning.html','swpBtn','👴 Retirement & SWP Planning');
+    }
+
+    function loadModule(file,label){
+        welcome.style.display="none";
+        loading.classList.add("visible");
+        status.textContent="Loading: " + label;
+        frame.onload=function(){loading.classList.remove("visible");status.textContent=label+" — Module loaded";};
+        frame.onerror=function(){loading.classList.remove("visible");status.textContent="Unable to load "+label;};
+        frame.src=file;
+    }
+</script>
+</body>
+</html>
