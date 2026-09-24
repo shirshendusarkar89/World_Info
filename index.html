@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Information Centre</title>
+
+<style>
+    :root{
+        --primary:#1e3a8a;
+        --accent:#2563eb;
+        --cyan:#00d9ff;
+        --gold:#ffbf2f;
+        --background:#eef4ff;
+        --panel:#ffffff;
+        --text:#0f172a;
+        --muted:#64748b;
+        --border:#cbd5e1;
+    }
+
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0}
+
+    body{
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+        background:
+            radial-gradient(circle at 12% 8%,rgba(0,217,255,.16),transparent 28%),
+            radial-gradient(circle at 88% 18%,rgba(37,99,235,.15),transparent 30%),
+            var(--background);
+        color:var(--text);
+        overflow:hidden;
+    }
+
+    .master{
+        width:100%;height:100vh;display:flex;flex-direction:column;padding:10px;
+    }
+
+    .header{
+        flex:0 0 auto;
+        position:relative;overflow:hidden;
+        background:
+            radial-gradient(circle at 50% 110%,rgba(0,217,255,.22),transparent 38%),
+            linear-gradient(135deg,#020617,#0b1d57 55%,#063b8f);
+        color:#fff;border:1px solid rgba(0,217,255,.55);border-radius:14px;
+        padding:10px 16px;
+        box-shadow:0 0 12px rgba(0,217,255,.30),0 8px 24px rgba(15,23,42,.22);
+    }
+
+    .header:before{
+        content:"";position:absolute;top:0;left:-35%;width:24%;height:100%;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.80),transparent);
+        transform:skewX(-20deg);filter:blur(3px);animation:headerSweep 5.5s linear infinite;
+        pointer-events:none;
+    }
+    .header:after{
+        content:"";position:absolute;width:220px;height:220px;right:-80px;top:-125px;
+        border-radius:50%;background:rgba(255,255,255,.08);box-shadow:0 0 55px rgba(0,217,255,.22);
+        pointer-events:none;
+    }
+
+    .title{
+        margin:0;text-align:center;font-size:clamp(1.05rem,2.5vw,1.55rem);
+        font-weight:900;letter-spacing:.45px;text-shadow:0 0 7px rgba(255,255,255,.75),0 0 18px rgba(0,217,255,.45);
+    }
+    .subtitle{
+        margin:2px 0 0;text-align:center;font-size:.68rem;opacity:.86;letter-spacing:.25px;
+    }
+
+    .module-bar{
+        flex:0 0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:9px 0;
+    }
+
+    .module-btn,.finance-btn{
+        position:relative;overflow:hidden;min-height:44px;border:1px solid rgba(0,217,255,.65);
+        border-radius:11px;background:linear-gradient(135deg,#061536,#0b2b68 65%,#061536);
+        color:#fff;font-size:.80rem;font-weight:850;cursor:pointer;
+        box-shadow:0 0 7px rgba(0,217,255,.45),inset 0 0 12px rgba(0,217,255,.08);
+        transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+    }
+    .module-btn:before,.finance-btn:before{
+        content:"";position:absolute;top:-25%;left:-35%;width:22%;height:150%;
+        background:linear-gradient(90deg,transparent,rgba(255,255,255,.82),transparent);
+        transform:skewX(-20deg);filter:blur(2px);animation:buttonSweep 4.2s linear infinite;
+        pointer-events:none;
+    }
+    .module-btn:hover,.finance-btn:hover{transform:translateY(-1px);box-shadow:0 0 12px rgba(0,217,255,.78),0 0 25px rgba(37,99,235,.30),inset 0 0 14px rgba(0,217,255,.10)}
+    .module-btn.active,.finance-btn.active{
+        border-color:#fff;box-shadow:0 0 10px rgba(0,217,255,.95),0 0 25px rgba(0,217,255,.48),inset 0 0 18px rgba(0,217,255,.18);
+        background:linear-gradient(135deg,#0b3c9b,#076bce 65%,#0b3c9b);
+    }
+    #financeBtn{border-color:rgba(255,191,47,.9);box-shadow:0 0 8px rgba(255,191,47,.48),inset 0 0 13px rgba(255,191,47,.08)}
+    #financeBtn.active{background:linear-gradient(135deg,#8b4a00,#c88700 60%,#7a4300);box-shadow:0 0 12px rgba(255,191,47,1),0 0 28px rgba(255,191,47,.42),inset 0 0 18px rgba(255,191,47,.16)}
+
+    .finance-bar{
+        display:none;flex:0 0 auto;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:0 0 8px;
+    }
+    .finance-bar.visible{display:grid}
+
+    .finance-btn{min-height:38px;font-size:.73rem;border-color:rgba(255,191,47,.72)}
+    .finance-btn.active{border-color:#ffe7a1;background:linear-gradient(135deg,#754000,#b36d00 60%,#6d3b00)}
+
+    .workspace{
+        position:relative;flex:1 1 auto;min-height:0;background:#fff;border:1px solid var(--border);
+        border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(15,23,42,.08);
+    }
+    #moduleFrame{width:100%;height:100%;border:0;display:block;background:#fff}
+
+    .welcome{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;background:linear-gradient(rgba(255,255,255,.96),rgba(248,250,252,.96));z-index:2}
+    .welcome-card{width:min(560px,94%);padding:30px 24px;border:1px solid var(--border);border-radius:18px;background:#fff;box-shadow:0 12px 35px rgba(15,23,42,.10)}
+    .welcome-icon{font-size:3rem;margin-bottom:8px}
+    .welcome h2{margin:0 0 7px;color:var(--primary);font-size:1.25rem}
+    .welcome p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.5}
+
+    .mobile-select-wrap{display:none}
+    .mobile-menu{display:none}
+
+    .status{flex:0 0 auto;text-align:center;color:var(--muted);font-size:.64rem;padding:5px 0 0}
+    .loading{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(248,250,252,.72);backdrop-filter:blur(2px);z-index:3;color:var(--primary);font-size:.82rem;font-weight:800}
+    .loading.visible{display:flex}
+
+    @keyframes headerSweep{0%{left:-35%}100%{left:125%}}
+    @keyframes buttonSweep{0%{left:-35%}100%{left:130%}}
+    @keyframes menuIn{from{opacity:0;transform:translateY(-5px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+    @media(max-width:600px){
+        body{background:radial-gradient(circle at 50% 0%,rgba(0,217,255,.13),transparent 35%),#06132d}
+        .master{padding:4px}
+        .header{padding:7px 9px;border-radius:10px;box-shadow:0 0 10px rgba(0,217,255,.38),0 5px 16px rgba(0,0,0,.35)}
+        .title{font-size:clamp(.90rem,5vw,1.18rem);letter-spacing:.35px;white-space:nowrap}
+        .subtitle{display:none}
+
+        /* Mobile uses a custom touch menu rather than the browser's native select. */
+        .module-bar{display:none}
+        .games-bar{display:none !important}
+        .mobile-select-wrap{display:block;position:relative;padding:5px 0 4px;z-index:50}
+        .mobile-select{
+            width:100%;min-height:43px;padding:0 42px 0 13px;border-radius:11px;
+            border:1px solid var(--cyan);color:#fff;background:linear-gradient(135deg,#071a40,#0a3475 65%,#071a40);
+            box-shadow:0 0 8px rgba(0,217,255,.62),inset 0 0 14px rgba(0,217,255,.10);
+            font-size:.82rem;font-weight:850;outline:none;cursor:pointer;text-align:left;
+            position:relative;overflow:hidden;
+        }
+        .mobile-select:before{
+            content:"";position:absolute;top:-35%;left:-38%;width:22%;height:170%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent);
+            transform:skewX(-20deg);filter:blur(2px);animation:buttonSweep 4s linear infinite;pointer-events:none;
+        }
+        .mobile-select .menu-chevron{position:absolute;right:14px;top:50%;transform:translateY(-58%);font-size:1.15rem;text-shadow:0 0 8px var(--cyan)}
+        .mobile-select.finance-choice{border-color:var(--gold);box-shadow:0 0 10px rgba(255,191,47,.78),0 0 20px rgba(255,191,47,.20),inset 0 0 14px rgba(255,191,47,.10)}
+        .mobile-select.finance-choice .menu-chevron{text-shadow:0 0 8px var(--gold)}
+
+        .mobile-menu{
+            display:none;position:absolute;left:0;right:0;top:52px;padding:7px;border-radius:14px;
+            background:linear-gradient(145deg,rgba(2,12,35,.98),rgba(7,34,79,.98));
+            border:1px solid rgba(0,217,255,.75);box-shadow:0 10px 28px rgba(0,0,0,.48),0 0 18px rgba(0,217,255,.30);
+            z-index:60;overflow:hidden;
+        }
+        .mobile-menu.visible{display:block;animation:menuIn .18s ease-out}
+        .mobile-menu-item,.mobile-finance-item{
+            position:relative;display:flex;align-items:center;gap:10px;width:100%;min-height:49px;margin:2px 0;
+            padding:0 12px;border:1px solid rgba(0,217,255,.38);border-radius:10px;
+            color:#fff;background:linear-gradient(135deg,#061536,#0b2b68 65%,#061536);
+            font-size:.82rem;font-weight:850;text-align:left;cursor:pointer;overflow:hidden;
+            box-shadow:0 0 6px rgba(0,217,255,.30),inset 0 0 10px rgba(0,217,255,.07);
+        }
+        .mobile-menu-item:before,.mobile-finance-item:before{
+            content:"";position:absolute;top:-30%;left:-38%;width:22%;height:160%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent);
+            transform:skewX(-20deg);filter:blur(2px);animation:buttonSweep 3.8s linear infinite;pointer-events:none;
+        }
+        .mobile-menu-item:active,.mobile-finance-item:active{transform:scale(.985);box-shadow:0 0 13px rgba(0,217,255,.92),inset 0 0 18px rgba(0,217,255,.14)}
+        .mobile-menu-icon{font-size:1.35rem;min-width:27px;text-align:center;filter:drop-shadow(0 0 4px rgba(0,217,255,.7))}
+        .mobile-menu-arrow{margin-left:auto;font-size:1.15rem;text-shadow:0 0 8px var(--cyan)}
+        .mobile-menu.finance-open .mobile-menu-item.finance-item{border-color:var(--gold);box-shadow:0 0 10px rgba(255,191,47,.85),0 0 20px rgba(255,191,47,.18),inset 0 0 14px rgba(255,191,47,.10);background:linear-gradient(135deg,#4b2700,#8a5000 65%,#4b2700)}
+
+        .mobile-finance-wrap{display:none;position:absolute;left:7px;right:7px;top:53px;padding:7px;border-radius:14px;
+            background:linear-gradient(145deg,rgba(35,18,0,.99),rgba(92,51,0,.98));border:1px solid rgba(255,191,47,.88);
+            box-shadow:0 10px 28px rgba(0,0,0,.50),0 0 20px rgba(255,191,47,.34);z-index:65;overflow:hidden}
+        .mobile-finance-wrap.visible{display:block;animation:menuIn .18s ease-out}
+        .mobile-finance-title{padding:5px 8px 7px;color:#ffe7a1;font-size:.70rem;font-weight:900;letter-spacing:.6px;text-shadow:0 0 8px rgba(255,191,47,.65)}
+        .mobile-finance-item{border-color:rgba(255,191,47,.55);box-shadow:0 0 6px rgba(255,191,47,.28),inset 0 0 10px rgba(255,191,47,.06);background:linear-gradient(135deg,#3c2100,#6d3d00 65%,#3c2100)}
+        .mobile-finance-item:active{box-shadow:0 0 14px rgba(255,191,47,.95),inset 0 0 18px rgba(255,191,47,.15)}
+        .mobile-finance-item .mobile-menu-icon{filter:drop-shadow(0 0 4px rgba(255,191,47,.8))}
+
+        .workspace{border-radius:9px;border-color:rgba(0,217,255,.35);box-shadow:0 0 12px rgba(0,217,255,.14)}
+        .welcome{padding:12px}
+        .welcome-card{width:96%;padding:20px 14px;border-radius:14px;background:rgba(255,255,255,.97)}
+        .welcome-icon{font-size:2.2rem;margin-bottom:4px}
+        .welcome h2{font-size:1rem;margin-bottom:6px}
+        .welcome p{font-size:.72rem;line-height:1.4}
+        .status{font-size:.54rem;padding-top:3px;color:#a9c7ff}
+    }
+
+        .games-bar{border-color:rgba(112,221,255,.55);}
+        .games-btn{border-color:rgba(112,221,255,.65);box-shadow:0 0 12px rgba(112,221,255,.28),inset 0 0 12px rgba(112,221,255,.06);}
+        .games-btn.active{box-shadow:0 0 20px rgba(112,221,255,.8),inset 0 0 18px rgba(112,221,255,.12);}
+        .mobile-games-wrap{display:none;position:absolute;left:7px;right:7px;top:53px;padding:7px;border-radius:14px;background:linear-gradient(145deg,rgba(2,25,48,.99),rgba(5,70,105,.98));border:1px solid rgba(112,221,255,.88);box-shadow:0 10px 28px rgba(0,0,0,.50),0 0 20px rgba(112,221,255,.34);z-index:65;overflow:hidden}
+        .mobile-games-wrap.visible{display:block;animation:menuIn .18s ease-out}
+        .mobile-games-title{padding:5px 8px 7px;color:#bcefff;font-size:.70rem;font-weight:900;letter-spacing:.6px;text-shadow:0 0 8px rgba(112,221,255,.65)}
+        .mobile-games-item{border-color:rgba(112,221,255,.6);box-shadow:0 0 6px rgba(112,221,255,.28),inset 0 0 10px rgba(112,221,255,.06);background:linear-gradient(135deg,#06283d,#07506f 65%,#06283d)}
+        .mobile-games-item:active{box-shadow:0 0 14px rgba(112,221,255,.95),inset 0 0 18px rgba(112,221,255,.15)}
+        .mobile-games-item .mobile-menu-icon{filter:drop-shadow(0 0 4px rgba(112,221,255,.8))}
+</style>
+</head>
+
+<body>
+<div class="master">
+
+    <header class="header">
+        <h1 class="title">GLOBAL INFORMATION CENTRE</h1>
+        <p class="subtitle">Select an information module to continue</p>
+    </header>
+
+    <nav class="module-bar" aria-label="Information modules">
+        <button class="module-btn" id="worldBtn" onclick="openModule('World_Info.html','worldBtn','🌍 World Information')">🌍 WORLD INFORMATION</button>
+        <button class="module-btn" id="indiaBtn" onclick="openModule('India_Info.html','indiaBtn','🇮🇳 India Information')">🇮🇳 INDIA INFORMATION</button>
+        <button class="module-btn" id="radioBtn" onclick="openModule('World_Radio.html','radioBtn','📻 World Radio')">📻 WORLD RADIO</button>
+        <button class="module-btn" id="financeBtn" onclick="openFinanceMenu()">💰 FINANCE</button>
+        <button class="module-btn" id="gamesBtn" onclick="openGamesMenu()">🎮 GAMES</button>
+    </nav>
+
+    <div class="mobile-select-wrap">
+        <button class="mobile-select" id="mobileModuleButton" type="button" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMobileMenu()">
+            <span id="mobileModuleLabel">☰&nbsp; SELECT MODULE</span><span class="menu-chevron" id="mobileMenuChevron">⌄</span>
+        </button>
+        <div class="mobile-menu" id="mobileMenu" role="menu" aria-label="Select module">
+            <button class="mobile-menu-item" type="button" role="menuitem" onclick="chooseMobileModule('world')"><span class="mobile-menu-icon">🌍</span><span>World Information</span></button>
+            <button class="mobile-menu-item" type="button" role="menuitem" onclick="chooseMobileModule('india')"><span class="mobile-menu-icon">🇮🇳</span><span>India Information</span></button>
+            <button class="mobile-menu-item" type="button" role="menuitem" onclick="chooseMobileModule('radio')"><span class="mobile-menu-icon">📻</span><span>World Radio</span></button>
+            <button class="mobile-menu-item finance-item" type="button" role="menuitem" onclick="chooseMobileModule('finance')"><span class="mobile-menu-icon">💰</span><span>Finance</span><span class="mobile-menu-arrow">›</span></button>
+            <button class="mobile-menu-item games-item" type="button" role="menuitem" onclick="chooseMobileModule('games')"><span class="mobile-menu-icon">🎮</span><span>Games</span><span class="mobile-menu-arrow">›</span></button>
+        </div>
+        <div class="mobile-finance-wrap" id="mobileFinanceWrap" role="menu" aria-label="Finance modules">
+            <div class="mobile-finance-title">💰 FINANCE MODULES</div>
+            <button class="mobile-finance-item" type="button" role="menuitem" onclick="chooseMobileFinance('mf')"><span class="mobile-menu-icon">📈</span><span>Mutual Fund Tracker</span></button>
+            <button class="mobile-finance-item" type="button" role="menuitem" onclick="chooseMobileFinance('rm')"><span class="mobile-menu-icon">🏠</span><span>Reverse Mortgage</span></button>
+            <button class="mobile-finance-item" type="button" role="menuitem" onclick="chooseMobileFinance('swp')"><span class="mobile-menu-icon">👴</span><span>Retirement &amp; SWP Planning</span></button>
+        </div>
+    </div>
+        <div class="mobile-games-wrap" id="mobileGamesWrap" role="menu" aria-label="Games modules">
+            <div class="mobile-games-title">🎮 GAMES</div>
+            <button class="mobile-games-item" type="button" role="menuitem" onclick="chooseMobileGame('space')"><span class="mobile-menu-icon">🚀</span><span>Space Defender</span></button>
+        </div>
+    </div>
+
+    <div class="finance-bar" id="financeBar" aria-label="Finance modules">
+        <button class="finance-btn" id="mfBtn" onclick="openFinanceModule('Mutual Fund Tracker.html','mfBtn','📈 Mutual Fund Tracker')">📈 Mutual Fund Tracker</button>
+        <button class="finance-btn" id="rmBtn" onclick="openFinanceModule('Reverse Mortgage Calculation.html','rmBtn','🏠 Reverse Mortgage')">🏠 Reverse Mortgage</button>
+        <button class="finance-btn" id="swpBtn" onclick="openFinanceModule('Retirement SWP Planning.html','swpBtn','👴 Retirement & SWP Planning')">👴 Retirement &amp; SWP Planning</button>
+    </div>
+
+    <div class="finance-bar games-bar" id="gamesBar" aria-label="Games modules">
+        <button class="finance-btn games-btn" id="spaceBtn" onclick="openGameModule('Space_Defender_V5_Gemini.html','spaceBtn','🚀 Space Defender')">🚀 Space Defender</button>
+    </div>
+
+    <main class="workspace">
+        <div class="welcome" id="welcome">
+            <div class="welcome-card">
+                <div class="welcome-icon">🌐</div>
+                <h2>Welcome to Global Information Centre</h2>
+                <p>
+                    Select a module above. On mobile, use the compact dropdown.
+                    Finance contains the Mutual Fund Tracker, Reverse Mortgage,
+                    and Retirement &amp; SWP Planning tools.
+                </p>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">Loading module…</div>
+
+        <iframe
+            id="moduleFrame"
+            title="Selected Information Module"
+            src="about:blank">
+        </iframe>
+    </main>
+
+    <div class="status" id="status">
+        No module selected
+    </div>
+</div>
+
+<script>
+    const frame = document.getElementById("moduleFrame");
+    const welcome = document.getElementById("welcome");
+    const loading = document.getElementById("loading");
+    const status = document.getElementById("status");
+    const financeBar = document.getElementById("financeBar");
+    const mobileModuleButton = document.getElementById("mobileModuleButton");
+    const mobileModuleLabel = document.getElementById("mobileModuleLabel");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const mobileMenuChevron = document.getElementById("mobileMenuChevron");
+    const mobileFinanceWrap = document.getElementById("mobileFinanceWrap");
+    const gamesBar = document.getElementById("gamesBar");
+    const mobileGamesWrap = document.getElementById("mobileGamesWrap");
+
+    let uiAudioContext = null;
+    let lastSoundButton = null;
+    let lastSoundTime = 0;
+
+    function playButtonSound(button){
+        try{
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if(!AudioCtx) return;
+
+            if(!uiAudioContext) uiAudioContext = new AudioCtx();
+
+            const fire = () => {
+                try{
+                    const now = uiAudioContext.currentTime;
+                    const master = uiAudioContext.createGain();
+                    master.gain.setValueAtTime(0.0001, now);
+                    master.gain.exponentialRampToValueAtTime(0.34, now + 0.012);
+                    master.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
+                    master.connect(uiAudioContext.destination);
+
+                    const osc1 = uiAudioContext.createOscillator();
+                    const osc2 = uiAudioContext.createOscillator();
+                    const osc3 = uiAudioContext.createOscillator();
+                    osc1.type = 'sine';
+                    osc2.type = 'triangle';
+                    osc3.type = 'sine';
+                    osc1.frequency.setValueAtTime(680, now);
+                    osc1.frequency.exponentialRampToValueAtTime(1040, now + 0.11);
+                    osc2.frequency.setValueAtTime(1360, now);
+                    osc2.frequency.exponentialRampToValueAtTime(2040, now + 0.09);
+                    osc3.frequency.setValueAtTime(2080, now);
+                    osc3.frequency.exponentialRampToValueAtTime(2600, now + 0.07);
+
+                    const g1 = uiAudioContext.createGain();
+                    const g2 = uiAudioContext.createGain();
+                    const g3 = uiAudioContext.createGain();
+                    g1.gain.value = 0.72;
+                    g2.gain.value = 0.20;
+                    g3.gain.value = 0.08;
+                    osc1.connect(g1).connect(master);
+                    osc2.connect(g2).connect(master);
+                    osc3.connect(g3).connect(master);
+                    osc1.start(now); osc2.start(now); osc3.start(now);
+                    osc1.stop(now + 0.27);
+                    osc2.stop(now + 0.13);
+                    osc3.stop(now + 0.09);
+                }catch(_){}
+            };
+
+            if(uiAudioContext.state === 'suspended'){
+                uiAudioContext.resume().then(fire).catch(()=>{});
+            }else{
+                fire();
+            }
+        }catch(_){}
+    }
+
+    function buttonSoundOnce(button){
+        const now = performance.now();
+        if(button === lastSoundButton && now - lastSoundTime < 350) return;
+        lastSoundButton = button;
+        lastSoundTime = now;
+        playButtonSound(button);
+    }
+
+    function clearDesktopButtons(){
+        document.querySelectorAll(".module-btn,.finance-btn").forEach(btn => btn.classList.remove("active"));
+    }
+
+    function closeMobileMenu(){
+        if(mobileMenu) mobileMenu.classList.remove("visible");
+        if(mobileModuleButton) mobileModuleButton.setAttribute("aria-expanded","false");
+        if(mobileMenuChevron) mobileMenuChevron.textContent="⌄";
+    }
+
+    function closeMobileGames(){ if(mobileGamesWrap) mobileGamesWrap.classList.remove("visible"); }
+
+    function closeMobileFinance(){
+        if(mobileFinanceWrap) mobileFinanceWrap.classList.remove("visible");
+    }
+
+    function resetMobileFinance(){
+        closeMobileFinance();
+        closeMobileGames();
+        if(mobileModuleButton) mobileModuleButton.classList.remove("finance-choice");
+    }
+
+    function toggleMobileMenu(){
+        closeMobileFinance();
+        const opening=!mobileMenu.classList.contains("visible");
+        if(opening){
+            mobileMenu.classList.add("visible");
+            mobileModuleButton.setAttribute("aria-expanded","true");
+            mobileMenuChevron.textContent="⌃";
+        }else{
+            closeMobileMenu();
+        }
+    }
+
+    function setMobileLabel(text, finance=false){
+        mobileModuleLabel.textContent=text;
+        mobileModuleButton.classList.toggle("finance-choice",finance);
+    }
+
+    function openModule(file, buttonId, label){
+        clearDesktopButtons();
+        const btn=document.getElementById(buttonId);
+        if(btn) btn.classList.add("active");
+        financeBar.classList.remove("visible");
+        if(gamesBar) gamesBar.classList.remove("visible");
+        resetMobileFinance();
+        setMobileLabel(label.toUpperCase());
+        closeMobileMenu();
+        loadModule(file,label);
+    }
+
+    function openFinanceMenu(){
+        clearDesktopButtons();
+        document.getElementById("financeBtn").classList.add("active");
+        financeBar.classList.add("visible");
+        if(gamesBar) gamesBar.classList.remove("visible");
+        welcome.style.display="none";
+        status.textContent="Select a finance tool";
+        setMobileLabel("💰  FINANCE",true);
+        closeMobileMenu();
+        if(mobileFinanceWrap) mobileFinanceWrap.classList.add("visible");
+    }
+
+    function openFinanceModule(file, buttonId, label){
+        clearDesktopButtons();
+        document.getElementById("financeBtn").classList.add("active");
+        document.getElementById(buttonId).classList.add("active");
+        financeBar.classList.add("visible");
+        setMobileLabel("💰  "+label.replace(/^📈 |^🏠 |^👴 /,"").toUpperCase(),true);
+        closeMobileMenu();
+        closeMobileFinance();
+        loadModule(file,label);
+    }
+
+    function openGamesMenu(){
+        clearDesktopButtons();
+        document.getElementById("gamesBtn").classList.add("active");
+        if(financeBar) financeBar.classList.remove("visible");
+        if(gamesBar) gamesBar.classList.add("visible");
+        welcome.style.display="none";
+        status.textContent="Select a game";
+        setMobileLabel("🎮  GAMES",false);
+        closeMobileMenu();
+        closeMobileFinance();
+        if(mobileGamesWrap) mobileGamesWrap.classList.add("visible");
+    }
+
+    function openGameModule(file, buttonId, label){
+        clearDesktopButtons();
+        document.getElementById("gamesBtn").classList.add("active");
+        document.getElementById(buttonId).classList.add("active");
+        if(financeBar) financeBar.classList.remove("visible");
+        if(gamesBar) gamesBar.classList.add("visible");
+        setMobileLabel("🎮  "+label.replace(/^🚀 /,"").toUpperCase(),false);
+        closeMobileMenu();
+        closeMobileFinance();
+        closeMobileGames();
+        loadModule(file,label);
+    }
+
+    function chooseMobileGame(value){
+        if(value==="space") return openGameModule('Space_Defender_V5_Gemini.html','spaceBtn','🚀 Space Defender');
+    }
+
+    function chooseMobileModule(value){
+        if(value==="world") return openModule('World_Info.html','worldBtn','🌍 World Information');
+        if(value==="india") return openModule('India_Info.html','indiaBtn','🇮🇳 India Information');
+        if(value==="radio") return openModule('World_Radio.html','radioBtn','📻 World Radio');
+        if(value==="finance") return openFinanceMenu();
+        if(value==="games") return openGamesMenu();
+    }
+
+    function chooseMobileFinance(value){
+        if(value==="mf") return openFinanceModule('Mutual Fund Tracker.html','mfBtn','📈 Mutual Fund Tracker');
+        if(value==="rm") return openFinanceModule('Reverse Mortgage Calculation.html','rmBtn','🏠 Reverse Mortgage');
+        if(value==="swp") return openFinanceModule('Retirement SWP Planning.html','swpBtn','👴 Retirement & SWP Planning');
+    }
+
+    // Fire on pointerdown so mobile browsers receive the sound during the actual user gesture.
+    // A short duplicate guard prevents pointerdown + click from producing two sounds.
+    document.addEventListener("pointerdown",function(e){
+        const clickedButton = e.target.closest && e.target.closest(".module-btn,.finance-btn,.mobile-select,.mobile-menu-item,.mobile-finance-item,.mobile-games-item");
+        if(clickedButton) buttonSoundOnce(clickedButton);
+    },true);
+
+    document.addEventListener("click",function(e){
+        const clickedButton = e.target.closest && e.target.closest(".module-btn,.finance-btn,.mobile-select,.mobile-menu-item,.mobile-finance-item,.mobile-games-item");
+        if(clickedButton) buttonSoundOnce(clickedButton);
+
+        if(!e.target.closest || !e.target.closest(".mobile-select-wrap")){
+            closeMobileMenu();
+            closeMobileFinance();
+            closeMobileGames();
+        }
+    });
+
+    function loadModule(file,label){
+        welcome.style.display="none";
+        loading.classList.add("visible");
+        status.textContent="Loading: " + label;
+        frame.onload=function(){loading.classList.remove("visible");status.textContent=label+" — Module loaded";};
+        frame.onerror=function(){loading.classList.remove("visible");status.textContent="Unable to load "+label;};
+        frame.src=file;
+    }
+</script>
+</body>
+</html>
