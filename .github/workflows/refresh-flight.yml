@@ -1,0 +1,42 @@
+
+name: SkyTrack Position Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7,37 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update-position:
+    if: ${{ vars.OPENSKY_AUTHORIZED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Fetch and validate flight position
+        env:
+          OPENSKY_AUTHORIZED: ${{ vars.OPENSKY_AUTHORIZED }}
+          OPENSKY_USERNAME: ${{ secrets.OPENSKY_USERNAME }}
+          OPENSKY_PASSWORD: ${{ secrets.OPENSKY_PASSWORD }}
+        run: python scripts/fetch_flight_position.py
+
+      - name: Publish updated JSON
+        run: |
+          if git diff --quiet -- flight_position.json; then
+            echo "No position file changes to publish."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add flight_position.json
+          git commit -m "Update SkyTrack published position"
+          git push
