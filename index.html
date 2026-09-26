@@ -117,7 +117,20 @@
         border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(15,23,42,.08);
     }
     #moduleFrame{width:100%;height:100%;border:0;display:block;background:#fff}
-    .welcome{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;background:radial-gradient(circle at 50% 44%,rgba(79,190,255,.34) 0%,rgba(238,247,255,.92) 43%,#cfe5ff 100%);z-index:2;overflow:hidden;border-radius:inherit}
+     .welcome{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;
+        background:radial-gradient(ellipse at 50% 42%,rgba(105,211,255,.48) 0%,rgba(24,112,211,.22) 34%,transparent 62%),
+                   linear-gradient(145deg,#071a43 0%,#0a3478 38%,#0b5db0 70%,#061b49 100%);
+        z-index:2;overflow:hidden;border-radius:inherit;isolation:isolate}
+    .welcome-ambient{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+    .ambient-grid{position:absolute;inset:-20%;opacity:.16;background-image:linear-gradient(rgba(103,219,255,.24) 1px,transparent 1px),linear-gradient(90deg,rgba(103,219,255,.24) 1px,transparent 1px);background-size:42px 42px;transform:perspective(600px) rotateX(58deg) scale(1.4);transform-origin:center bottom;mask-image:linear-gradient(to bottom,transparent 5%,#000 48%,transparent 100%)}
+    .ambient-orbit{position:absolute;width:76%;height:68%;left:12%;top:8%;border:1px solid rgba(132,236,255,.32);border-radius:50%;transform:rotate(-18deg);box-shadow:0 0 24px rgba(0,202,255,.08),inset 0 0 24px rgba(0,202,255,.06);animation:orbitDrift 18s linear infinite}
+    .ambient-orbit:before,.ambient-orbit:after{content:"";position:absolute;inset:9% -8%;border:1px solid rgba(255,207,95,.22);border-radius:50%;transform:rotate(36deg)}
+    .ambient-orbit:after{inset:20% -14%;border-color:rgba(81,221,255,.20);transform:rotate(-48deg)}
+    .ambient-ribbon{position:absolute;left:-12%;width:124%;height:26%;border-radius:50%;border-top:2px solid rgba(86,229,255,.48);filter:drop-shadow(0 0 7px rgba(0,205,255,.72));transform:rotate(-7deg);animation:ribbonFloat 8s ease-in-out infinite alternate}
+    .ambient-ribbon.ribbon-one{top:54%}
+    .ambient-ribbon.ribbon-two{top:67%;border-color:rgba(255,197,70,.46);transform:rotate(5deg);animation-delay:-3s}
+    .ambient-ribbon.ribbon-three{top:79%;border-color:rgba(72,174,255,.34);transform:rotate(-2deg);animation-delay:-5s}
+    .ambient-stars{position:absolute;inset:0;background:radial-gradient(circle at 9% 22%,#d9fbff 0 1px,transparent 2px),radial-gradient(circle at 23% 68%,#fff 0 1px,transparent 2px),radial-gradient(circle at 82% 19%,#baf5ff 0 1px,transparent 2px),radial-gradient(circle at 91% 58%,#fff 0 1px,transparent 2px),radial-gradient(circle at 72% 82%,#d6faff 0 1px,transparent 2px),radial-gradient(circle at 43% 12%,#fff 0 1px,transparent 2px);opacity:.55;animation:starPulse 4s ease-in-out infinite alternate}
     .welcome-stage{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;width:100%;height:auto;max-width:760px;max-height:100%;perspective:900px;transform-style:preserve-3d;padding:6px 10px 10px;overflow:visible}
     .welcome-earth-wrap{position:relative;flex:0 0 220px;width:220px;height:220px;display:block;margin:0 auto 4px;filter:drop-shadow(0 10px 20px rgba(0,150,255,.22))}
     #welcomeEarthCanvas{position:absolute;left:0;top:0;display:block;width:220px!important;height:220px!important;border-radius:50%;outline:none}
@@ -203,6 +216,9 @@
           0 1px 2px rgba(255,255,255,.95),
           0 0 7px rgba(80,170,255,.16);
     }
+    @keyframes orbitDrift{from{transform:rotate(-18deg) scale(1)}to{transform:rotate(342deg) scale(1.025)}}
+    @keyframes ribbonFloat{from{transform:translateX(-2%) rotate(-7deg);opacity:.55}to{transform:translateX(2%) rotate(-3deg);opacity:1}}
+    @keyframes starPulse{from{opacity:.28}to{opacity:.72}}
     @keyframes welcomeTitleGlow{
         0%,100%{filter:brightness(1);text-shadow:0 0 3px rgba(255,255,255,.95),0 0 9px rgba(67,170,255,.35),0 2px 5px rgba(0,45,120,.28)}
         50%{filter:brightness(1.08);text-shadow:0 0 5px rgba(255,255,255,1),0 0 16px rgba(67,170,255,.58),0 2px 6px rgba(0,45,120,.3)}
@@ -221,7 +237,7 @@
 
     
     @media(max-width:600px){
-        .welcome{padding:4px 5px;background:linear-gradient(180deg,#cfe5ff 0%,#eef7ff 52%,#d7ebff 100%)}
+        .welcome{padding:4px 5px;background:radial-gradient(ellipse at 50% 42%,rgba(105,211,255,.48) 0%,rgba(24,112,211,.22) 34%,transparent 62%),linear-gradient(145deg,#071a43 0%,#0a3478 38%,#0b5db0 70%,#061b49 100%)}
         .welcome-stage{width:100%;height:auto;max-height:100%;padding:0 6px 6px;transform:translateY(-18px)}
         .welcome-earth-wrap{flex:0 0 225px;width:225px;height:225px;margin-bottom:4px}
         #welcomeEarthCanvas{width:225px!important;height:225px!important}
@@ -320,7 +336,7 @@
         .status{font-size:.54rem;padding-top:3px;color:#a9c7ff}
     }
 @media(prefers-reduced-motion:reduce){
-        .welcome:before,.welcome-title-small,.welcome-divider:after{animation:none!important}
+        .welcome:before,.welcome-ambient *,.welcome-title-small,.welcome-divider:after{animation:none!important}
     }
     
     /* --- Welcome typography: attention-catching animated treatment --- */
@@ -582,7 +598,6 @@
         <button class="module-btn" id="worldBtn" onclick="openModule('World_Info.html','worldBtn','🌍 World Information')">🌍 WORLD INFORMATION</button>
         <button class="module-btn" id="indiaBtn" onclick="openModule('India_Info.html','indiaBtn','🇮🇳 India Information')">🇮🇳 INDIA INFORMATION</button>
         <button class="module-btn" id="radioBtn" onclick="openModule('World_Radio.html','radioBtn','📻 World Radio')">📻 WORLD RADIO</button>
-        <button class="module-btn" id="skytrackBtn" onclick="openModule('SkyTrack.html','skytrackBtn','✈️ SkyTrack Flight Tracker')">✈️ SKYTRACK FLIGHT TRACKER</button>
         <button class="module-btn" id="financeBtn" onclick="openFinanceMenu()">💰 FINANCE</button>
         <button class="module-btn" id="gamesBtn" onclick="openGamesMenu()">🎮 GAMES</button>
     </nav>
@@ -595,7 +610,6 @@
             <button class="mobile-menu-item" type="button" role="menuitem" onclick="chooseMobileModule('world')"><span class="mobile-menu-icon">🌍</span><span>World Information</span></button>
             <button class="mobile-menu-item" type="button" role="menuitem" onclick="chooseMobileModule('india')"><span class="mobile-menu-icon">🇮🇳</span><span>India Information</span></button>
             <button class="mobile-menu-item" type="button" role="menuitem" onclick="chooseMobileModule('radio')"><span class="mobile-menu-icon">📻</span><span>World Radio</span></button>
-            <button class="mobile-menu-item" type="button" role="menuitem" onclick="chooseMobileModule('skytrack')"><span class="mobile-menu-icon">✈️</span><span>SkyTrack Flight Tracker</span></button>
             <button class="mobile-menu-item finance-item" type="button" role="menuitem" onclick="chooseMobileModule('finance')"><span class="mobile-menu-icon">💰</span><span>Finance</span><span class="mobile-menu-arrow">›</span></button>
             <button class="mobile-menu-item games-item" type="button" role="menuitem" onclick="chooseMobileModule('games')"><span class="mobile-menu-icon">🎮</span><span>Games</span><span class="mobile-menu-arrow">›</span></button>
         </div>
@@ -623,6 +637,14 @@
 
     <main class="workspace">
         <div class="welcome" id="welcome">
+            <div class="welcome-ambient" aria-hidden="true">
+                <div class="ambient-grid"></div>
+                <div class="ambient-orbit"></div>
+                <div class="ambient-ribbon ribbon-one"></div>
+                <div class="ambient-ribbon ribbon-two"></div>
+                <div class="ambient-ribbon ribbon-three"></div>
+                <div class="ambient-stars"></div>
+            </div>
             <div class="welcome-stage">
                 <div class="welcome-earth-wrap" id="welcomeEarthWrap" aria-label="Rotating Earth with 23.44 degree axial tilt">
                     <canvas id="welcomeEarthCanvas"></canvas>
@@ -637,7 +659,7 @@
                     </h3>
                     <div class="welcome-divider" aria-hidden="true"></div>
                     <p class="welcome-text">
-                        Select a module above. On mobile, use the compact dropdown. Finance contains the Mutual Fund Tracker, Reverse Mortgage, and Retirement &amp; SWP Planning tools. Games contains Space Defender.
+                        Explore world and India information, listen to World Radio, or open Finance for Mutual Fund Tracking, Reverse Mortgage, and Retirement &amp; SWP Planning. Choose Games to play Space Defender. On mobile, select a module from the compact menu.
                     </p>
                 </div>
             </div>
@@ -848,7 +870,6 @@
         if(value==="world") return openModule('World_Info.html','worldBtn','🌍 World Information');
         if(value==="india") return openModule('India_Info.html','indiaBtn','🇮🇳 India Information');
         if(value==="radio") return openModule('World_Radio.html','radioBtn','📻 World Radio');
-        if(value==="skytrack") return openModule('SkyTrack.html','skytrackBtn','✈️ SkyTrack Flight Tracker');
         if(value==="finance") return openFinanceMenu();
         if(value==="games") return openGamesMenu();
     }
