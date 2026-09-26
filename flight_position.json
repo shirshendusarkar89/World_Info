@@ -1,0 +1,16 @@
+{
+  "flightCode": "TG630",
+  "status": "not_connected",
+  "latitude": null,
+  "longitude": null,
+  "callsign": null,
+  "airline": null,
+  "route": null,
+  "aircraft": null,
+  "altitudeFt": null,
+  "speedKts": null,
+  "heading": null,
+  "lastUpdatedAt": null,
+  "nextUpdateAt": null,
+  "message": "Awaiting authorized data connection. No verified position has been published."
+}

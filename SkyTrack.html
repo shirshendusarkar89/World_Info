@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyTrack - Flight Position Monitor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-slate-800 border-b border-slate-700 p-4 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                ✈️ <span class="text-sky-400">SkyTrack</span> Flight Position Monitor
+            </h1>
+            <span class="text-xs bg-sky-900 text-sky-300 border border-sky-700 px-2 py-1 rounded">Published Position · 30-min Updates</span>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto w-full p-4 flex-grow grid grid-cols-1 lg:grid-cols-4 gap-6 mt-2">
+        
+        <!-- Left Sidebar: Controls & Info -->
+        <div class="lg:col-span-1 flex flex-col gap-4">
+            
+            <!-- Search Panel -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg flex flex-col gap-3">
+                <label for="flightNumber" class="text-sm font-medium text-slate-300">Flight Number</label>
+                <input type="text" id="flightNumber" value="TG630" placeholder="e.g. TG630, UA123, EK202" 
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500 uppercase font-mono tracking-wider">
+                <button onclick="startFlightTracking()" 
+                    class="bg-sky-600 hover:bg-sky-500 text-white py-2 rounded-lg font-medium transition duration-200 shadow">
+                    Select Flight
+                </button>
+            </div>
+
+            <!-- Position Update Status -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg flex flex-col gap-3">
+                <h2 class="text-sm font-semibold text-sky-400 border-b border-slate-700 pb-1">Flight Position Status</h2>
+                <div class="flex flex-col gap-1 text-sm">
+                    <span class="text-slate-400">Flight Position Last Updated at</span>
+                    <strong id="lastUpdated" class="text-white text-base">Not available</strong>
+                </div>
+                <div class="flex flex-col gap-1 text-sm">
+                    <span class="text-slate-400">Next Update at</span>
+                    <strong id="nextUpdate" class="text-white text-base">Waiting for published data</strong>
+                </div>
+                <div class="flex items-center justify-between border-t border-slate-700 pt-2">
+                    <span class="text-slate-400 text-xs">Refresh interval</span>
+                    <strong class="text-sky-300 text-xs">30 minutes</strong>
+                </div>
+                <button id="refreshBtn" onclick="refreshFlightPosition(true)" disabled
+                    class="bg-sky-700/60 text-slate-400 border border-sky-800 py-2 rounded-lg text-sm font-medium cursor-not-allowed">
+                    Refresh Position Now
+                </button>
+                <p id="statusMessage" class="text-xs text-amber-300 leading-relaxed">Select a flight to read its latest published position from flight_position.json. Live updates depend on the repository background service.</p>
+            </div>
+
+            <!-- Flight Telemetry Panel -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-lg flex flex-col gap-3 flex-grow">
+                <h2 class="text-sm font-semibold text-sky-400 border-b border-slate-700 pb-1">Telemetry</h2>
+                <div id="telemetryData" class="flex flex-col gap-2 text-xs text-slate-300">
+                    <div class="flex justify-between gap-3"><span>Airline:</span> <strong id="tAirline" class="text-white text-right">Not available</strong></div>
+                    <div class="flex justify-between gap-3"><span>Route:</span> <strong id="tRoute" class="text-white text-right">Not available</strong></div>
+                    <div class="flex justify-between gap-3"><span>Aircraft:</span> <strong id="tAircraft" class="text-white text-right">Not available</strong></div>
+                    <div class="flex justify-between gap-3"><span>Altitude:</span> <strong id="tAltitude" class="text-sky-300 font-mono text-right">Not available</strong></div>
+                    <div class="flex justify-between gap-3"><span>Ground Speed:</span> <strong id="tSpeed" class="text-sky-300 font-mono text-right">Not available</strong></div>
+                    <div class="flex justify-between gap-3"><span>Heading:</span> <strong id="tHeading" class="text-sky-300 font-mono text-right">Not available</strong></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Area: Map Display -->
+        <div class="lg:col-span-3 bg-slate-800 p-2 rounded-xl border border-slate-700 shadow-lg flex flex-col h-[550px] min-h-[500px]">
+            <div class="relative w-full flex-1 min-h-[500px] rounded-lg overflow-hidden">
+                <div id="map" class="absolute inset-0 rounded-lg z-10"></div>
+                <div id="mapHint" class="absolute bottom-4 left-1/2 -translate-x-1/2 z-[500] bg-slate-900/90 border border-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg shadow-lg text-center pointer-events-none">Select a flight to look for its latest reported position.</div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize Leaflet using the proven Esri World Street Map setup
+        // from the user's working World_Info dashboard.
+        const map = L.map('map', {
+            zoomControl: true,
+            scrollWheelZoom: true,
+            doubleClickZoom: true,
+            touchZoom: true,
+            dragging: true,
+            attributionControl: true,
+            preferCanvas: true,
+            worldCopyJump: true,
+            maxBoundsViscosity: 1.0
+        }).setView([13.69, 100.75], 5);
+
+        L.tileLayer(
+            'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+            {
+                maxZoom: 19,
+                minZoom: 1,
+                noWrap: false,
+                keepBuffer: 2,
+                attribution: 'Esri, HERE, Garmin, &copy; OpenStreetMap contributors, and the GIS User Community'
+            }
+        ).addTo(map);
+
+        map.setMaxBounds([[-85.05112878, -360], [85.05112878, 360]]);
+
+        // Recalculate the map canvas after layout/window changes.
+        const refreshMapSize = () => map.invalidateSize(true);
+        window.addEventListener('resize', refreshMapSize);
+        window.addEventListener('load', refreshMapSize);
+        setTimeout(refreshMapSize, 250);
+
+        // Experimental OpenSky lookup. This uses observed state vectors, not a
+        // simulated route. Operational use requires written permission from OpenSky.
+        const POSITION_URL = './flight_position.json';
+        const REFRESH_MS = 30 * 60 * 1000;
+        let selectedFlightCode = '';
+        let aircraftMarker = null;
+        let requestInProgress = false;
+        let hasReceivedPosition = false;
+
+        function formatClock(date) {
+            if (!(date instanceof Date) || isNaN(date.getTime())) return 'Not available';
+            return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
+        }
+        function setStatus(message, color='text-amber-300') {
+            const el = document.getElementById('statusMessage');
+            el.className = `text-xs ${color} leading-relaxed`;
+            el.textContent = message;
+        }
+        function planeIcon(heading) {
+            const rotation = Number.isFinite(Number(heading)) ? Number(heading) : 0;
+            return L.divIcon({
+                className: 'live-plane-icon',
+                html: `<div style="font-size:30px;line-height:36px;width:36px;height:36px;text-align:center;transform:rotate(${rotation}deg);filter:drop-shadow(0 2px 3px #111);">✈</div>`,
+                iconSize:[36,36], iconAnchor:[18,18]
+            });
+        }
+        function clearTelemetry() {
+            ['tAirline','tRoute','tAircraft','tAltitude','tSpeed','tHeading'].forEach(id => {
+                const el=document.getElementById(id); if(el) el.textContent='Not available';
+            });
+        }
+        function findFlightRecord(data, flightCode) {
+            if (!data || typeof data !== 'object') return null;
+            const normalize = v => String(v || '').toUpperCase().replace(/[^A-Z0-9]/g,'');
+            if (normalize(data.flightCode) !== normalize(flightCode)) return null;
+            return data;
+        }
+        function showPosition(data) {
+            const lat=Number(data.latitude), lon=Number(data.longitude);
+            if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+                setStatus(data.message || 'No verified position is published for this flight yet.', 'text-amber-300');
+                document.getElementById('mapHint').textContent=`No verified position loaded · ${selectedFlightCode}`;
+                return;
+            }
+            const heading=Number(data.heading);
+            const position=[lat,lon];
+            if (!aircraftMarker) {
+                aircraftMarker=L.marker(position,{icon:planeIcon(heading)}).addTo(map);
+                map.setView(position,Math.max(map.getZoom(),6));
+            } else {
+                aircraftMarker.setLatLng(position);
+                aircraftMarker.setIcon(planeIcon(heading));
+            }
+            const call=data.callsign || data.flightCode || selectedFlightCode;
+            aircraftMarker.bindPopup(`<b>${call}</b><br>Last published position<br>${lat.toFixed(4)}, ${lon.toFixed(4)}`);
+            document.getElementById('lastUpdated').textContent=data.lastUpdatedAt ? formatClock(new Date(data.lastUpdatedAt)) : 'Not available';
+            document.getElementById('nextUpdate').textContent=data.nextUpdateAt ? formatClock(new Date(data.nextUpdateAt)) : 'Not scheduled';
+            document.getElementById('tAirline').textContent=data.airline || 'Not provided';
+            document.getElementById('tRoute').textContent=data.route || 'Not provided';
+            document.getElementById('tAircraft').textContent=data.aircraft || 'Not provided';
+            document.getElementById('tAltitude').textContent=Number.isFinite(Number(data.altitudeFt)) ? Math.round(Number(data.altitudeFt)).toLocaleString()+' ft' : 'Not available';
+            document.getElementById('tSpeed').textContent=Number.isFinite(Number(data.speedKts)) ? Math.round(Number(data.speedKts))+' kts' : 'Not available';
+            document.getElementById('tHeading').textContent=Number.isFinite(heading) ? Math.round(heading)+'°' : 'Not available';
+            document.getElementById('mapHint').textContent=`Latest published position: ${call} · ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+            hasReceivedPosition=true;
+            setStatus('Showing the latest position published to this repository. This is a snapshot, not continuous movement.', 'text-emerald-300');
+        }
+        async function refreshFlightPosition(manual=false) {
+            if (!selectedFlightCode || requestInProgress) return;
+            requestInProgress=true;
+            const btn=document.getElementById('refreshBtn');
+            btn.disabled=true; btn.textContent='Checking…';
+            setStatus('Reading the latest published position snapshot…','text-sky-300');
+            try {
+                const response=await fetch(POSITION_URL+'?t='+Date.now(),{cache:'no-store'});
+                if (!response.ok) throw new Error('HTTP '+response.status);
+                const data=await response.json();
+                const record=findFlightRecord(data,selectedFlightCode);
+                if (!record) {
+                    setStatus('The published data file is for a different flight or has no matching flight code.','text-amber-300');
+                    return;
+                }
+                if (record.status && record.status !== 'ok') {
+                    document.getElementById('lastUpdated').textContent=record.lastUpdatedAt ? formatClock(new Date(record.lastUpdatedAt)) : 'Not available';
+                    document.getElementById('nextUpdate').textContent=record.nextUpdateAt ? formatClock(new Date(record.nextUpdateAt)) : 'Waiting for published data';
+                    setStatus(record.message || 'No verified position has been published yet.','text-amber-300');
+                    document.getElementById('mapHint').textContent=`No verified position loaded · ${selectedFlightCode}`;
+                    return;
+                }
+                showPosition(record);
+            } catch(error) {
+                setStatus('Could not read published position: '+error.message+'. Open the app through GitHub Pages, not as a local file.','text-amber-300');
+            } finally {
+                requestInProgress=false;
+                btn.disabled=false; btn.textContent='Check Published Position Now';
+            }
+        }
+        function startFlightTracking() {
+            const code=document.getElementById('flightNumber').value.trim().toUpperCase();
+            if (!code) { setStatus('Please enter a flight number first.','text-amber-300'); return; }
+            selectedFlightCode=code;
+            document.getElementById('lastUpdated').textContent='Not available';
+            document.getElementById('nextUpdate').textContent='Checking…';
+            clearTelemetry();
+            if (aircraftMarker) { map.removeLayer(aircraftMarker); aircraftMarker=null; }
+            document.getElementById('mapHint').textContent=`Looking for published position · ${code}`;
+            refreshFlightPosition();
+        }
+        document.getElementById('flightNumber').addEventListener('keydown', event => {
+            if (event.key === 'Enter') startFlightTracking();
+        });
+
+    </script>
+</body>
+</html>
