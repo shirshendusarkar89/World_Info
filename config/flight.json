@@ -1,0 +1,15 @@
+SKYTRACK INTEGRATION FILES
+
+1. Replace the existing repository index.html with this updated index.html.
+   Existing module buttons and module behavior are retained; SkyTrack is added
+   to desktop and mobile module menus.
+2. Upload SkyTrack.html to the repository root.
+3. Upload flight_position.json to the repository root.
+4. The SkyTrack page reads ./flight_position.json. Keep both files together.
+
+IMPORTANT:
+- This JSON is an initial no-data status record, not a live position.
+- No background updater is enabled in this integration set yet.
+- Live tracking requires an authorized, configured data source and a scheduled
+  GitHub Actions workflow. Do not treat this preview as live aircraft data.
+- Preserve the existing filenames and paths of all other modules.
